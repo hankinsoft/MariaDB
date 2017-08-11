@@ -34,3 +34,4 @@
 
 # Misc
 .DS_Store
+*.xcuserstate
