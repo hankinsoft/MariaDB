@@ -1,0 +1,804 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 48;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		7213B69D1F3E0D7000416FB8 /* MariaDB.h in Headers */ = {isa = PBXBuildFile; fileRef = 7213B69B1F3E0D7000416FB8 /* MariaDB.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		721583301F3E115D00C0A661 /* array.c in Sources */ = {isa = PBXBuildFile; fileRef = 7215832F1F3E115D00C0A661 /* array.c */; };
+		721583321F3E116500C0A661 /* ma_dyncol.c in Sources */ = {isa = PBXBuildFile; fileRef = 721583311F3E116500C0A661 /* ma_dyncol.c */; };
+		721583341F3E117900C0A661 /* bchange.c in Sources */ = {isa = PBXBuildFile; fileRef = 721583331F3E117900C0A661 /* bchange.c */; };
+		721583361F3E117D00C0A661 /* bmove.c in Sources */ = {isa = PBXBuildFile; fileRef = 721583351F3E117D00C0A661 /* bmove.c */; };
+		721583381F3E118300C0A661 /* bmove_upp.c in Sources */ = {isa = PBXBuildFile; fileRef = 721583371F3E118300C0A661 /* bmove_upp.c */; };
+		7215833A1F3E119600C0A661 /* my_charset.c in Sources */ = {isa = PBXBuildFile; fileRef = 721583391F3E119600C0A661 /* my_charset.c */; };
+		7215833C1F3E119E00C0A661 /* hash.c in Sources */ = {isa = PBXBuildFile; fileRef = 7215833B1F3E119E00C0A661 /* hash.c */; };
+		7215833E1F3E11A600C0A661 /* violite.c in Sources */ = {isa = PBXBuildFile; fileRef = 7215833D1F3E11A600C0A661 /* violite.c */; };
+		721583401F3E11B000C0A661 /* net.c in Sources */ = {isa = PBXBuildFile; fileRef = 7215833F1F3E11B000C0A661 /* net.c */; };
+		721583421F3E11BD00C0A661 /* charset.c in Sources */ = {isa = PBXBuildFile; fileRef = 721583411F3E11BD00C0A661 /* charset.c */; };
+		721583441F3E11C500C0A661 /* ma_time.c in Sources */ = {isa = PBXBuildFile; fileRef = 721583431F3E11C500C0A661 /* ma_time.c */; };
+		721583461F3E11CB00C0A661 /* dbug.c in Sources */ = {isa = PBXBuildFile; fileRef = 721583451F3E11CB00C0A661 /* dbug.c */; };
+		721583481F3E11D300C0A661 /* default.c in Sources */ = {isa = PBXBuildFile; fileRef = 721583471F3E11D300C0A661 /* default.c */; };
+		7215834C1F3E11EB00C0A661 /* my_vsnprintf.c in Sources */ = {isa = PBXBuildFile; fileRef = 7215834B1F3E11EB00C0A661 /* my_vsnprintf.c */; };
+		721583561F3E129C00C0A661 /* errmsg.c in Sources */ = {isa = PBXBuildFile; fileRef = 7215834D1F3E129C00C0A661 /* errmsg.c */; };
+		721583571F3E129C00C0A661 /* getopt.c in Sources */ = {isa = PBXBuildFile; fileRef = 7215834E1F3E129C00C0A661 /* getopt.c */; };
+		721583581F3E129C00C0A661 /* getopt1.c in Sources */ = {isa = PBXBuildFile; fileRef = 7215834F1F3E129C00C0A661 /* getopt1.c */; };
+		721583591F3E129C00C0A661 /* int2str.c in Sources */ = {isa = PBXBuildFile; fileRef = 721583501F3E129C00C0A661 /* int2str.c */; };
+		7215835A1F3E129C00C0A661 /* is_prefix.c in Sources */ = {isa = PBXBuildFile; fileRef = 721583511F3E129C00C0A661 /* is_prefix.c */; };
+		7215835B1F3E129C00C0A661 /* libmariadb.c in Sources */ = {isa = PBXBuildFile; fileRef = 721583521F3E129C00C0A661 /* libmariadb.c */; };
+		7215835C1F3E129C00C0A661 /* list.c in Sources */ = {isa = PBXBuildFile; fileRef = 721583531F3E129C00C0A661 /* list.c */; };
+		7215835D1F3E129C00C0A661 /* llstr.c in Sources */ = {isa = PBXBuildFile; fileRef = 721583541F3E129C00C0A661 /* llstr.c */; };
+		7215835E1F3E129C00C0A661 /* longlong2str.c in Sources */ = {isa = PBXBuildFile; fileRef = 721583551F3E129C00C0A661 /* longlong2str.c */; };
+		721583601F3E12BE00C0A661 /* ma_secure.c in Sources */ = {isa = PBXBuildFile; fileRef = 7215835F1F3E12BE00C0A661 /* ma_secure.c */; };
+		7215836B1F3E12E100C0A661 /* mf_dirname.c in Sources */ = {isa = PBXBuildFile; fileRef = 721583611F3E12E100C0A661 /* mf_dirname.c */; };
+		7215836C1F3E12E100C0A661 /* mf_fn_ext.c in Sources */ = {isa = PBXBuildFile; fileRef = 721583621F3E12E100C0A661 /* mf_fn_ext.c */; };
+		7215836D1F3E12E100C0A661 /* mf_format.c in Sources */ = {isa = PBXBuildFile; fileRef = 721583631F3E12E100C0A661 /* mf_format.c */; };
+		7215836E1F3E12E100C0A661 /* mf_loadpath.c in Sources */ = {isa = PBXBuildFile; fileRef = 721583641F3E12E100C0A661 /* mf_loadpath.c */; };
+		7215836F1F3E12E100C0A661 /* mf_pack.c in Sources */ = {isa = PBXBuildFile; fileRef = 721583651F3E12E100C0A661 /* mf_pack.c */; };
+		721583701F3E12E100C0A661 /* mf_path.c in Sources */ = {isa = PBXBuildFile; fileRef = 721583661F3E12E100C0A661 /* mf_path.c */; };
+		721583711F3E12E100C0A661 /* mf_unixpath.c in Sources */ = {isa = PBXBuildFile; fileRef = 721583671F3E12E100C0A661 /* mf_unixpath.c */; };
+		721583721F3E12E100C0A661 /* mf_wcomp.c in Sources */ = {isa = PBXBuildFile; fileRef = 721583681F3E12E100C0A661 /* mf_wcomp.c */; };
+		721583731F3E12E100C0A661 /* mulalloc.c in Sources */ = {isa = PBXBuildFile; fileRef = 721583691F3E12E100C0A661 /* mulalloc.c */; };
+		721583741F3E12E100C0A661 /* my_alloc.c in Sources */ = {isa = PBXBuildFile; fileRef = 7215836A1F3E12E100C0A661 /* my_alloc.c */; };
+		721583761F3E12F300C0A661 /* my_auth.c in Sources */ = {isa = PBXBuildFile; fileRef = 721583751F3E12F300C0A661 /* my_auth.c */; };
+		721583801F3E130D00C0A661 /* my_compress.c in Sources */ = {isa = PBXBuildFile; fileRef = 721583771F3E130D00C0A661 /* my_compress.c */; };
+		721583811F3E130D00C0A661 /* my_context.c in Sources */ = {isa = PBXBuildFile; fileRef = 721583781F3E130D00C0A661 /* my_context.c */; };
+		721583821F3E130D00C0A661 /* my_div.c in Sources */ = {isa = PBXBuildFile; fileRef = 721583791F3E130D00C0A661 /* my_div.c */; };
+		721583831F3E130D00C0A661 /* my_error.c in Sources */ = {isa = PBXBuildFile; fileRef = 7215837A1F3E130D00C0A661 /* my_error.c */; };
+		721583841F3E130D00C0A661 /* my_fopen.c in Sources */ = {isa = PBXBuildFile; fileRef = 7215837B1F3E130D00C0A661 /* my_fopen.c */; };
+		721583851F3E130D00C0A661 /* my_fstream.c in Sources */ = {isa = PBXBuildFile; fileRef = 7215837C1F3E130D00C0A661 /* my_fstream.c */; };
+		721583861F3E130D00C0A661 /* my_getwd.c in Sources */ = {isa = PBXBuildFile; fileRef = 7215837D1F3E130D00C0A661 /* my_getwd.c */; };
+		721583871F3E130D00C0A661 /* my_init.c in Sources */ = {isa = PBXBuildFile; fileRef = 7215837E1F3E130D00C0A661 /* my_init.c */; };
+		721583881F3E130D00C0A661 /* my_lib.c in Sources */ = {isa = PBXBuildFile; fileRef = 7215837F1F3E130D00C0A661 /* my_lib.c */; };
+		721583951F3E133000C0A661 /* my_loaddata.c in Sources */ = {isa = PBXBuildFile; fileRef = 721583891F3E133000C0A661 /* my_loaddata.c */; };
+		721583961F3E133000C0A661 /* my_malloc.c in Sources */ = {isa = PBXBuildFile; fileRef = 7215838A1F3E133000C0A661 /* my_malloc.c */; };
+		721583971F3E133000C0A661 /* my_messnc.c in Sources */ = {isa = PBXBuildFile; fileRef = 7215838B1F3E133000C0A661 /* my_messnc.c */; };
+		721583981F3E133000C0A661 /* my_net.c in Sources */ = {isa = PBXBuildFile; fileRef = 7215838C1F3E133000C0A661 /* my_net.c */; };
+		721583991F3E133000C0A661 /* my_once.c in Sources */ = {isa = PBXBuildFile; fileRef = 7215838D1F3E133000C0A661 /* my_once.c */; };
+		7215839A1F3E133000C0A661 /* my_open.c in Sources */ = {isa = PBXBuildFile; fileRef = 7215838E1F3E133000C0A661 /* my_open.c */; };
+		7215839B1F3E133000C0A661 /* my_port.c in Sources */ = {isa = PBXBuildFile; fileRef = 7215838F1F3E133000C0A661 /* my_port.c */; };
+		7215839C1F3E133000C0A661 /* my_pthread.c in Sources */ = {isa = PBXBuildFile; fileRef = 721583901F3E133000C0A661 /* my_pthread.c */; };
+		7215839D1F3E133000C0A661 /* my_read.c in Sources */ = {isa = PBXBuildFile; fileRef = 721583911F3E133000C0A661 /* my_read.c */; };
+		7215839E1F3E133000C0A661 /* my_realloc.c in Sources */ = {isa = PBXBuildFile; fileRef = 721583921F3E133000C0A661 /* my_realloc.c */; };
+		7215839F1F3E133000C0A661 /* my_seek.c in Sources */ = {isa = PBXBuildFile; fileRef = 721583931F3E133000C0A661 /* my_seek.c */; };
+		721583A01F3E133000C0A661 /* my_static.c in Sources */ = {isa = PBXBuildFile; fileRef = 721583941F3E133000C0A661 /* my_static.c */; };
+		721583A51F3E135500C0A661 /* my_stmt_codec.c in Sources */ = {isa = PBXBuildFile; fileRef = 721583A11F3E135500C0A661 /* my_stmt_codec.c */; };
+		721583A61F3E135500C0A661 /* my_stmt.c in Sources */ = {isa = PBXBuildFile; fileRef = 721583A21F3E135500C0A661 /* my_stmt.c */; };
+		721583A71F3E135500C0A661 /* my_symlink.c in Sources */ = {isa = PBXBuildFile; fileRef = 721583A31F3E135500C0A661 /* my_symlink.c */; };
+		721583A81F3E135500C0A661 /* my_thr_init.c in Sources */ = {isa = PBXBuildFile; fileRef = 721583A41F3E135500C0A661 /* my_thr_init.c */; };
+		721583AA1F3E137E00C0A661 /* my_write.c in Sources */ = {isa = PBXBuildFile; fileRef = 721583A91F3E137E00C0A661 /* my_write.c */; };
+		721583AC1F3E138300C0A661 /* mysql_async.c in Sources */ = {isa = PBXBuildFile; fileRef = 721583AB1F3E138300C0A661 /* mysql_async.c */; };
+		721583B81F3E13A700C0A661 /* password.c in Sources */ = {isa = PBXBuildFile; fileRef = 721583AD1F3E13A700C0A661 /* password.c */; };
+		721583BA1F3E13A700C0A661 /* str2int.c in Sources */ = {isa = PBXBuildFile; fileRef = 721583AF1F3E13A700C0A661 /* str2int.c */; };
+		721583BB1F3E13A700C0A661 /* strcend.c in Sources */ = {isa = PBXBuildFile; fileRef = 721583B01F3E13A700C0A661 /* strcend.c */; };
+		721583BC1F3E13A700C0A661 /* strcont.c in Sources */ = {isa = PBXBuildFile; fileRef = 721583B11F3E13A700C0A661 /* strcont.c */; };
+		721583BD1F3E13A700C0A661 /* strend.c in Sources */ = {isa = PBXBuildFile; fileRef = 721583B21F3E13A700C0A661 /* strend.c */; };
+		721583BE1F3E13A700C0A661 /* strfill.c in Sources */ = {isa = PBXBuildFile; fileRef = 721583B31F3E13A700C0A661 /* strfill.c */; };
+		721583BF1F3E13A700C0A661 /* string.c in Sources */ = {isa = PBXBuildFile; fileRef = 721583B41F3E13A700C0A661 /* string.c */; };
+		721583C01F3E13A700C0A661 /* strinstr.c in Sources */ = {isa = PBXBuildFile; fileRef = 721583B51F3E13A700C0A661 /* strinstr.c */; };
+		721583C11F3E13A700C0A661 /* strmake.c in Sources */ = {isa = PBXBuildFile; fileRef = 721583B61F3E13A700C0A661 /* strmake.c */; };
+		721583C21F3E13A700C0A661 /* strmov.c in Sources */ = {isa = PBXBuildFile; fileRef = 721583B71F3E13A700C0A661 /* strmov.c */; };
+		721583C41F3E161700C0A661 /* strnmov.c in Sources */ = {isa = PBXBuildFile; fileRef = 721583C31F3E161700C0A661 /* strnmov.c */; };
+		721583C61F3E162400C0A661 /* strtoll.c in Sources */ = {isa = PBXBuildFile; fileRef = 721583C51F3E162400C0A661 /* strtoll.c */; };
+		721583CC1F3E163600C0A661 /* strtoull.c in Sources */ = {isa = PBXBuildFile; fileRef = 721583C71F3E163600C0A661 /* strtoull.c */; };
+		721583CD1F3E163600C0A661 /* strxmov.c in Sources */ = {isa = PBXBuildFile; fileRef = 721583C81F3E163600C0A661 /* strxmov.c */; };
+		721583CE1F3E163600C0A661 /* strxnmov.c in Sources */ = {isa = PBXBuildFile; fileRef = 721583C91F3E163600C0A661 /* strxnmov.c */; };
+		721583CF1F3E163600C0A661 /* thr_mutex.c in Sources */ = {isa = PBXBuildFile; fileRef = 721583CA1F3E163600C0A661 /* thr_mutex.c */; };
+		721583D01F3E163600C0A661 /* typelib.c in Sources */ = {isa = PBXBuildFile; fileRef = 721583CB1F3E163600C0A661 /* typelib.c */; };
+		721583D21F3E163D00C0A661 /* sha1.c in Sources */ = {isa = PBXBuildFile; fileRef = 721583D11F3E163D00C0A661 /* sha1.c */; };
+		721583D41F3E166600C0A661 /* client_plugin.c in Sources */ = {isa = PBXBuildFile; fileRef = 721583D31F3E166600C0A661 /* client_plugin.c */; };
+		721583E51F3E1CB600C0A661 /* adler32.c in Sources */ = {isa = PBXBuildFile; fileRef = 721583D61F3E1CB600C0A661 /* adler32.c */; };
+		721583E61F3E1CB600C0A661 /* compress.c in Sources */ = {isa = PBXBuildFile; fileRef = 721583D71F3E1CB600C0A661 /* compress.c */; };
+		721583E71F3E1CB600C0A661 /* crc32.c in Sources */ = {isa = PBXBuildFile; fileRef = 721583D81F3E1CB600C0A661 /* crc32.c */; };
+		721583E81F3E1CB600C0A661 /* deflate.c in Sources */ = {isa = PBXBuildFile; fileRef = 721583D91F3E1CB600C0A661 /* deflate.c */; };
+		721583E91F3E1CB600C0A661 /* gzclose.c in Sources */ = {isa = PBXBuildFile; fileRef = 721583DA1F3E1CB600C0A661 /* gzclose.c */; };
+		721583EA1F3E1CB600C0A661 /* gzlib.c in Sources */ = {isa = PBXBuildFile; fileRef = 721583DB1F3E1CB600C0A661 /* gzlib.c */; };
+		721583EB1F3E1CB600C0A661 /* gzread.c in Sources */ = {isa = PBXBuildFile; fileRef = 721583DC1F3E1CB600C0A661 /* gzread.c */; };
+		721583EC1F3E1CB600C0A661 /* gzwrite.c in Sources */ = {isa = PBXBuildFile; fileRef = 721583DD1F3E1CB600C0A661 /* gzwrite.c */; };
+		721583ED1F3E1CB600C0A661 /* infback.c in Sources */ = {isa = PBXBuildFile; fileRef = 721583DE1F3E1CB600C0A661 /* infback.c */; };
+		721583EE1F3E1CB600C0A661 /* inffast.c in Sources */ = {isa = PBXBuildFile; fileRef = 721583DF1F3E1CB600C0A661 /* inffast.c */; };
+		721583EF1F3E1CB600C0A661 /* inflate.c in Sources */ = {isa = PBXBuildFile; fileRef = 721583E01F3E1CB600C0A661 /* inflate.c */; };
+		721583F01F3E1CB600C0A661 /* inftrees.c in Sources */ = {isa = PBXBuildFile; fileRef = 721583E11F3E1CB600C0A661 /* inftrees.c */; };
+		721583F11F3E1CB600C0A661 /* trees.c in Sources */ = {isa = PBXBuildFile; fileRef = 721583E21F3E1CB600C0A661 /* trees.c */; };
+		721583F21F3E1CB600C0A661 /* uncompr.c in Sources */ = {isa = PBXBuildFile; fileRef = 721583E31F3E1CB600C0A661 /* uncompr.c */; };
+		721583F31F3E1CB600C0A661 /* zutil.c in Sources */ = {isa = PBXBuildFile; fileRef = 721583E41F3E1CB600C0A661 /* zutil.c */; };
+		721583F51F3E1DD800C0A661 /* errors.c in Sources */ = {isa = PBXBuildFile; fileRef = 721583F41F3E1DD800C0A661 /* errors.c */; };
+		721583F71F3E1E6500C0A661 /* mysql.h in Headers */ = {isa = PBXBuildFile; fileRef = 721583F61F3E1E6500C0A661 /* mysql.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		721583FD1F3E1E9900C0A661 /* m_ctype.h in Headers */ = {isa = PBXBuildFile; fileRef = 721583F91F3E1E9900C0A661 /* m_ctype.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		721583FE1F3E1E9900C0A661 /* my_list.h in Headers */ = {isa = PBXBuildFile; fileRef = 721583FA1F3E1E9900C0A661 /* my_list.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		721583FF1F3E1E9900C0A661 /* mysql_com.h in Headers */ = {isa = PBXBuildFile; fileRef = 721583FB1F3E1E9900C0A661 /* mysql_com.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		721584001F3E1E9900C0A661 /* mysql_version.h in Headers */ = {isa = PBXBuildFile; fileRef = 721583FC1F3E1E9900C0A661 /* mysql_version.h */; settings = {ATTRIBUTES = (Public, ); }; };
+/* End PBXBuildFile section */
+
+/* Begin PBXFileReference section */
+		7213B6981F3E0D7000416FB8 /* MariaDB.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = MariaDB.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		7213B69B1F3E0D7000416FB8 /* MariaDB.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MariaDB.h; sourceTree = "<group>"; };
+		7213B69C1F3E0D7000416FB8 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		7215832F1F3E115D00C0A661 /* array.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = array.c; path = MariaDB/libmariadb/array.c; sourceTree = SOURCE_ROOT; };
+		721583311F3E116500C0A661 /* ma_dyncol.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = ma_dyncol.c; path = MariaDB/libmariadb/ma_dyncol.c; sourceTree = SOURCE_ROOT; };
+		721583331F3E117900C0A661 /* bchange.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = bchange.c; path = MariaDB/libmariadb/bchange.c; sourceTree = SOURCE_ROOT; };
+		721583351F3E117D00C0A661 /* bmove.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = bmove.c; path = MariaDB/libmariadb/bmove.c; sourceTree = SOURCE_ROOT; };
+		721583371F3E118300C0A661 /* bmove_upp.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = bmove_upp.c; path = MariaDB/libmariadb/bmove_upp.c; sourceTree = SOURCE_ROOT; };
+		721583391F3E119600C0A661 /* my_charset.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = my_charset.c; path = MariaDB/libmariadb/my_charset.c; sourceTree = SOURCE_ROOT; };
+		7215833B1F3E119E00C0A661 /* hash.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = hash.c; path = MariaDB/libmariadb/hash.c; sourceTree = SOURCE_ROOT; };
+		7215833D1F3E11A600C0A661 /* violite.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = violite.c; path = MariaDB/libmariadb/violite.c; sourceTree = SOURCE_ROOT; };
+		7215833F1F3E11B000C0A661 /* net.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = net.c; path = MariaDB/libmariadb/net.c; sourceTree = SOURCE_ROOT; };
+		721583411F3E11BD00C0A661 /* charset.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = charset.c; path = MariaDB/libmariadb/charset.c; sourceTree = SOURCE_ROOT; };
+		721583431F3E11C500C0A661 /* ma_time.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = ma_time.c; path = MariaDB/libmariadb/ma_time.c; sourceTree = SOURCE_ROOT; };
+		721583451F3E11CB00C0A661 /* dbug.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = dbug.c; path = MariaDB/libmariadb/dbug.c; sourceTree = SOURCE_ROOT; };
+		721583471F3E11D300C0A661 /* default.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = default.c; path = MariaDB/libmariadb/default.c; sourceTree = SOURCE_ROOT; };
+		7215834B1F3E11EB00C0A661 /* my_vsnprintf.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = my_vsnprintf.c; path = MariaDB/libmariadb/my_vsnprintf.c; sourceTree = SOURCE_ROOT; };
+		7215834D1F3E129C00C0A661 /* errmsg.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = errmsg.c; path = MariaDB/libmariadb/errmsg.c; sourceTree = SOURCE_ROOT; };
+		7215834E1F3E129C00C0A661 /* getopt.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = getopt.c; path = MariaDB/libmariadb/getopt.c; sourceTree = SOURCE_ROOT; };
+		7215834F1F3E129C00C0A661 /* getopt1.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = getopt1.c; path = MariaDB/libmariadb/getopt1.c; sourceTree = SOURCE_ROOT; };
+		721583501F3E129C00C0A661 /* int2str.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = int2str.c; path = MariaDB/libmariadb/int2str.c; sourceTree = SOURCE_ROOT; };
+		721583511F3E129C00C0A661 /* is_prefix.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = is_prefix.c; path = MariaDB/libmariadb/is_prefix.c; sourceTree = SOURCE_ROOT; };
+		721583521F3E129C00C0A661 /* libmariadb.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = libmariadb.c; path = MariaDB/libmariadb/libmariadb.c; sourceTree = SOURCE_ROOT; };
+		721583531F3E129C00C0A661 /* list.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = list.c; path = MariaDB/libmariadb/list.c; sourceTree = SOURCE_ROOT; };
+		721583541F3E129C00C0A661 /* llstr.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = llstr.c; path = MariaDB/libmariadb/llstr.c; sourceTree = SOURCE_ROOT; };
+		721583551F3E129C00C0A661 /* longlong2str.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = longlong2str.c; path = MariaDB/libmariadb/longlong2str.c; sourceTree = SOURCE_ROOT; };
+		7215835F1F3E12BE00C0A661 /* ma_secure.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = ma_secure.c; path = MariaDB/libmariadb/ma_secure.c; sourceTree = SOURCE_ROOT; };
+		721583611F3E12E100C0A661 /* mf_dirname.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = mf_dirname.c; path = MariaDB/libmariadb/mf_dirname.c; sourceTree = SOURCE_ROOT; };
+		721583621F3E12E100C0A661 /* mf_fn_ext.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = mf_fn_ext.c; path = MariaDB/libmariadb/mf_fn_ext.c; sourceTree = SOURCE_ROOT; };
+		721583631F3E12E100C0A661 /* mf_format.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = mf_format.c; path = MariaDB/libmariadb/mf_format.c; sourceTree = SOURCE_ROOT; };
+		721583641F3E12E100C0A661 /* mf_loadpath.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = mf_loadpath.c; path = MariaDB/libmariadb/mf_loadpath.c; sourceTree = SOURCE_ROOT; };
+		721583651F3E12E100C0A661 /* mf_pack.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = mf_pack.c; path = MariaDB/libmariadb/mf_pack.c; sourceTree = SOURCE_ROOT; };
+		721583661F3E12E100C0A661 /* mf_path.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = mf_path.c; path = MariaDB/libmariadb/mf_path.c; sourceTree = SOURCE_ROOT; };
+		721583671F3E12E100C0A661 /* mf_unixpath.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = mf_unixpath.c; path = MariaDB/libmariadb/mf_unixpath.c; sourceTree = SOURCE_ROOT; };
+		721583681F3E12E100C0A661 /* mf_wcomp.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = mf_wcomp.c; path = MariaDB/libmariadb/mf_wcomp.c; sourceTree = SOURCE_ROOT; };
+		721583691F3E12E100C0A661 /* mulalloc.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = mulalloc.c; path = MariaDB/libmariadb/mulalloc.c; sourceTree = SOURCE_ROOT; };
+		7215836A1F3E12E100C0A661 /* my_alloc.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = my_alloc.c; path = MariaDB/libmariadb/my_alloc.c; sourceTree = SOURCE_ROOT; };
+		721583751F3E12F300C0A661 /* my_auth.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = my_auth.c; path = MariaDB/libmariadb/my_auth.c; sourceTree = SOURCE_ROOT; };
+		721583771F3E130D00C0A661 /* my_compress.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = my_compress.c; path = MariaDB/libmariadb/my_compress.c; sourceTree = SOURCE_ROOT; };
+		721583781F3E130D00C0A661 /* my_context.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = my_context.c; path = MariaDB/libmariadb/my_context.c; sourceTree = SOURCE_ROOT; };
+		721583791F3E130D00C0A661 /* my_div.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = my_div.c; path = MariaDB/libmariadb/my_div.c; sourceTree = SOURCE_ROOT; };
+		7215837A1F3E130D00C0A661 /* my_error.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = my_error.c; path = MariaDB/libmariadb/my_error.c; sourceTree = SOURCE_ROOT; };
+		7215837B1F3E130D00C0A661 /* my_fopen.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = my_fopen.c; path = MariaDB/libmariadb/my_fopen.c; sourceTree = SOURCE_ROOT; };
+		7215837C1F3E130D00C0A661 /* my_fstream.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = my_fstream.c; path = MariaDB/libmariadb/my_fstream.c; sourceTree = SOURCE_ROOT; };
+		7215837D1F3E130D00C0A661 /* my_getwd.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = my_getwd.c; path = MariaDB/libmariadb/my_getwd.c; sourceTree = SOURCE_ROOT; };
+		7215837E1F3E130D00C0A661 /* my_init.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = my_init.c; path = MariaDB/libmariadb/my_init.c; sourceTree = SOURCE_ROOT; };
+		7215837F1F3E130D00C0A661 /* my_lib.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = my_lib.c; path = MariaDB/libmariadb/my_lib.c; sourceTree = SOURCE_ROOT; };
+		721583891F3E133000C0A661 /* my_loaddata.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = my_loaddata.c; path = MariaDB/libmariadb/my_loaddata.c; sourceTree = SOURCE_ROOT; };
+		7215838A1F3E133000C0A661 /* my_malloc.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = my_malloc.c; path = MariaDB/libmariadb/my_malloc.c; sourceTree = SOURCE_ROOT; };
+		7215838B1F3E133000C0A661 /* my_messnc.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = my_messnc.c; path = MariaDB/libmariadb/my_messnc.c; sourceTree = SOURCE_ROOT; };
+		7215838C1F3E133000C0A661 /* my_net.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = my_net.c; path = MariaDB/libmariadb/my_net.c; sourceTree = SOURCE_ROOT; };
+		7215838D1F3E133000C0A661 /* my_once.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = my_once.c; path = MariaDB/libmariadb/my_once.c; sourceTree = SOURCE_ROOT; };
+		7215838E1F3E133000C0A661 /* my_open.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = my_open.c; path = MariaDB/libmariadb/my_open.c; sourceTree = SOURCE_ROOT; };
+		7215838F1F3E133000C0A661 /* my_port.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = my_port.c; path = MariaDB/libmariadb/my_port.c; sourceTree = SOURCE_ROOT; };
+		721583901F3E133000C0A661 /* my_pthread.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = my_pthread.c; path = MariaDB/libmariadb/my_pthread.c; sourceTree = SOURCE_ROOT; };
+		721583911F3E133000C0A661 /* my_read.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = my_read.c; path = MariaDB/libmariadb/my_read.c; sourceTree = SOURCE_ROOT; };
+		721583921F3E133000C0A661 /* my_realloc.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = my_realloc.c; path = MariaDB/libmariadb/my_realloc.c; sourceTree = SOURCE_ROOT; };
+		721583931F3E133000C0A661 /* my_seek.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = my_seek.c; path = MariaDB/libmariadb/my_seek.c; sourceTree = SOURCE_ROOT; };
+		721583941F3E133000C0A661 /* my_static.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = my_static.c; path = MariaDB/libmariadb/my_static.c; sourceTree = SOURCE_ROOT; };
+		721583A11F3E135500C0A661 /* my_stmt_codec.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = my_stmt_codec.c; path = MariaDB/libmariadb/my_stmt_codec.c; sourceTree = SOURCE_ROOT; };
+		721583A21F3E135500C0A661 /* my_stmt.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = my_stmt.c; path = MariaDB/libmariadb/my_stmt.c; sourceTree = SOURCE_ROOT; };
+		721583A31F3E135500C0A661 /* my_symlink.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = my_symlink.c; path = MariaDB/libmariadb/my_symlink.c; sourceTree = SOURCE_ROOT; };
+		721583A41F3E135500C0A661 /* my_thr_init.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = my_thr_init.c; path = MariaDB/libmariadb/my_thr_init.c; sourceTree = SOURCE_ROOT; };
+		721583A91F3E137E00C0A661 /* my_write.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = my_write.c; path = MariaDB/libmariadb/my_write.c; sourceTree = SOURCE_ROOT; };
+		721583AB1F3E138300C0A661 /* mysql_async.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = mysql_async.c; path = MariaDB/libmariadb/mysql_async.c; sourceTree = SOURCE_ROOT; };
+		721583AD1F3E13A700C0A661 /* password.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = password.c; path = MariaDB/libmariadb/password.c; sourceTree = SOURCE_ROOT; };
+		721583AF1F3E13A700C0A661 /* str2int.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = str2int.c; path = MariaDB/libmariadb/str2int.c; sourceTree = SOURCE_ROOT; };
+		721583B01F3E13A700C0A661 /* strcend.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = strcend.c; path = MariaDB/libmariadb/strcend.c; sourceTree = SOURCE_ROOT; };
+		721583B11F3E13A700C0A661 /* strcont.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = strcont.c; path = MariaDB/libmariadb/strcont.c; sourceTree = SOURCE_ROOT; };
+		721583B21F3E13A700C0A661 /* strend.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = strend.c; path = MariaDB/libmariadb/strend.c; sourceTree = SOURCE_ROOT; };
+		721583B31F3E13A700C0A661 /* strfill.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = strfill.c; path = MariaDB/libmariadb/strfill.c; sourceTree = SOURCE_ROOT; };
+		721583B41F3E13A700C0A661 /* string.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = string.c; path = MariaDB/libmariadb/string.c; sourceTree = SOURCE_ROOT; };
+		721583B51F3E13A700C0A661 /* strinstr.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = strinstr.c; path = MariaDB/libmariadb/strinstr.c; sourceTree = SOURCE_ROOT; };
+		721583B61F3E13A700C0A661 /* strmake.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = strmake.c; path = MariaDB/libmariadb/strmake.c; sourceTree = SOURCE_ROOT; };
+		721583B71F3E13A700C0A661 /* strmov.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = strmov.c; path = MariaDB/libmariadb/strmov.c; sourceTree = SOURCE_ROOT; };
+		721583C31F3E161700C0A661 /* strnmov.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = strnmov.c; path = MariaDB/libmariadb/strnmov.c; sourceTree = SOURCE_ROOT; };
+		721583C51F3E162400C0A661 /* strtoll.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = strtoll.c; path = MariaDB/libmariadb/strtoll.c; sourceTree = SOURCE_ROOT; };
+		721583C71F3E163600C0A661 /* strtoull.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = strtoull.c; path = MariaDB/libmariadb/strtoull.c; sourceTree = SOURCE_ROOT; };
+		721583C81F3E163600C0A661 /* strxmov.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = strxmov.c; path = MariaDB/libmariadb/strxmov.c; sourceTree = SOURCE_ROOT; };
+		721583C91F3E163600C0A661 /* strxnmov.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = strxnmov.c; path = MariaDB/libmariadb/strxnmov.c; sourceTree = SOURCE_ROOT; };
+		721583CA1F3E163600C0A661 /* thr_mutex.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = thr_mutex.c; path = MariaDB/libmariadb/thr_mutex.c; sourceTree = SOURCE_ROOT; };
+		721583CB1F3E163600C0A661 /* typelib.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = typelib.c; path = MariaDB/libmariadb/typelib.c; sourceTree = SOURCE_ROOT; };
+		721583D11F3E163D00C0A661 /* sha1.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = sha1.c; path = MariaDB/libmariadb/sha1.c; sourceTree = SOURCE_ROOT; };
+		721583D31F3E166600C0A661 /* client_plugin.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = client_plugin.c; path = MariaDB/libmariadb/client_plugin.c; sourceTree = SOURCE_ROOT; };
+		721583D61F3E1CB600C0A661 /* adler32.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = adler32.c; path = MariaDB/zlib/adler32.c; sourceTree = SOURCE_ROOT; };
+		721583D71F3E1CB600C0A661 /* compress.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = compress.c; path = MariaDB/zlib/compress.c; sourceTree = SOURCE_ROOT; };
+		721583D81F3E1CB600C0A661 /* crc32.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = crc32.c; path = MariaDB/zlib/crc32.c; sourceTree = SOURCE_ROOT; };
+		721583D91F3E1CB600C0A661 /* deflate.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = deflate.c; path = MariaDB/zlib/deflate.c; sourceTree = SOURCE_ROOT; };
+		721583DA1F3E1CB600C0A661 /* gzclose.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = gzclose.c; path = MariaDB/zlib/gzclose.c; sourceTree = SOURCE_ROOT; };
+		721583DB1F3E1CB600C0A661 /* gzlib.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = gzlib.c; path = MariaDB/zlib/gzlib.c; sourceTree = SOURCE_ROOT; };
+		721583DC1F3E1CB600C0A661 /* gzread.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = gzread.c; path = MariaDB/zlib/gzread.c; sourceTree = SOURCE_ROOT; };
+		721583DD1F3E1CB600C0A661 /* gzwrite.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = gzwrite.c; path = MariaDB/zlib/gzwrite.c; sourceTree = SOURCE_ROOT; };
+		721583DE1F3E1CB600C0A661 /* infback.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = infback.c; path = MariaDB/zlib/infback.c; sourceTree = SOURCE_ROOT; };
+		721583DF1F3E1CB600C0A661 /* inffast.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = inffast.c; path = MariaDB/zlib/inffast.c; sourceTree = SOURCE_ROOT; };
+		721583E01F3E1CB600C0A661 /* inflate.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = inflate.c; path = MariaDB/zlib/inflate.c; sourceTree = SOURCE_ROOT; };
+		721583E11F3E1CB600C0A661 /* inftrees.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = inftrees.c; path = MariaDB/zlib/inftrees.c; sourceTree = SOURCE_ROOT; };
+		721583E21F3E1CB600C0A661 /* trees.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = trees.c; path = MariaDB/zlib/trees.c; sourceTree = SOURCE_ROOT; };
+		721583E31F3E1CB600C0A661 /* uncompr.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = uncompr.c; path = MariaDB/zlib/uncompr.c; sourceTree = SOURCE_ROOT; };
+		721583E41F3E1CB600C0A661 /* zutil.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = zutil.c; path = MariaDB/zlib/zutil.c; sourceTree = SOURCE_ROOT; };
+		721583F41F3E1DD800C0A661 /* errors.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = errors.c; path = MariaDB/libmariadb/errors.c; sourceTree = SOURCE_ROOT; };
+		721583F61F3E1E6500C0A661 /* mysql.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = mysql.h; path = include/mysql.h; sourceTree = "<group>"; };
+		721583F91F3E1E9900C0A661 /* m_ctype.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = m_ctype.h; path = include/m_ctype.h; sourceTree = "<group>"; };
+		721583FA1F3E1E9900C0A661 /* my_list.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = my_list.h; path = include/my_list.h; sourceTree = "<group>"; };
+		721583FB1F3E1E9900C0A661 /* mysql_com.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = mysql_com.h; path = include/mysql_com.h; sourceTree = "<group>"; };
+		721583FC1F3E1E9900C0A661 /* mysql_version.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = mysql_version.h; path = include/mysql_version.h; sourceTree = "<group>"; };
+/* End PBXFileReference section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		7213B6941F3E0D7000416FB8 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		7213B68E1F3E0D7000416FB8 = {
+			isa = PBXGroup;
+			children = (
+				7213B69A1F3E0D7000416FB8 /* MariaDB */,
+				7213B6991F3E0D7000416FB8 /* Products */,
+			);
+			sourceTree = "<group>";
+		};
+		7213B6991F3E0D7000416FB8 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				7213B6981F3E0D7000416FB8 /* MariaDB.framework */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		7213B69A1F3E0D7000416FB8 /* MariaDB */ = {
+			isa = PBXGroup;
+			children = (
+				721583F81F3E1E6900C0A661 /* include */,
+				7213B6A31F3E0D9200416FB8 /* src */,
+				7213B69B1F3E0D7000416FB8 /* MariaDB.h */,
+				7213B69C1F3E0D7000416FB8 /* Info.plist */,
+			);
+			path = MariaDB;
+			sourceTree = "<group>";
+		};
+		7213B6A31F3E0D9200416FB8 /* src */ = {
+			isa = PBXGroup;
+			children = (
+				721583D51F3E1C8300C0A661 /* zlib */,
+				7215832F1F3E115D00C0A661 /* array.c */,
+				721583311F3E116500C0A661 /* ma_dyncol.c */,
+				721583331F3E117900C0A661 /* bchange.c */,
+				721583351F3E117D00C0A661 /* bmove.c */,
+				721583371F3E118300C0A661 /* bmove_upp.c */,
+				721583391F3E119600C0A661 /* my_charset.c */,
+				7215833B1F3E119E00C0A661 /* hash.c */,
+				7215833D1F3E11A600C0A661 /* violite.c */,
+				7215833F1F3E11B000C0A661 /* net.c */,
+				721583411F3E11BD00C0A661 /* charset.c */,
+				721583431F3E11C500C0A661 /* ma_time.c */,
+				721583451F3E11CB00C0A661 /* dbug.c */,
+				721583471F3E11D300C0A661 /* default.c */,
+				721583F41F3E1DD800C0A661 /* errors.c */,
+				7215834B1F3E11EB00C0A661 /* my_vsnprintf.c */,
+				7215834D1F3E129C00C0A661 /* errmsg.c */,
+				7215834E1F3E129C00C0A661 /* getopt.c */,
+				7215834F1F3E129C00C0A661 /* getopt1.c */,
+				721583501F3E129C00C0A661 /* int2str.c */,
+				721583D31F3E166600C0A661 /* client_plugin.c */,
+				721583511F3E129C00C0A661 /* is_prefix.c */,
+				721583521F3E129C00C0A661 /* libmariadb.c */,
+				721583531F3E129C00C0A661 /* list.c */,
+				721583541F3E129C00C0A661 /* llstr.c */,
+				721583551F3E129C00C0A661 /* longlong2str.c */,
+				7215835F1F3E12BE00C0A661 /* ma_secure.c */,
+				721583A11F3E135500C0A661 /* my_stmt_codec.c */,
+				721583A21F3E135500C0A661 /* my_stmt.c */,
+				721583A31F3E135500C0A661 /* my_symlink.c */,
+				721583A41F3E135500C0A661 /* my_thr_init.c */,
+				721583611F3E12E100C0A661 /* mf_dirname.c */,
+				721583621F3E12E100C0A661 /* mf_fn_ext.c */,
+				721583631F3E12E100C0A661 /* mf_format.c */,
+				721583641F3E12E100C0A661 /* mf_loadpath.c */,
+				721583651F3E12E100C0A661 /* mf_pack.c */,
+				721583661F3E12E100C0A661 /* mf_path.c */,
+				721583671F3E12E100C0A661 /* mf_unixpath.c */,
+				721583681F3E12E100C0A661 /* mf_wcomp.c */,
+				721583691F3E12E100C0A661 /* mulalloc.c */,
+				7215836A1F3E12E100C0A661 /* my_alloc.c */,
+				721583751F3E12F300C0A661 /* my_auth.c */,
+				721583771F3E130D00C0A661 /* my_compress.c */,
+				721583781F3E130D00C0A661 /* my_context.c */,
+				721583891F3E133000C0A661 /* my_loaddata.c */,
+				7215838A1F3E133000C0A661 /* my_malloc.c */,
+				7215838B1F3E133000C0A661 /* my_messnc.c */,
+				7215838C1F3E133000C0A661 /* my_net.c */,
+				7215838D1F3E133000C0A661 /* my_once.c */,
+				7215838E1F3E133000C0A661 /* my_open.c */,
+				7215838F1F3E133000C0A661 /* my_port.c */,
+				721583901F3E133000C0A661 /* my_pthread.c */,
+				721583911F3E133000C0A661 /* my_read.c */,
+				721583D11F3E163D00C0A661 /* sha1.c */,
+				721583921F3E133000C0A661 /* my_realloc.c */,
+				721583931F3E133000C0A661 /* my_seek.c */,
+				721583941F3E133000C0A661 /* my_static.c */,
+				721583791F3E130D00C0A661 /* my_div.c */,
+				7215837A1F3E130D00C0A661 /* my_error.c */,
+				721583C71F3E163600C0A661 /* strtoull.c */,
+				721583C81F3E163600C0A661 /* strxmov.c */,
+				721583C91F3E163600C0A661 /* strxnmov.c */,
+				721583CA1F3E163600C0A661 /* thr_mutex.c */,
+				721583CB1F3E163600C0A661 /* typelib.c */,
+				7215837B1F3E130D00C0A661 /* my_fopen.c */,
+				721583AB1F3E138300C0A661 /* mysql_async.c */,
+				721583A91F3E137E00C0A661 /* my_write.c */,
+				7215837C1F3E130D00C0A661 /* my_fstream.c */,
+				721583C51F3E162400C0A661 /* strtoll.c */,
+				7215837D1F3E130D00C0A661 /* my_getwd.c */,
+				721583AD1F3E13A700C0A661 /* password.c */,
+				721583C31F3E161700C0A661 /* strnmov.c */,
+				721583AF1F3E13A700C0A661 /* str2int.c */,
+				721583B01F3E13A700C0A661 /* strcend.c */,
+				721583B11F3E13A700C0A661 /* strcont.c */,
+				721583B21F3E13A700C0A661 /* strend.c */,
+				721583B31F3E13A700C0A661 /* strfill.c */,
+				721583B41F3E13A700C0A661 /* string.c */,
+				721583B51F3E13A700C0A661 /* strinstr.c */,
+				721583B61F3E13A700C0A661 /* strmake.c */,
+				721583B71F3E13A700C0A661 /* strmov.c */,
+				7215837E1F3E130D00C0A661 /* my_init.c */,
+				7215837F1F3E130D00C0A661 /* my_lib.c */,
+			);
+			path = src;
+			sourceTree = "<group>";
+		};
+		721583D51F3E1C8300C0A661 /* zlib */ = {
+			isa = PBXGroup;
+			children = (
+				721583D61F3E1CB600C0A661 /* adler32.c */,
+				721583D71F3E1CB600C0A661 /* compress.c */,
+				721583D81F3E1CB600C0A661 /* crc32.c */,
+				721583D91F3E1CB600C0A661 /* deflate.c */,
+				721583DA1F3E1CB600C0A661 /* gzclose.c */,
+				721583DB1F3E1CB600C0A661 /* gzlib.c */,
+				721583DC1F3E1CB600C0A661 /* gzread.c */,
+				721583DD1F3E1CB600C0A661 /* gzwrite.c */,
+				721583DE1F3E1CB600C0A661 /* infback.c */,
+				721583DF1F3E1CB600C0A661 /* inffast.c */,
+				721583E01F3E1CB600C0A661 /* inflate.c */,
+				721583E11F3E1CB600C0A661 /* inftrees.c */,
+				721583E21F3E1CB600C0A661 /* trees.c */,
+				721583E31F3E1CB600C0A661 /* uncompr.c */,
+				721583E41F3E1CB600C0A661 /* zutil.c */,
+			);
+			name = zlib;
+			sourceTree = "<group>";
+		};
+		721583F81F3E1E6900C0A661 /* include */ = {
+			isa = PBXGroup;
+			children = (
+				721583F61F3E1E6500C0A661 /* mysql.h */,
+				721583F91F3E1E9900C0A661 /* m_ctype.h */,
+				721583FA1F3E1E9900C0A661 /* my_list.h */,
+				721583FB1F3E1E9900C0A661 /* mysql_com.h */,
+				721583FC1F3E1E9900C0A661 /* mysql_version.h */,
+			);
+			name = include;
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXHeadersBuildPhase section */
+		7213B6951F3E0D7000416FB8 /* Headers */ = {
+			isa = PBXHeadersBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				7213B69D1F3E0D7000416FB8 /* MariaDB.h in Headers */,
+				721584001F3E1E9900C0A661 /* mysql_version.h in Headers */,
+				721583FE1F3E1E9900C0A661 /* my_list.h in Headers */,
+				721583FD1F3E1E9900C0A661 /* m_ctype.h in Headers */,
+				721583FF1F3E1E9900C0A661 /* mysql_com.h in Headers */,
+				721583F71F3E1E6500C0A661 /* mysql.h in Headers */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXHeadersBuildPhase section */
+
+/* Begin PBXNativeTarget section */
+		7213B6971F3E0D7000416FB8 /* MariaDB */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 7213B6A01F3E0D7000416FB8 /* Build configuration list for PBXNativeTarget "MariaDB" */;
+			buildPhases = (
+				7213B6931F3E0D7000416FB8 /* Sources */,
+				7213B6941F3E0D7000416FB8 /* Frameworks */,
+				7213B6951F3E0D7000416FB8 /* Headers */,
+				7213B6961F3E0D7000416FB8 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = MariaDB;
+			productName = MariaDB;
+			productReference = 7213B6981F3E0D7000416FB8 /* MariaDB.framework */;
+			productType = "com.apple.product-type.framework";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		7213B68F1F3E0D7000416FB8 /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				LastUpgradeCheck = 0900;
+				ORGANIZATIONNAME = "Kyle Hankinson";
+				TargetAttributes = {
+					7213B6971F3E0D7000416FB8 = {
+						CreatedOnToolsVersion = 9.0;
+					};
+				};
+			};
+			buildConfigurationList = 7213B6921F3E0D7000416FB8 /* Build configuration list for PBXProject "MariaDB" */;
+			compatibilityVersion = "Xcode 8.0";
+			developmentRegion = en;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				en,
+			);
+			mainGroup = 7213B68E1F3E0D7000416FB8;
+			productRefGroup = 7213B6991F3E0D7000416FB8 /* Products */;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				7213B6971F3E0D7000416FB8 /* MariaDB */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXResourcesBuildPhase section */
+		7213B6961F3E0D7000416FB8 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXResourcesBuildPhase section */
+
+/* Begin PBXSourcesBuildPhase section */
+		7213B6931F3E0D7000416FB8 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				721583CD1F3E163600C0A661 /* strxmov.c in Sources */,
+				7215833A1F3E119600C0A661 /* my_charset.c in Sources */,
+				721583E51F3E1CB600C0A661 /* adler32.c in Sources */,
+				721583A71F3E135500C0A661 /* my_symlink.c in Sources */,
+				721583BD1F3E13A700C0A661 /* strend.c in Sources */,
+				721583711F3E12E100C0A661 /* mf_unixpath.c in Sources */,
+				7215835A1F3E129C00C0A661 /* is_prefix.c in Sources */,
+				721583C61F3E162400C0A661 /* strtoll.c in Sources */,
+				721583CE1F3E163600C0A661 /* strxnmov.c in Sources */,
+				721583C21F3E13A700C0A661 /* strmov.c in Sources */,
+				721583C41F3E161700C0A661 /* strnmov.c in Sources */,
+				721583F01F3E1CB600C0A661 /* inftrees.c in Sources */,
+				721583EF1F3E1CB600C0A661 /* inflate.c in Sources */,
+				721583341F3E117900C0A661 /* bchange.c in Sources */,
+				721583741F3E12E100C0A661 /* my_alloc.c in Sources */,
+				721583BE1F3E13A700C0A661 /* strfill.c in Sources */,
+				721583BC1F3E13A700C0A661 /* strcont.c in Sources */,
+				7215839A1F3E133000C0A661 /* my_open.c in Sources */,
+				7215836D1F3E12E100C0A661 /* mf_format.c in Sources */,
+				721583E81F3E1CB600C0A661 /* deflate.c in Sources */,
+				721583CC1F3E163600C0A661 /* strtoull.c in Sources */,
+				7215836B1F3E12E100C0A661 /* mf_dirname.c in Sources */,
+				721583BA1F3E13A700C0A661 /* str2int.c in Sources */,
+				7215836F1F3E12E100C0A661 /* mf_pack.c in Sources */,
+				721583801F3E130D00C0A661 /* my_compress.c in Sources */,
+				721583881F3E130D00C0A661 /* my_lib.c in Sources */,
+				721583421F3E11BD00C0A661 /* charset.c in Sources */,
+				721583361F3E117D00C0A661 /* bmove.c in Sources */,
+				721583B81F3E13A700C0A661 /* password.c in Sources */,
+				7215835B1F3E129C00C0A661 /* libmariadb.c in Sources */,
+				721583F21F3E1CB600C0A661 /* uncompr.c in Sources */,
+				721583A61F3E135500C0A661 /* my_stmt.c in Sources */,
+				721583321F3E116500C0A661 /* ma_dyncol.c in Sources */,
+				721583821F3E130D00C0A661 /* my_div.c in Sources */,
+				721583D41F3E166600C0A661 /* client_plugin.c in Sources */,
+				7215839B1F3E133000C0A661 /* my_port.c in Sources */,
+				721583951F3E133000C0A661 /* my_loaddata.c in Sources */,
+				721583701F3E12E100C0A661 /* mf_path.c in Sources */,
+				721583871F3E130D00C0A661 /* my_init.c in Sources */,
+				7215834C1F3E11EB00C0A661 /* my_vsnprintf.c in Sources */,
+				721583D01F3E163600C0A661 /* typelib.c in Sources */,
+				721583D21F3E163D00C0A661 /* sha1.c in Sources */,
+				721583461F3E11CB00C0A661 /* dbug.c in Sources */,
+				721583EA1F3E1CB600C0A661 /* gzlib.c in Sources */,
+				721583BB1F3E13A700C0A661 /* strcend.c in Sources */,
+				721583301F3E115D00C0A661 /* array.c in Sources */,
+				721583F31F3E1CB600C0A661 /* zutil.c in Sources */,
+				7215839C1F3E133000C0A661 /* my_pthread.c in Sources */,
+				721583851F3E130D00C0A661 /* my_fstream.c in Sources */,
+				721583841F3E130D00C0A661 /* my_fopen.c in Sources */,
+				721583571F3E129C00C0A661 /* getopt.c in Sources */,
+				721583381F3E118300C0A661 /* bmove_upp.c in Sources */,
+				721583F51F3E1DD800C0A661 /* errors.c in Sources */,
+				721583581F3E129C00C0A661 /* getopt1.c in Sources */,
+				7215839D1F3E133000C0A661 /* my_read.c in Sources */,
+				721583E71F3E1CB600C0A661 /* crc32.c in Sources */,
+				721583EB1F3E1CB600C0A661 /* gzread.c in Sources */,
+				7215835D1F3E129C00C0A661 /* llstr.c in Sources */,
+				721583AA1F3E137E00C0A661 /* my_write.c in Sources */,
+				721583561F3E129C00C0A661 /* errmsg.c in Sources */,
+				721583A81F3E135500C0A661 /* my_thr_init.c in Sources */,
+				721583A51F3E135500C0A661 /* my_stmt_codec.c in Sources */,
+				721583C01F3E13A700C0A661 /* strinstr.c in Sources */,
+				721583BF1F3E13A700C0A661 /* string.c in Sources */,
+				721583E61F3E1CB600C0A661 /* compress.c in Sources */,
+				721583401F3E11B000C0A661 /* net.c in Sources */,
+				721583981F3E133000C0A661 /* my_net.c in Sources */,
+				721583AC1F3E138300C0A661 /* mysql_async.c in Sources */,
+				721583C11F3E13A700C0A661 /* strmake.c in Sources */,
+				721583721F3E12E100C0A661 /* mf_wcomp.c in Sources */,
+				721583ED1F3E1CB600C0A661 /* infback.c in Sources */,
+				721583591F3E129C00C0A661 /* int2str.c in Sources */,
+				721583811F3E130D00C0A661 /* my_context.c in Sources */,
+				721583601F3E12BE00C0A661 /* ma_secure.c in Sources */,
+				7215835E1F3E129C00C0A661 /* longlong2str.c in Sources */,
+				7215836E1F3E12E100C0A661 /* mf_loadpath.c in Sources */,
+				721583481F3E11D300C0A661 /* default.c in Sources */,
+				721583761F3E12F300C0A661 /* my_auth.c in Sources */,
+				7215833E1F3E11A600C0A661 /* violite.c in Sources */,
+				721583831F3E130D00C0A661 /* my_error.c in Sources */,
+				721583961F3E133000C0A661 /* my_malloc.c in Sources */,
+				721583EE1F3E1CB600C0A661 /* inffast.c in Sources */,
+				721583991F3E133000C0A661 /* my_once.c in Sources */,
+				7215839F1F3E133000C0A661 /* my_seek.c in Sources */,
+				721583861F3E130D00C0A661 /* my_getwd.c in Sources */,
+				721583971F3E133000C0A661 /* my_messnc.c in Sources */,
+				721583E91F3E1CB600C0A661 /* gzclose.c in Sources */,
+				7215835C1F3E129C00C0A661 /* list.c in Sources */,
+				7215836C1F3E12E100C0A661 /* mf_fn_ext.c in Sources */,
+				7215833C1F3E119E00C0A661 /* hash.c in Sources */,
+				721583EC1F3E1CB600C0A661 /* gzwrite.c in Sources */,
+				721583A01F3E133000C0A661 /* my_static.c in Sources */,
+				721583CF1F3E163600C0A661 /* thr_mutex.c in Sources */,
+				721583731F3E12E100C0A661 /* mulalloc.c in Sources */,
+				721583441F3E11C500C0A661 /* ma_time.c in Sources */,
+				721583F11F3E1CB600C0A661 /* trees.c in Sources */,
+				7215839E1F3E133000C0A661 /* my_realloc.c in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin XCBuildConfiguration section */
+		7213B69E1F3E0D7000416FB8 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				CODE_SIGN_IDENTITY = "Mac Developer";
+				COPY_PHASE_STRIP = NO;
+				CURRENT_PROJECT_VERSION = 1;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_TESTABILITY = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				MACOSX_DEPLOYMENT_TARGET = 10.12;
+				MTL_ENABLE_DEBUG_INFO = YES;
+				ONLY_ACTIVE_ARCH = YES;
+				SDKROOT = macosx;
+				VERSIONING_SYSTEM = "apple-generic";
+				VERSION_INFO_PREFIX = "";
+			};
+			name = Debug;
+		};
+		7213B69F1F3E0D7000416FB8 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				CODE_SIGN_IDENTITY = "Mac Developer";
+				COPY_PHASE_STRIP = NO;
+				CURRENT_PROJECT_VERSION = 1;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				ENABLE_NS_ASSERTIONS = NO;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				MACOSX_DEPLOYMENT_TARGET = 10.12;
+				MTL_ENABLE_DEBUG_INFO = NO;
+				SDKROOT = macosx;
+				VERSIONING_SYSTEM = "apple-generic";
+				VERSION_INFO_PREFIX = "";
+			};
+			name = Release;
+		};
+		7213B6A11F3E0D7000416FB8 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CLANG_CXX_LANGUAGE_STANDARD = "compiler-default";
+				CLANG_CXX_LIBRARY = "compiler-default";
+				CLANG_ENABLE_MODULES = NO;
+				CLANG_ENABLE_MODULE_DEBUGGING = NO;
+				CODE_SIGN_IDENTITY = "";
+				COMBINE_HIDPI_IMAGES = YES;
+				DEFINES_MODULE = YES;
+				DEVELOPMENT_TEAM = LKJB72232C;
+				DYLIB_COMPATIBILITY_VERSION = 1;
+				DYLIB_CURRENT_VERSION = 1;
+				DYLIB_INSTALL_NAME_BASE = "@rpath";
+				FRAMEWORK_VERSION = A;
+				GCC_C_LANGUAGE_STANDARD = "compiler-default";
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"$(inherited)",
+					"DEBUG=1",
+					HAVE_OPENSSL,
+				);
+				HEADER_SEARCH_PATHS = (
+					/usr/local/opt/openssl/include,
+					"\"$(SRCROOT)/MariaDB/include\"",
+					"\"$(SRCROOT)/MariaDB/libmariadb\"",
+					"\"$(SRCROOT)/MariaDB/zlib\"",
+				);
+				INFOPLIST_FILE = MariaDB/Info.plist;
+				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks @loader_path/Frameworks";
+				OTHER_CFLAGS = (
+					"-fPIC",
+					"-D",
+					ENABLED_LOCAL_INFILE,
+					"-D",
+					HAVE_COMPRESS,
+					"-D",
+					LIBMARIADB,
+					"-D",
+					THREAD,
+				);
+				OTHER_LDFLAGS = (
+					/usr/lib/libiconv.dylib,
+					/usr/local/opt/openssl/lib/libssl.dylib,
+					/usr/local/opt/openssl/lib/libcrypto.dylib,
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = com.hankinsoft.sqlpro.MariaDB;
+				PRODUCT_NAME = "$(TARGET_NAME:c99extidentifier)";
+				SKIP_INSTALL = YES;
+			};
+			name = Debug;
+		};
+		7213B6A21F3E0D7000416FB8 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CLANG_CXX_LANGUAGE_STANDARD = "compiler-default";
+				CLANG_CXX_LIBRARY = "compiler-default";
+				CLANG_ENABLE_MODULES = NO;
+				CLANG_ENABLE_MODULE_DEBUGGING = NO;
+				CODE_SIGN_IDENTITY = "";
+				COMBINE_HIDPI_IMAGES = YES;
+				DEFINES_MODULE = YES;
+				DEVELOPMENT_TEAM = LKJB72232C;
+				DYLIB_COMPATIBILITY_VERSION = 1;
+				DYLIB_CURRENT_VERSION = 1;
+				DYLIB_INSTALL_NAME_BASE = "@rpath";
+				FRAMEWORK_VERSION = A;
+				GCC_C_LANGUAGE_STANDARD = "compiler-default";
+				GCC_PREPROCESSOR_DEFINITIONS = HAVE_OPENSSL;
+				HEADER_SEARCH_PATHS = (
+					/usr/local/opt/openssl/include,
+					"\"$(SRCROOT)/MariaDB/include\"",
+					"\"$(SRCROOT)/MariaDB/libmariadb\"",
+					"\"$(SRCROOT)/MariaDB/zlib\"",
+				);
+				INFOPLIST_FILE = MariaDB/Info.plist;
+				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks @loader_path/Frameworks";
+				OTHER_CFLAGS = (
+					"-fPIC",
+					"-D",
+					ENABLED_LOCAL_INFILE,
+					"-D",
+					HAVE_COMPRESS,
+					"-D",
+					LIBMARIADB,
+					"-D",
+					THREAD,
+				);
+				OTHER_LDFLAGS = (
+					/usr/lib/libiconv.dylib,
+					/usr/local/opt/openssl/lib/libssl.dylib,
+					/usr/local/opt/openssl/lib/libcrypto.dylib,
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = com.hankinsoft.sqlpro.MariaDB;
+				PRODUCT_NAME = "$(TARGET_NAME:c99extidentifier)";
+				SKIP_INSTALL = YES;
+			};
+			name = Release;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		7213B6921F3E0D7000416FB8 /* Build configuration list for PBXProject "MariaDB" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				7213B69E1F3E0D7000416FB8 /* Debug */,
+				7213B69F1F3E0D7000416FB8 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		7213B6A01F3E0D7000416FB8 /* Build configuration list for PBXNativeTarget "MariaDB" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				7213B6A11F3E0D7000416FB8 /* Debug */,
+				7213B6A21F3E0D7000416FB8 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+/* End XCConfigurationList section */
+	};
+	rootObject = 7213B68F1F3E0D7000416FB8 /* Project object */;
+}
