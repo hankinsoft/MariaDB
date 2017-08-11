@@ -24,6 +24,9 @@
 #include <m_string.h>
 #include <dbug.h>
 
+#warning -- probably shouldnt have this
+void ERR_remove_state(unsigned long pid); /* if zero we look it up */
+
 #ifdef THREAD
 #ifdef USE_TLS
 pthread_key(struct st_my_thread_var*, THR_KEY_mysys);

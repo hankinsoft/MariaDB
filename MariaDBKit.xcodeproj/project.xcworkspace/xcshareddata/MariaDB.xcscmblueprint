@@ -1,0 +1,30 @@
+{
+  "DVTSourceControlWorkspaceBlueprintPrimaryRemoteRepositoryKey" : "0A02D992243FD2D9038BD2B8F2F0AEC4DE1E3846",
+  "DVTSourceControlWorkspaceBlueprintWorkingCopyRepositoryLocationsKey" : {
+
+  },
+  "DVTSourceControlWorkspaceBlueprintWorkingCopyStatesKey" : {
+    "0A02D992243FD2D9038BD2B8F2F0AEC4DE1E3846" : 9223372036854775807,
+    "367290395BDFEBD5951957754D0CADA6A9C2BBAF" : 9223372036854775807
+  },
+  "DVTSourceControlWorkspaceBlueprintIdentifierKey" : "ED479623-28A1-49AF-A400-1EB195A55337",
+  "DVTSourceControlWorkspaceBlueprintWorkingCopyPathsKey" : {
+    "0A02D992243FD2D9038BD2B8F2F0AEC4DE1E3846" : "MariaDB\/",
+    "367290395BDFEBD5951957754D0CADA6A9C2BBAF" : "FreeTDS\/"
+  },
+  "DVTSourceControlWorkspaceBlueprintNameKey" : "MariaDB",
+  "DVTSourceControlWorkspaceBlueprintVersion" : 204,
+  "DVTSourceControlWorkspaceBlueprintRelativePathToProjectKey" : "MariaDB.xcodeproj",
+  "DVTSourceControlWorkspaceBlueprintRemoteRepositoriesKey" : [
+    {
+      "DVTSourceControlWorkspaceBlueprintRemoteRepositoryURLKey" : "https:\/\/github.com\/hankinsoft\/MariaDB.git",
+      "DVTSourceControlWorkspaceBlueprintRemoteRepositorySystemKey" : "com.apple.dt.Xcode.sourcecontrol.Git",
+      "DVTSourceControlWorkspaceBlueprintRemoteRepositoryIdentifierKey" : "0A02D992243FD2D9038BD2B8F2F0AEC4DE1E3846"
+    },
+    {
+      "DVTSourceControlWorkspaceBlueprintRemoteRepositoryURLKey" : "https:\/\/github.com\/hankinsoft\/FreeTDS.git",
+      "DVTSourceControlWorkspaceBlueprintRemoteRepositorySystemKey" : "com.apple.dt.Xcode.sourcecontrol.Git",
+      "DVTSourceControlWorkspaceBlueprintRemoteRepositoryIdentifierKey" : "367290395BDFEBD5951957754D0CADA6A9C2BBAF"
+    }
+  ]
+}
