@@ -6,7 +6,7 @@
 //  Copyright © 2017 Kyle Hankinson. All rights reserved.
 //
 
-#import <Cocoa/Cocoa.h>
+#import <Foundation/Foundation.h>
 
 //! Project version number for MariaDB.
 FOUNDATION_EXPORT double MariaDBVersionNumber;
