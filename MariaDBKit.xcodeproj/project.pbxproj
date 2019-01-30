@@ -143,8 +143,10 @@
 		27B7B5AD220003C900CE2354 /* ma_list.h in Headers */ = {isa = PBXBuildFile; fileRef = 27B7B49C21FFFA0C00CE2354 /* ma_list.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		27F0376421F9F6C20039DFA6 /* libssl.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 27F0376221F9F6C20039DFA6 /* libssl.a */; };
 		27F0376521F9F6C20039DFA6 /* libcrypto.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 27F0376321F9F6C20039DFA6 /* libcrypto.a */; };
-		720B049A2201D7FC0051FC88 /* sha256_pw.c in Sources */ = {isa = PBXBuildFile; fileRef = 27B7B50C21FFFA1C00CE2354 /* sha256_pw.c */; };
-		720B049B2201D8030051FC88 /* sha256_pw.c in Sources */ = {isa = PBXBuildFile; fileRef = 27B7B50C21FFFA1C00CE2354 /* sha256_pw.c */; };
+		720B049C2201D96A0051FC88 /* caching_sha2_pw.c in Sources */ = {isa = PBXBuildFile; fileRef = 27B7B50021FFFA1C00CE2354 /* caching_sha2_pw.c */; };
+		720B049D2201D96E0051FC88 /* caching_sha2_pw.c in Sources */ = {isa = PBXBuildFile; fileRef = 27B7B50021FFFA1C00CE2354 /* caching_sha2_pw.c */; };
+		720B04A82201DC3E0051FC88 /* openssl_crypt.c in Sources */ = {isa = PBXBuildFile; fileRef = 720B04A02201DC3E0051FC88 /* openssl_crypt.c */; };
+		720B04A92201DC3E0051FC88 /* openssl_crypt.c in Sources */ = {isa = PBXBuildFile; fileRef = 720B04A02201DC3E0051FC88 /* openssl_crypt.c */; };
 		7213B69D1F3E0D7000416FB8 /* MariaDBKit.h in Headers */ = {isa = PBXBuildFile; fileRef = 7213B69B1F3E0D7000416FB8 /* MariaDBKit.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		724972EC1F3E23600026F0FA /* MariaDBKit.h in Headers */ = {isa = PBXBuildFile; fileRef = 7213B69B1F3E0D7000416FB8 /* MariaDBKit.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		724973001F3E26E10026F0FA /* libcrypto.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 724972FE1F3E26E10026F0FA /* libcrypto.a */; };
@@ -347,6 +349,7 @@
 		27B7B57121FFFDD400CE2354 /* inflate.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = inflate.c; sourceTree = "<group>"; };
 		27F0376221F9F6C20039DFA6 /* libssl.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libssl.a; path = libs/iOS/libssl.a; sourceTree = "<group>"; };
 		27F0376321F9F6C20039DFA6 /* libcrypto.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libcrypto.a; path = libs/iOS/libcrypto.a; sourceTree = "<group>"; };
+		720B04A02201DC3E0051FC88 /* openssl_crypt.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = openssl_crypt.c; sourceTree = "<group>"; };
 		7213B6981F3E0D7000416FB8 /* MariaDBKit.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = MariaDBKit.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		7213B69B1F3E0D7000416FB8 /* MariaDBKit.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MariaDBKit.h; sourceTree = "<group>"; };
 		7213B69C1F3E0D7000416FB8 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
@@ -395,6 +398,7 @@
 		27B7B43121FFF9F500CE2354 /* libmariadb */ = {
 			isa = PBXGroup;
 			children = (
+				720B049F2201DC3E0051FC88 /* secure */,
 				27B7B43221FFF9F500CE2354 /* mariadb_charset.c */,
 				27B7B43321FFF9F500CE2354 /* ma_context.c */,
 				27B7B43421FFF9F500CE2354 /* ma_charset.c */,
@@ -662,6 +666,14 @@
 			path = zlib;
 			sourceTree = "<group>";
 		};
+		720B049F2201DC3E0051FC88 /* secure */ = {
+			isa = PBXGroup;
+			children = (
+				720B04A02201DC3E0051FC88 /* openssl_crypt.c */,
+			);
+			path = secure;
+			sourceTree = "<group>";
+		};
 		7213B68E1F3E0D7000416FB8 = {
 			isa = PBXGroup;
 			children = (
@@ -903,13 +915,13 @@
 				27B7B54521FFFD5300CE2354 /* gzread.c in Sources */,
 				27B7B51721FFFBD400CE2354 /* my_auth.c in Sources */,
 				27B7B56D21FFFD5300CE2354 /* adler32.c in Sources */,
+				720B049D2201D96E0051FC88 /* caching_sha2_pw.c in Sources */,
 				27B7B48221FFF9F500CE2354 /* ma_client_plugin.c in Sources */,
 				27B7B56B21FFFD5300CE2354 /* inffast.c in Sources */,
 				27B7B48421FFF9F500CE2354 /* ma_pvio.c in Sources */,
 				27B7B45421FFF9F500CE2354 /* ma_charset.c in Sources */,
 				27B7B46621FFF9F500CE2354 /* ma_loaddata.c in Sources */,
 				27B7B45021FFF9F500CE2354 /* mariadb_charset.c in Sources */,
-				720B049A2201D7FC0051FC88 /* sha256_pw.c in Sources */,
 				27B7B45221FFF9F500CE2354 /* ma_context.c in Sources */,
 				27B7B46421FFF9F500CE2354 /* ma_init.c in Sources */,
 				27B7B54B21FFFD5300CE2354 /* crc32.c in Sources */,
@@ -939,6 +951,7 @@
 				27B7B48621FFF9F500CE2354 /* mariadb_stmt.c in Sources */,
 				27B7B54D21FFFD5300CE2354 /* infback.c in Sources */,
 				27B7B54121FFFD5300CE2354 /* deflate.c in Sources */,
+				720B04A82201DC3E0051FC88 /* openssl_crypt.c in Sources */,
 				27B7B55F21FFFD5300CE2354 /* inftrees.c in Sources */,
 				27B7B56321FFFD5300CE2354 /* gzwrite.c in Sources */,
 				27B7B47021FFF9F500CE2354 /* ma_io.c in Sources */,
@@ -958,6 +971,7 @@
 				27B7B51321FFFAE300CE2354 /* my_auth.c in Sources */,
 				27B7B54621FFFD5300CE2354 /* gzread.c in Sources */,
 				27B7B51421FFFAE700CE2354 /* old_password.c in Sources */,
+				720B049C2201D96A0051FC88 /* caching_sha2_pw.c in Sources */,
 				27B7B56E21FFFD5300CE2354 /* adler32.c in Sources */,
 				27B7B48321FFF9F500CE2354 /* ma_client_plugin.c in Sources */,
 				27B7B56C21FFFD5300CE2354 /* inffast.c in Sources */,
@@ -965,7 +979,6 @@
 				27B7B45521FFF9F500CE2354 /* ma_charset.c in Sources */,
 				27B7B46721FFF9F500CE2354 /* ma_loaddata.c in Sources */,
 				27B7B45121FFF9F500CE2354 /* mariadb_charset.c in Sources */,
-				720B049B2201D8030051FC88 /* sha256_pw.c in Sources */,
 				27B7B45321FFF9F500CE2354 /* ma_context.c in Sources */,
 				27B7B46521FFF9F500CE2354 /* ma_init.c in Sources */,
 				27B7B54C21FFFD5300CE2354 /* crc32.c in Sources */,
@@ -995,6 +1008,7 @@
 				27B7B48721FFF9F500CE2354 /* mariadb_stmt.c in Sources */,
 				27B7B54E21FFFD5300CE2354 /* infback.c in Sources */,
 				27B7B54221FFFD5300CE2354 /* deflate.c in Sources */,
+				720B04A92201DC3E0051FC88 /* openssl_crypt.c in Sources */,
 				27B7B56021FFFD5300CE2354 /* inftrees.c in Sources */,
 				27B7B56421FFFD5300CE2354 /* gzwrite.c in Sources */,
 				27B7B47121FFF9F500CE2354 /* ma_io.c in Sources */,
