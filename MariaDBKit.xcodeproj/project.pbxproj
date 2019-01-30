@@ -143,6 +143,8 @@
 		27B7B5AD220003C900CE2354 /* ma_list.h in Headers */ = {isa = PBXBuildFile; fileRef = 27B7B49C21FFFA0C00CE2354 /* ma_list.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		27F0376421F9F6C20039DFA6 /* libssl.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 27F0376221F9F6C20039DFA6 /* libssl.a */; };
 		27F0376521F9F6C20039DFA6 /* libcrypto.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 27F0376321F9F6C20039DFA6 /* libcrypto.a */; };
+		720B049A2201D7FC0051FC88 /* sha256_pw.c in Sources */ = {isa = PBXBuildFile; fileRef = 27B7B50C21FFFA1C00CE2354 /* sha256_pw.c */; };
+		720B049B2201D8030051FC88 /* sha256_pw.c in Sources */ = {isa = PBXBuildFile; fileRef = 27B7B50C21FFFA1C00CE2354 /* sha256_pw.c */; };
 		7213B69D1F3E0D7000416FB8 /* MariaDBKit.h in Headers */ = {isa = PBXBuildFile; fileRef = 7213B69B1F3E0D7000416FB8 /* MariaDBKit.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		724972EC1F3E23600026F0FA /* MariaDBKit.h in Headers */ = {isa = PBXBuildFile; fileRef = 7213B69B1F3E0D7000416FB8 /* MariaDBKit.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		724973001F3E26E10026F0FA /* libcrypto.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 724972FE1F3E26E10026F0FA /* libcrypto.a */; };
@@ -907,6 +909,7 @@
 				27B7B45421FFF9F500CE2354 /* ma_charset.c in Sources */,
 				27B7B46621FFF9F500CE2354 /* ma_loaddata.c in Sources */,
 				27B7B45021FFF9F500CE2354 /* mariadb_charset.c in Sources */,
+				720B049A2201D7FC0051FC88 /* sha256_pw.c in Sources */,
 				27B7B45221FFF9F500CE2354 /* ma_context.c in Sources */,
 				27B7B46421FFF9F500CE2354 /* ma_init.c in Sources */,
 				27B7B54B21FFFD5300CE2354 /* crc32.c in Sources */,
@@ -962,6 +965,7 @@
 				27B7B45521FFF9F500CE2354 /* ma_charset.c in Sources */,
 				27B7B46721FFF9F500CE2354 /* ma_loaddata.c in Sources */,
 				27B7B45121FFF9F500CE2354 /* mariadb_charset.c in Sources */,
+				720B049B2201D8030051FC88 /* sha256_pw.c in Sources */,
 				27B7B45321FFF9F500CE2354 /* ma_context.c in Sources */,
 				27B7B46521FFF9F500CE2354 /* ma_init.c in Sources */,
 				27B7B54C21FFFD5300CE2354 /* crc32.c in Sources */,
@@ -1255,7 +1259,7 @@
 				GCC_PREPROCESSOR_DEFINITIONS = (
 					"$(inherited)",
 					"DEBUG=1",
-					HAVE_OPENSSL,
+					"HAVE_OPENSSL=1",
 				);
 				HEADER_SEARCH_PATHS = "$(SOURCE_ROOT)/MariaDB/include_copied/";
 				INFOPLIST_FILE = MariaDB/Info.plist;
@@ -1304,7 +1308,7 @@
 				DYLIB_INSTALL_NAME_BASE = "@rpath";
 				FRAMEWORK_VERSION = A;
 				GCC_C_LANGUAGE_STANDARD = "compiler-default";
-				GCC_PREPROCESSOR_DEFINITIONS = HAVE_OPENSSL;
+				GCC_PREPROCESSOR_DEFINITIONS = "HAVE_OPENSSL=1";
 				HEADER_SEARCH_PATHS = "$(SOURCE_ROOT)/MariaDB/include_copied/";
 				INFOPLIST_FILE = MariaDB/Info.plist;
 				INSTALL_PATH = "";
