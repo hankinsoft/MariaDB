@@ -3,6 +3,7 @@
 //  MariaDB
 //
 //  Created by Kyle Hankinson on 8/11/17.
+//  Updated by Yuri (https://yuriydev.com)
 //  Copyright © 2017 Kyle Hankinson. All rights reserved.
 //
 

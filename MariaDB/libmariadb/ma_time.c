@@ -1,5 +1,6 @@
 /****************************************************************************
    Copyright (C) 2013 Monty Program AB
+                 2016 MariaDB Corporation AB
    
    This library is free software; you can redistribute it and/or
    modify it under the terms of the GNU Library General Public
@@ -19,8 +20,7 @@
    Part of this code includes code from the PHP project which
    is freely available from http://www.php.net
 *****************************************************************************/
-#include "mysys_priv.h"
-#include <my_global.h>
+#include <ma_global.h>
 #include <mysql.h>
 #include <stdio.h>
 
@@ -34,7 +34,7 @@ size_t mariadb_time_to_string(const MYSQL_TIME *tm, char *time_str, size_t len,
     return 0;
 
   if (digits == AUTO_SEC_PART_DIGITS)
-    digits= MIN((tm->second_part) ? SEC_PART_DIGITS : 0, 15);
+    digits= (tm->second_part) ? SEC_PART_DIGITS : 0;
 
   switch(tm->time_type) {
     case MYSQL_TIMESTAMP_DATE:
