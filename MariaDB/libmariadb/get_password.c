@@ -16,11 +16,11 @@
    or write to the Free Software Foundation, Inc., 
    51 Franklin St., Fifth Floor, Boston, MA 02110, USA
 *************************************************************************************/
-#include <my_global.h>
-#include <my_sys.h>
+#include <ma_global.h>
+#include <ma_sys.h>
 #include "mysql.h"
-#include <m_string.h>
-#include <m_ctype.h>
+#include <ma_string.h>
+#include <mariadb_ctype.h>
 #include <stdio.h>
 #include <memory.h>
 
@@ -56,17 +56,16 @@ static char *get_password(FILE *file, char *buffer, int length)
 #else
   int  Offset= 0;
 #endif
-
   memset(buffer, 0, length);
 
   do
   {
 #ifdef _WIN32
-    if (!ReadConsole(Hdl, &inChar, 1, &CharsProcessed, NULL) ||
+    if (!ReadConsole(Hdl, &inChar, 1, (DWORD *)&CharsProcessed, NULL) ||
         !CharsProcessed)
       break;
 #else
-    inChar= fgetc(file);
+    inChar= (char)fgetc(file);
 #endif
 
     switch(inChar) {
@@ -119,8 +118,6 @@ char* get_tty_password(char *prompt, char *buffer, int length)
 #ifdef _WIN32
   DWORD  SaveState;
   HANDLE Hdl;
-  int    Offset= 0;
-  DWORD  CharsProcessed=  0;
 
   if (prompt)
     fprintf(stderr, "%s", prompt);
