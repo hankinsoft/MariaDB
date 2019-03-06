@@ -154,6 +154,14 @@
 		7249730D1F3E2A240026F0FA /* MariaDBKitTests_ios.m in Sources */ = {isa = PBXBuildFile; fileRef = 7249730C1F3E2A240026F0FA /* MariaDBKitTests_ios.m */; };
 		7249730F1F3E2A240026F0FA /* MariaDBKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 724972F71F3E23600026F0FA /* MariaDBKit.framework */; };
 		724973151F3E2C040026F0FA /* MariaDBKit.framework in Resources */ = {isa = PBXBuildFile; fileRef = 724972F71F3E23600026F0FA /* MariaDBKit.framework */; };
+		72584E9A222FFA5700E4B47C /* MariaDBResultSet.h in Headers */ = {isa = PBXBuildFile; fileRef = 72584E98222FFA5700E4B47C /* MariaDBResultSet.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		72584E9B222FFA5700E4B47C /* MariaDBResultSet.h in Headers */ = {isa = PBXBuildFile; fileRef = 72584E98222FFA5700E4B47C /* MariaDBResultSet.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		72584E9C222FFA5700E4B47C /* MariaDBResultSet.m in Sources */ = {isa = PBXBuildFile; fileRef = 72584E99222FFA5700E4B47C /* MariaDBResultSet.m */; };
+		72584E9D222FFA5700E4B47C /* MariaDBResultSet.m in Sources */ = {isa = PBXBuildFile; fileRef = 72584E99222FFA5700E4B47C /* MariaDBResultSet.m */; };
+		72584EA0222FFB0500E4B47C /* MariaDBClient.h in Headers */ = {isa = PBXBuildFile; fileRef = 72584E9E222FFB0500E4B47C /* MariaDBClient.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		72584EA1222FFB0500E4B47C /* MariaDBClient.h in Headers */ = {isa = PBXBuildFile; fileRef = 72584E9E222FFB0500E4B47C /* MariaDBClient.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		72584EA2222FFB0500E4B47C /* MariaDBClient.m in Sources */ = {isa = PBXBuildFile; fileRef = 72584E9F222FFB0500E4B47C /* MariaDBClient.m */; };
+		72584EA3222FFB0500E4B47C /* MariaDBClient.m in Sources */ = {isa = PBXBuildFile; fileRef = 72584E9F222FFB0500E4B47C /* MariaDBClient.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -361,6 +369,10 @@
 		7249730A1F3E2A240026F0FA /* MariaDBKitTests-ios.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = "MariaDBKitTests-ios.xctest"; sourceTree = BUILT_PRODUCTS_DIR; };
 		7249730C1F3E2A240026F0FA /* MariaDBKitTests_ios.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = MariaDBKitTests_ios.m; sourceTree = "<group>"; };
 		7249730E1F3E2A240026F0FA /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		72584E98222FFA5700E4B47C /* MariaDBResultSet.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MariaDBResultSet.h; sourceTree = "<group>"; };
+		72584E99222FFA5700E4B47C /* MariaDBResultSet.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = MariaDBResultSet.m; sourceTree = "<group>"; };
+		72584E9E222FFB0500E4B47C /* MariaDBClient.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MariaDBClient.h; sourceTree = "<group>"; };
+		72584E9F222FFB0500E4B47C /* MariaDBClient.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = MariaDBClient.m; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -703,6 +715,10 @@
 				27B7B43121FFF9F500CE2354 /* libmariadb */,
 				7213B69B1F3E0D7000416FB8 /* MariaDBKit.h */,
 				7213B69C1F3E0D7000416FB8 /* Info.plist */,
+				72584E98222FFA5700E4B47C /* MariaDBResultSet.h */,
+				72584E99222FFA5700E4B47C /* MariaDBResultSet.m */,
+				72584E9E222FFB0500E4B47C /* MariaDBClient.h */,
+				72584E9F222FFB0500E4B47C /* MariaDBClient.m */,
 			);
 			path = MariaDB;
 			sourceTree = "<group>";
@@ -739,6 +755,8 @@
 			buildActionMask = 2147483647;
 			files = (
 				27B7B5A6220002FA00CE2354 /* mariadb_stmt.h in Headers */,
+				72584E9A222FFA5700E4B47C /* MariaDBResultSet.h in Headers */,
+				72584EA0222FFB0500E4B47C /* MariaDBClient.h in Headers */,
 				7213B69D1F3E0D7000416FB8 /* MariaDBKit.h in Headers */,
 				27B7B57421FFFE7F00CE2354 /* mysql.h in Headers */,
 				27B7B5A22200029100CE2354 /* mariadb_com.h in Headers */,
@@ -764,8 +782,10 @@
 			buildActionMask = 2147483647;
 			files = (
 				724972EC1F3E23600026F0FA /* MariaDBKit.h in Headers */,
+				72584E9B222FFA5700E4B47C /* MariaDBResultSet.h in Headers */,
 				27B7B57721FFFF3100CE2354 /* mysql.h in Headers */,
 				27B7B5A9220003A400CE2354 /* mariadb_ctype.h in Headers */,
+				72584EA1222FFB0500E4B47C /* MariaDBClient.h in Headers */,
 				27B7B5AA220003AA00CE2354 /* mariadb_stmt.h in Headers */,
 				27B7B5AB220003B100CE2354 /* mariadb_com.h in Headers */,
 				27B7B5AC220003B900CE2354 /* mariadb_version.h in Headers */,
@@ -951,9 +971,11 @@
 				27B7B48621FFF9F500CE2354 /* mariadb_stmt.c in Sources */,
 				27B7B54D21FFFD5300CE2354 /* infback.c in Sources */,
 				27B7B54121FFFD5300CE2354 /* deflate.c in Sources */,
+				72584E9C222FFA5700E4B47C /* MariaDBResultSet.m in Sources */,
 				720B04A82201DC3E0051FC88 /* openssl_crypt.c in Sources */,
 				27B7B55F21FFFD5300CE2354 /* inftrees.c in Sources */,
 				27B7B56321FFFD5300CE2354 /* gzwrite.c in Sources */,
+				72584EA2222FFB0500E4B47C /* MariaDBClient.m in Sources */,
 				27B7B47021FFF9F500CE2354 /* ma_io.c in Sources */,
 				27B7B55B21FFFD5300CE2354 /* minigzip.c in Sources */,
 				27B7B45621FFF9F500CE2354 /* ma_list.c in Sources */,
@@ -1008,9 +1030,11 @@
 				27B7B48721FFF9F500CE2354 /* mariadb_stmt.c in Sources */,
 				27B7B54E21FFFD5300CE2354 /* infback.c in Sources */,
 				27B7B54221FFFD5300CE2354 /* deflate.c in Sources */,
+				72584E9D222FFA5700E4B47C /* MariaDBResultSet.m in Sources */,
 				720B04A92201DC3E0051FC88 /* openssl_crypt.c in Sources */,
 				27B7B56021FFFD5300CE2354 /* inftrees.c in Sources */,
 				27B7B56421FFFD5300CE2354 /* gzwrite.c in Sources */,
+				72584EA3222FFB0500E4B47C /* MariaDBClient.m in Sources */,
 				27B7B47121FFF9F500CE2354 /* ma_io.c in Sources */,
 				27B7B55C21FFFD5300CE2354 /* minigzip.c in Sources */,
 				27B7B45721FFF9F500CE2354 /* ma_list.c in Sources */,

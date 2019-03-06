@@ -17,3 +17,5 @@ FOUNDATION_EXPORT const unsigned char MariaDBVersionString[];
 
 // In this header, you should import all the public headers of your framework using statements like #import <MariaDB/PublicHeader.h>
 #import "mysql.h"
+#import "MariaDBClient.h"
+#import "MariaDBResultSet.h"
