@@ -162,6 +162,8 @@
 		72584EA1222FFB0500E4B47C /* MariaDBClient.h in Headers */ = {isa = PBXBuildFile; fileRef = 72584E9E222FFB0500E4B47C /* MariaDBClient.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		72584EA2222FFB0500E4B47C /* MariaDBClient.m in Sources */ = {isa = PBXBuildFile; fileRef = 72584E9F222FFB0500E4B47C /* MariaDBClient.m */; };
 		72584EA3222FFB0500E4B47C /* MariaDBClient.m in Sources */ = {isa = PBXBuildFile; fileRef = 72584E9F222FFB0500E4B47C /* MariaDBClient.m */; };
+		727B45032289EC7B00CB3C60 /* openssl.c in Sources */ = {isa = PBXBuildFile; fileRef = 727B45022289EC7B00CB3C60 /* openssl.c */; };
+		727B45042289EC7B00CB3C60 /* openssl.c in Sources */ = {isa = PBXBuildFile; fileRef = 727B45022289EC7B00CB3C60 /* openssl.c */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -373,6 +375,7 @@
 		72584E99222FFA5700E4B47C /* MariaDBResultSet.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = MariaDBResultSet.m; sourceTree = "<group>"; };
 		72584E9E222FFB0500E4B47C /* MariaDBClient.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MariaDBClient.h; sourceTree = "<group>"; };
 		72584E9F222FFB0500E4B47C /* MariaDBClient.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = MariaDBClient.m; sourceTree = "<group>"; };
+		727B45022289EC7B00CB3C60 /* openssl.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = openssl.c; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -682,6 +685,7 @@
 			isa = PBXGroup;
 			children = (
 				720B04A02201DC3E0051FC88 /* openssl_crypt.c */,
+				727B45022289EC7B00CB3C60 /* openssl.c */,
 			);
 			path = secure;
 			sourceTree = "<group>";
@@ -935,6 +939,7 @@
 				27B7B54521FFFD5300CE2354 /* gzread.c in Sources */,
 				27B7B51721FFFBD400CE2354 /* my_auth.c in Sources */,
 				27B7B56D21FFFD5300CE2354 /* adler32.c in Sources */,
+				727B45032289EC7B00CB3C60 /* openssl.c in Sources */,
 				720B049D2201D96E0051FC88 /* caching_sha2_pw.c in Sources */,
 				27B7B48221FFF9F500CE2354 /* ma_client_plugin.c in Sources */,
 				27B7B56B21FFFD5300CE2354 /* inffast.c in Sources */,
@@ -994,6 +999,7 @@
 				27B7B54621FFFD5300CE2354 /* gzread.c in Sources */,
 				27B7B51421FFFAE700CE2354 /* old_password.c in Sources */,
 				720B049C2201D96A0051FC88 /* caching_sha2_pw.c in Sources */,
+				727B45042289EC7B00CB3C60 /* openssl.c in Sources */,
 				27B7B56E21FFFD5300CE2354 /* adler32.c in Sources */,
 				27B7B48321FFF9F500CE2354 /* ma_client_plugin.c in Sources */,
 				27B7B56C21FFFD5300CE2354 /* inffast.c in Sources */,
@@ -1200,7 +1206,9 @@
 					"DEBUG=1",
 					HAVE_OPENSSL,
 					"LIBMARIADB=1",
+					"HAVE_TLS=$(HAVE_TLS)",
 				);
+				HAVE_TLS = 1;
 				HEADER_SEARCH_PATHS = "";
 				INFOPLIST_FILE = MariaDB/Info.plist;
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
@@ -1247,7 +1255,11 @@
 				DYLIB_INSTALL_NAME_BASE = "@rpath";
 				FRAMEWORK_VERSION = A;
 				GCC_C_LANGUAGE_STANDARD = "compiler-default";
-				GCC_PREPROCESSOR_DEFINITIONS = HAVE_OPENSSL;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					HAVE_OPENSSL,
+					"HAVE_TLS=$(HAVE_TLS)",
+				);
+				HAVE_TLS = 1;
 				HEADER_SEARCH_PATHS = "";
 				INFOPLIST_FILE = MariaDB/Info.plist;
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
@@ -1298,7 +1310,9 @@
 					"$(inherited)",
 					"DEBUG=1",
 					"HAVE_OPENSSL=1",
+					"HAVE_TLS=$(HAVE_TLS)",
 				);
+				HAVE_TLS = 1;
 				HEADER_SEARCH_PATHS = "$(SOURCE_ROOT)/MariaDB/include_copied/";
 				INFOPLIST_FILE = MariaDB/Info.plist;
 				INSTALL_PATH = "";
@@ -1347,6 +1361,7 @@
 				FRAMEWORK_VERSION = A;
 				GCC_C_LANGUAGE_STANDARD = "compiler-default";
 				GCC_PREPROCESSOR_DEFINITIONS = "HAVE_OPENSSL=1";
+				HAVE_TLS = 1;
 				HEADER_SEARCH_PATHS = "$(SOURCE_ROOT)/MariaDB/include_copied/";
 				INFOPLIST_FILE = MariaDB/Info.plist;
 				INSTALL_PATH = "";
