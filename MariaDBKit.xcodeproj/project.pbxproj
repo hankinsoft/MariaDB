@@ -1111,6 +1111,7 @@
 				GCC_PREPROCESSOR_DEFINITIONS = (
 					"DEBUG=1",
 					"$(inherited)",
+					HAVE_TLS,
 				);
 				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
 				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
@@ -1167,7 +1168,7 @@
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
 				GCC_C_LANGUAGE_STANDARD = gnu11;
 				GCC_NO_COMMON_BLOCKS = YES;
-				GCC_PREPROCESSOR_DEFINITIONS = "";
+				GCC_PREPROCESSOR_DEFINITIONS = HAVE_TLS;
 				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
 				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
 				GCC_WARN_UNDECLARED_SELECTOR = YES;
@@ -1206,9 +1207,8 @@
 					"DEBUG=1",
 					HAVE_OPENSSL,
 					"LIBMARIADB=1",
-					"HAVE_TLS=$(HAVE_TLS)",
+					HAVE_TLS,
 				);
-				HAVE_TLS = 1;
 				HEADER_SEARCH_PATHS = "";
 				INFOPLIST_FILE = MariaDB/Info.plist;
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
@@ -1257,9 +1257,8 @@
 				GCC_C_LANGUAGE_STANDARD = "compiler-default";
 				GCC_PREPROCESSOR_DEFINITIONS = (
 					HAVE_OPENSSL,
-					"HAVE_TLS=$(HAVE_TLS)",
+					HAVE_TLS,
 				);
-				HAVE_TLS = 1;
 				HEADER_SEARCH_PATHS = "";
 				INFOPLIST_FILE = MariaDB/Info.plist;
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
@@ -1310,9 +1309,8 @@
 					"$(inherited)",
 					"DEBUG=1",
 					"HAVE_OPENSSL=1",
-					"HAVE_TLS=$(HAVE_TLS)",
+					HAVE_TLS,
 				);
-				HAVE_TLS = 1;
 				HEADER_SEARCH_PATHS = "$(SOURCE_ROOT)/MariaDB/include_copied/";
 				INFOPLIST_FILE = MariaDB/Info.plist;
 				INSTALL_PATH = "";
@@ -1360,8 +1358,10 @@
 				DYLIB_INSTALL_NAME_BASE = "@rpath";
 				FRAMEWORK_VERSION = A;
 				GCC_C_LANGUAGE_STANDARD = "compiler-default";
-				GCC_PREPROCESSOR_DEFINITIONS = "HAVE_OPENSSL=1";
-				HAVE_TLS = 1;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"HAVE_OPENSSL=1",
+					HAVE_TLS,
+				);
 				HEADER_SEARCH_PATHS = "$(SOURCE_ROOT)/MariaDB/include_copied/";
 				INFOPLIST_FILE = MariaDB/Info.plist;
 				INSTALL_PATH = "";
