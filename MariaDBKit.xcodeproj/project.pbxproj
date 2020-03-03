@@ -162,6 +162,8 @@
 		72584EA1222FFB0500E4B47C /* MariaDBClient.h in Headers */ = {isa = PBXBuildFile; fileRef = 72584E9E222FFB0500E4B47C /* MariaDBClient.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		72584EA2222FFB0500E4B47C /* MariaDBClient.m in Sources */ = {isa = PBXBuildFile; fileRef = 72584E9F222FFB0500E4B47C /* MariaDBClient.m */; };
 		72584EA3222FFB0500E4B47C /* MariaDBClient.m in Sources */ = {isa = PBXBuildFile; fileRef = 72584E9F222FFB0500E4B47C /* MariaDBClient.m */; };
+		726F8B8C240F215900DEDCC2 /* mariadb_cleartext.c in Sources */ = {isa = PBXBuildFile; fileRef = 27B7B50321FFFA1C00CE2354 /* mariadb_cleartext.c */; };
+		726F8B8D240F215E00DEDCC2 /* mariadb_cleartext.c in Sources */ = {isa = PBXBuildFile; fileRef = 27B7B50321FFFA1C00CE2354 /* mariadb_cleartext.c */; };
 		727B45032289EC7B00CB3C60 /* openssl.c in Sources */ = {isa = PBXBuildFile; fileRef = 727B45022289EC7B00CB3C60 /* openssl.c */; };
 		727B45042289EC7B00CB3C60 /* openssl.c in Sources */ = {isa = PBXBuildFile; fileRef = 727B45022289EC7B00CB3C60 /* openssl.c */; };
 /* End PBXBuildFile section */
@@ -936,6 +938,7 @@
 			files = (
 				27B7B51821FFFBFA00CE2354 /* old_password.c in Sources */,
 				27B7B51621FFFBC400CE2354 /* pvio_socket.c in Sources */,
+				726F8B8D240F215E00DEDCC2 /* mariadb_cleartext.c in Sources */,
 				27B7B54521FFFD5300CE2354 /* gzread.c in Sources */,
 				27B7B51721FFFBD400CE2354 /* my_auth.c in Sources */,
 				27B7B56D21FFFD5300CE2354 /* adler32.c in Sources */,
@@ -996,6 +999,7 @@
 			files = (
 				27B7B51521FFFAEF00CE2354 /* pvio_socket.c in Sources */,
 				27B7B51321FFFAE300CE2354 /* my_auth.c in Sources */,
+				726F8B8C240F215900DEDCC2 /* mariadb_cleartext.c in Sources */,
 				27B7B54621FFFD5300CE2354 /* gzread.c in Sources */,
 				27B7B51421FFFAE700CE2354 /* old_password.c in Sources */,
 				720B049C2201D96A0051FC88 /* caching_sha2_pw.c in Sources */,
