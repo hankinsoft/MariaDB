@@ -84,7 +84,7 @@ const char *client_errors[]=
 {
 /* 2000 */  "Unknown MySQL error",
 /* 2001 */  "Can't create UNIX socket (%d)",
-/* 2002 */  "Can't connect to local MySQL server through socket '%-.64s' (%d)",
+/* 2002 */  "Can't connect to local MySQL server through socket '%-.128s' (%d)",
 /* 2003 */  "Can't connect to MySQL server on '%-.64s' (%d)",
 /* 2004 */  "Can't create TCP/IP socket (%d)",
 /* 2005 */  "Unknown MySQL server host '%-.100s' (%d)",
