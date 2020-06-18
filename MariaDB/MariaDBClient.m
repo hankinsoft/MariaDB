@@ -67,6 +67,11 @@
             port: (NSUInteger) port
            error: (NSError**) pError
 {
+    if(0 == port)
+    {
+        port = 3306;
+    } // End of no port
+
     mysql = mysql_init(NULL);
     
     // Compress results
