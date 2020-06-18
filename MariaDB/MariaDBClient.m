@@ -49,6 +49,20 @@
         username: (NSString*) username
         password: (NSString*) password
         database: (NSString*) database
+           error: (NSError**) pError
+{
+    return [self connect: host
+                username: username
+                password: password
+                database: database
+                    port: 3306
+                   error: pError];
+}
+
+- (BOOL) connect: (NSString*) host
+        username: (NSString*) username
+        password: (NSString*) password
+        database: (NSString*) database
             port: (NSUInteger) port
            error: (NSError**) pError
 {

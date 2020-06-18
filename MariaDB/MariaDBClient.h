@@ -20,6 +20,12 @@ NS_ASSUME_NONNULL_BEGIN
         username: (NSString*) username
         password: (NSString*) password
         database: (NSString*) database
+           error: (NSError**) pError;
+
+- (BOOL) connect: (NSString*) host
+        username: (NSString*) username
+        password: (NSString*) password
+        database: (NSString*) database
             port: (NSUInteger) port
            error: (NSError**) pError;
 
