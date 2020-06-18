@@ -94,6 +94,11 @@
     return affectedRows;
 } // End of numberOfAffectedRows
 
+- (NSArray<NSString*>*) columnNames
+{
+    return columnNames;
+} // End of columnNames
+
 - (BOOL) next: (NSError*__autoreleasing*) error
 {
     if(NULL == internalMySQLResult)
