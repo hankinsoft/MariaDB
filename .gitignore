@@ -37,3 +37,7 @@
 *.xcuserstate
 .DS_Store
 xcuserdata/
+
+## Build generated
+build/
+DerivedData/
