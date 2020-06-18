@@ -5,4 +5,7 @@
 ## MariaDB
 MariaDB/MySQL client framework iOS and macOS.
 
+## Carthage
+> github "hankinsoft/MariaDB"
+
 Provided by [SQLPro Studio](https://sqlprostudio.com).
