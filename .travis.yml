@@ -1,6 +1,4 @@
-language: objective-c
 os:
   - iOS
-  - osx
-osx_image: xcode10.2
+  - macOS
 script: xcodebuild clean build -project MariaDBKit.xcodeproj
