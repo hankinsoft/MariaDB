@@ -12,7 +12,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 @interface MariaDBResultSet : NSObject
 
-- (BOOL) next: (NSError*__autoreleasing*) error;
+- (BOOL) next: (NSError*__autoreleasing*) error NS_SWIFT_NOTHROW;
 - (id) objectForColumnIndex: (NSUInteger) columnIndex;
 
 @end
