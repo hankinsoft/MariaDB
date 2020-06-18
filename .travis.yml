@@ -1,4 +1,2 @@
-os:
-  - iOS
-  - macOS
-script: xcodebuild clean build -project MariaDBKit.xcodeproj
+osx_image: xcode11.4
+script: xcodebuild clean build -project MariaDBKit.xcodeproj -target MariaDBKit-macos
