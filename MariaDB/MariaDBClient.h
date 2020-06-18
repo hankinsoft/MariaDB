@@ -31,7 +31,7 @@ NS_ASSUME_NONNULL_BEGIN
 - (NSError*) lastError;
 
 - (MariaDBResultSet*) executeQuery: (NSString*) sql
-                             error: (NSError**) pError;
+                             error: (NSError**) pError __attribute__((swift_error(nonnull_error)));
 
 @end
 
