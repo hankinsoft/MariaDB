@@ -7,6 +7,7 @@
 //
 
 #import "MariaDBClient.h"
+#import "MariaDBResultSetPrivate.h"
 
 #ifndef MYSQL_SUCCESS
 #define MYSQL_SUCCESS           (0)

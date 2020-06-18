@@ -7,7 +7,6 @@
 //
 
 #import <Foundation/Foundation.h>
-#import "mysql.h"
 #import "MariaDBResultSet.h"
 
 #define kMariaDBKitDomain      @"MariaDBKit"
@@ -30,6 +29,9 @@ NS_ASSUME_NONNULL_BEGIN
            error: (NSError**) pError;
 
 - (NSError*) lastError;
+
+- (MariaDBResultSet*) executeQuery: (NSString*) sql
+                             error: (NSError**) pError;
 
 @end
 

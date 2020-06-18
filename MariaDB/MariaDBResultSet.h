@@ -7,13 +7,11 @@
 //
 
 #import <Foundation/Foundation.h>
-#import "mysql.h"
 
 NS_ASSUME_NONNULL_BEGIN
 
 @interface MariaDBResultSet : NSObject
 
-- (id) initWithResult: (MYSQL_RES*) result;
 - (BOOL) next: (NSError*__autoreleasing*) error;
 - (id) objectForColumnIndex: (NSUInteger) columnIndex;
 

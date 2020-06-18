@@ -365,6 +365,7 @@
 		7213B6981F3E0D7000416FB8 /* MariaDBKit.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = MariaDBKit.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		7213B69B1F3E0D7000416FB8 /* MariaDBKit.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MariaDBKit.h; sourceTree = "<group>"; };
 		7213B69C1F3E0D7000416FB8 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		7237CFFE249BC1830025FED0 /* MariaDBResultSetPrivate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MariaDBResultSetPrivate.h; sourceTree = "<group>"; };
 		724972F71F3E23600026F0FA /* MariaDBKit.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = MariaDBKit.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		724972FE1F3E26E10026F0FA /* libcrypto.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libcrypto.a; path = ../libs/macOS/libcrypto.a; sourceTree = "<group>"; };
 		724972FF1F3E26E10026F0FA /* libssl.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libssl.a; path = ../libs/macOS/libssl.a; sourceTree = "<group>"; };
@@ -723,6 +724,7 @@
 				7213B69C1F3E0D7000416FB8 /* Info.plist */,
 				72584E98222FFA5700E4B47C /* MariaDBResultSet.h */,
 				72584E99222FFA5700E4B47C /* MariaDBResultSet.m */,
+				7237CFFE249BC1830025FED0 /* MariaDBResultSetPrivate.h */,
 				72584E9E222FFB0500E4B47C /* MariaDBClient.h */,
 				72584E9F222FFB0500E4B47C /* MariaDBClient.m */,
 			);

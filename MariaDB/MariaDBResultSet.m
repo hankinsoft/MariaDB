@@ -7,6 +7,7 @@
 //
 
 #import "MariaDBResultSet.h"
+#import "MariaDBResultSetPrivate.h"
 
 @interface MariaDBResultSet ()
 {
