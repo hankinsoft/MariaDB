@@ -1237,7 +1237,7 @@
 					"-D",
 					DBUG_OFF,
 				);
-				OTHER_LDFLAGS = /usr/lib/libiconv.dylib;
+				OTHER_LDFLAGS = "";
 				PRODUCT_BUNDLE_IDENTIFIER = com.hankinsoft.sqlpro.MariaDB;
 				PRODUCT_NAME = MariaDBKit;
 				SKIP_INSTALL = YES;
@@ -1287,7 +1287,7 @@
 					"-D",
 					DBUG_OFF,
 				);
-				OTHER_LDFLAGS = /usr/lib/libiconv.dylib;
+				OTHER_LDFLAGS = "";
 				PRODUCT_BUNDLE_IDENTIFIER = com.hankinsoft.sqlpro.MariaDB;
 				PRODUCT_NAME = MariaDBKit;
 				SKIP_INSTALL = YES;
