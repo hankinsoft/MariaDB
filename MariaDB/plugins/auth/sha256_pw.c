@@ -112,7 +112,7 @@ end:
 }
 #endif
 
-char *load_pub_key_file(const char *filename, int *pub_key_size)
+char *sha256_load_pub_key_file(const char *filename, int *pub_key_size)
 {
   FILE *fp= NULL;
   char *buffer= NULL;
@@ -212,7 +212,7 @@ static int auth_sha256_client(MYSQL_PLUGIN_VIO *vio, MYSQL *mysql)
   if (mysql->options.extension &&
       mysql->options.extension->server_public_key)
   {
-    filebuffer= load_pub_key_file(mysql->options.extension->server_public_key,
+    filebuffer= sha256_load_pub_key_file(mysql->options.extension->server_public_key,
                              &packet_length);
   }
 
