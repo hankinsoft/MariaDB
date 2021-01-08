@@ -68,7 +68,6 @@
 		27B7B48A21FFF9F500CE2354 /* get_password.c in Sources */ = {isa = PBXBuildFile; fileRef = 27B7B44F21FFF9F500CE2354 /* get_password.c */; };
 		27B7B48B21FFF9F500CE2354 /* get_password.c in Sources */ = {isa = PBXBuildFile; fileRef = 27B7B44F21FFF9F500CE2354 /* get_password.c */; };
 		27B7B51021FFFAB900CE2354 /* libiconv.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = 27B7B50F21FFFAB900CE2354 /* libiconv.tbd */; };
-		27B7B51221FFFAC300CE2354 /* libiconv.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = 27B7B51121FFFAC300CE2354 /* libiconv.tbd */; };
 		27B7B51321FFFAE300CE2354 /* my_auth.c in Sources */ = {isa = PBXBuildFile; fileRef = 27B7B50121FFFA1C00CE2354 /* my_auth.c */; };
 		27B7B51421FFFAE700CE2354 /* old_password.c in Sources */ = {isa = PBXBuildFile; fileRef = 27B7B50721FFFA1C00CE2354 /* old_password.c */; };
 		27B7B51521FFFAEF00CE2354 /* pvio_socket.c in Sources */ = {isa = PBXBuildFile; fileRef = 27B7B4F521FFFA1C00CE2354 /* pvio_socket.c */; };
@@ -148,6 +147,7 @@
 		720B04A82201DC3E0051FC88 /* openssl_crypt.c in Sources */ = {isa = PBXBuildFile; fileRef = 720B04A02201DC3E0051FC88 /* openssl_crypt.c */; };
 		720B04A92201DC3E0051FC88 /* openssl_crypt.c in Sources */ = {isa = PBXBuildFile; fileRef = 720B04A02201DC3E0051FC88 /* openssl_crypt.c */; };
 		7213B69D1F3E0D7000416FB8 /* MariaDBKit.h in Headers */ = {isa = PBXBuildFile; fileRef = 7213B69B1F3E0D7000416FB8 /* MariaDBKit.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		722BB2C525A88AAE00016267 /* libiconv.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = 27B7B50F21FFFAB900CE2354 /* libiconv.tbd */; };
 		724972EC1F3E23600026F0FA /* MariaDBKit.h in Headers */ = {isa = PBXBuildFile; fileRef = 7213B69B1F3E0D7000416FB8 /* MariaDBKit.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		724973001F3E26E10026F0FA /* libcrypto.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 724972FE1F3E26E10026F0FA /* libcrypto.a */; };
 		724973011F3E26E10026F0FA /* libssl.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 724972FF1F3E26E10026F0FA /* libssl.a */; };
@@ -398,7 +398,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				27B7B51221FFFAC300CE2354 /* libiconv.tbd in Frameworks */,
+				722BB2C525A88AAE00016267 /* libiconv.tbd in Frameworks */,
 				27F0376421F9F6C20039DFA6 /* libssl.a in Frameworks */,
 				27F0376521F9F6C20039DFA6 /* libcrypto.a in Frameworks */,
 			);
@@ -1342,7 +1342,6 @@
 					"-D",
 					DBUG_OFF,
 				);
-				OTHER_LDFLAGS = /usr/lib/libiconv.dylib;
 				PRODUCT_BUNDLE_IDENTIFIER = com.hankinsoft.sqlpro.MariaDB;
 				PRODUCT_NAME = MariaDBKit;
 				SDKROOT = iphoneos;
@@ -1393,7 +1392,6 @@
 					"-D",
 					DBUG_OFF,
 				);
-				OTHER_LDFLAGS = /usr/lib/libiconv.dylib;
 				PRODUCT_BUNDLE_IDENTIFIER = com.hankinsoft.sqlpro.MariaDB;
 				PRODUCT_NAME = MariaDBKit;
 				SDKROOT = iphoneos;
