@@ -3227,6 +3227,10 @@ mysql_get_optionv(MYSQL *mysql, enum mysql_option option, void *arg, ...)
   case MARIADB_OPT_CONNECTION_HANDLER:
     *((char **)arg)= mysql->options.extension ? mysql->options.extension->connection_handler : NULL;
     break;
+  case MARIADB_OPT_TLS_VERSION:
+  case MYSQL_OPT_TLS_VERSION:
+    *((char **)arg)= mysql->options.extension ? mysql->options.extension->tls_version : NULL;
+    break;
   default:
     va_end(ap);
     return(-1);
