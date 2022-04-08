@@ -52,7 +52,7 @@
 #include <netinet/ip.h>
 #include <netdb.h>
 #include <netinet/tcp.h>
-#define IS_SOCKET_EINTR(err) (err == SOCKET_EINTR)
+#define IS_SOCKET_EINTR(err) ((err) == SOCKET_EINTR)
 #else
 #include <ws2tcpip.h>
 #define O_NONBLOCK 1
@@ -82,6 +82,12 @@
 
 #if SOCKET_EAGAIN != SOCKET_EWOULDBLOCK
 #define HAVE_SOCKET_EWOULDBLOCK 1
+#endif
+
+#ifdef _AIX
+#ifndef MSG_DONTWAIT
+#define MSG_DONTWAIT 0
+#endif
 #endif
 
 /* Function prototypes */
@@ -504,6 +510,14 @@ int pvio_socket_wait_io_or_timeout(MARIADB_PVIO *pvio, my_bool is_read, int time
   if (!pvio || !pvio->data)
     return 0;
 
+  if (pvio->mysql->options.extension && 
+      pvio->mysql->options.extension->io_wait != NULL) {
+    my_socket handle;
+    if (pvio_socket_get_handle(pvio, &handle))
+      return 0;
+    return pvio->mysql->options.extension->io_wait(handle, is_read, timeout);
+  }
+
   csock= (struct st_pvio_socket *)pvio->data;
   {
 #ifndef _WIN32
@@ -772,13 +786,19 @@ my_bool pvio_socket_connect(MARIADB_PVIO *pvio, MA_PVIO_CINFO *cinfo)
     /* Abstract socket */
     if (cinfo->unix_socket[0] == '@')
     {
-      strncpy(UNIXaddr.sun_path + 1, cinfo->unix_socket + 1, 107);
+      strncpy(UNIXaddr.sun_path + 1, cinfo->unix_socket + 1, 106);
       port_length+= offsetof(struct sockaddr_un, sun_path);
     }
     else
 #endif
     {
-      strcpy(UNIXaddr.sun_path, cinfo->unix_socket);
+      size_t sun_path_size = sizeof(UNIXaddr.sun_path);
+      strncpy(UNIXaddr.sun_path, cinfo->unix_socket, sun_path_size - 1);
+      if (sun_path_size == strlen(UNIXaddr.sun_path) + 1 && UNIXaddr.sun_path[sun_path_size - 1] != '\0')
+      {
+        /* Making the string null-terminated */
+        UNIXaddr.sun_path[sun_path_size - 1] = '\0';
+      }
       port_length= sizeof(UNIXaddr);
     }
     if (pvio_socket_connect_sync_or_async(pvio, (struct sockaddr *) &UNIXaddr, port_length))

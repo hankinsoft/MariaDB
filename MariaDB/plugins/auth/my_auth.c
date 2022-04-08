@@ -8,9 +8,11 @@
 typedef struct st_mysql_client_plugin_AUTHENTICATION auth_plugin_t;
 static int client_mpvio_write_packet(struct st_plugin_vio*, const uchar*, size_t);
 static int native_password_auth_client(MYSQL_PLUGIN_VIO *vio, MYSQL *mysql);
+static int dummy_fallback_auth_client(MYSQL_PLUGIN_VIO *vio, MYSQL *mysql __attribute__((unused)));
 extern void read_user_name(char *name);
 extern char *ma_send_connect_attr(MYSQL *mysql, unsigned char *buffer);
 extern int ma_read_ok_packet(MYSQL *mysql, uchar *pos, ulong length);
+extern unsigned char *mysql_net_store_length(unsigned char *packet, size_t length);
 
 typedef struct {
   int (*read_packet)(struct st_plugin_vio *vio, uchar **buf);
@@ -83,6 +85,7 @@ static int native_password_auth_client(MYSQL_PLUGIN_VIO *vio, MYSQL *mysql)
   if (mysql && mysql->passwd[0])
   {
     char scrambled[SCRAMBLE_LENGTH + 1];
+    memset(scrambled, 0, SCRAMBLE_LENGTH + 1);
     ma_scramble_41((uchar *)scrambled, (char*)pkt, mysql->passwd);
     if (vio->write_packet(vio, (uchar*)scrambled, SCRAMBLE_LENGTH))
       return CR_ERROR;
@@ -92,6 +95,53 @@ static int native_password_auth_client(MYSQL_PLUGIN_VIO *vio, MYSQL *mysql)
       return CR_ERROR;
 
   return CR_OK;
+}
+
+auth_plugin_t dummy_fallback_client_plugin=
+{
+  MYSQL_CLIENT_AUTHENTICATION_PLUGIN,
+  MYSQL_CLIENT_AUTHENTICATION_PLUGIN_INTERFACE_VERSION,
+  "dummy_fallback_auth",
+  "Sergei Golubchik",
+  "Dummy fallback plugin",
+  {1, 0, 0},
+  "LGPL",
+  NULL,
+  NULL,
+  NULL,
+  NULL,
+  dummy_fallback_auth_client
+};
+
+
+static int dummy_fallback_auth_client(MYSQL_PLUGIN_VIO *vio, MYSQL *mysql __attribute__((unused)))
+{
+  char last_error[MYSQL_ERRMSG_SIZE];
+  unsigned int i, last_errno= ((MCPVIO_EXT *)vio)->mysql->net.last_errno;
+  if (last_errno)
+  {
+    strncpy(last_error, ((MCPVIO_EXT *)vio)->mysql->net.last_error,
+            sizeof(last_error) - 1);
+    last_error[sizeof(last_error) - 1]= 0;
+  }
+
+  /* safety-wise we only do 10 round-trips */
+  for (i=0; i < 10; i++)
+  {
+    uchar *pkt;
+    if (vio->read_packet(vio, &pkt) < 0)
+      break;
+    if (vio->write_packet(vio, 0, 0))
+      break;
+  }
+  if (last_errno)
+  {
+    MYSQL *mysql= ((MCPVIO_EXT *)vio)->mysql;
+    strncpy(mysql->net.last_error, last_error,
+            sizeof(mysql->net.last_error) - 1);
+    mysql->net.last_error[sizeof(mysql->net.last_error) - 1]= 0;
+  }
+  return CR_ERROR;
 }
 
 static int send_change_user_packet(MCPVIO_EXT *mpvio,
@@ -182,6 +232,10 @@ static int send_client_reply_packet(MCPVIO_EXT *mpvio,
 #endif /* HAVE_TLS && !EMBEDDED_LIBRARY*/
   if (mpvio->db)
     mysql->client_flag|= CLIENT_CONNECT_WITH_DB;
+  else
+    /* See CONC-490: If no database was specified, we need
+       to unset CLIENT_CONNECT_WITH_DB flag */
+    mysql->client_flag&= ~CLIENT_CONNECT_WITH_DB;
 
   /* if server doesn't support SSL and verification of server certificate
      was set to mandatory, we need to return an error */
@@ -201,12 +255,37 @@ static int send_client_reply_packet(MCPVIO_EXT *mpvio,
 
   /* Remove options that server doesn't support */
   mysql->client_flag= mysql->client_flag &
-                       (~(CLIENT_COMPRESS | CLIENT_SSL | CLIENT_PROTOCOL_41) 
+                       (~(CLIENT_COMPRESS | CLIENT_ZSTD_COMPRESSION | CLIENT_SSL | CLIENT_PROTOCOL_41) 
                        | mysql->server_capabilities);
 
-#ifndef HAVE_COMPRESS
-  mysql->client_flag&= ~CLIENT_COMPRESS;
-#endif
+  /* save compress for reconnect */
+  if (mysql->client_flag & CLIENT_COMPRESS)
+    mysql->options.compress= 1;
+
+  if (mysql->options.compress)
+  {
+    /* For MySQL 8.0 we will use zstd copression */
+    if (mysql->server_capabilities & CLIENT_ZSTD_COMPRESSION)
+    {
+      if ((compression_plugin(net) = (MARIADB_COMPRESSION_PLUGIN *)mysql_client_find_plugin(mysql, 
+                                    _mariadb_compression_algorithm_str(COMPRESSION_ZSTD),
+                                    MARIADB_CLIENT_COMPRESSION_PLUGIN)))
+      {
+        mysql->client_flag|= CLIENT_ZSTD_COMPRESSION;
+        mysql->client_flag&= ~CLIENT_COMPRESS;
+      }
+    }
+    /* load zlib compression as default */
+    if (!compression_plugin(net))
+    {
+      if ((compression_plugin(net) = (MARIADB_COMPRESSION_PLUGIN *)mysql_client_find_plugin(mysql, 
+                                    _mariadb_compression_algorithm_str(COMPRESSION_ZLIB),
+                                    MARIADB_CLIENT_COMPRESSION_PLUGIN)))
+      {
+        mysql->client_flag|= CLIENT_COMPRESS;
+      }
+    }
+  }
 
   if (mysql->client_flag & CLIENT_PROTOCOL_41)
   {
@@ -219,7 +298,10 @@ static int send_client_reply_packet(MCPVIO_EXT *mpvio,
     memset(buff + 9, 0, 32-9);
     if (!(mysql->server_capabilities & CLIENT_MYSQL))
     {
-      mysql->extension->mariadb_client_flag = MARIADB_CLIENT_SUPPORTED_FLAGS >> 32;
+      uint server_extended_cap= mysql->extension->mariadb_server_capabilities;
+      uint client_extended_cap= (uint)(MARIADB_CLIENT_SUPPORTED_FLAGS >> 32);
+      mysql->extension->mariadb_client_flag=
+          server_extended_cap & client_extended_cap;
       int4store(buff + 28, mysql->extension->mariadb_client_flag);
     }
     end= buff+32;
@@ -275,7 +357,17 @@ static int send_client_reply_packet(MCPVIO_EXT *mpvio,
   {
     if (mysql->server_capabilities & CLIENT_SECURE_CONNECTION)
     {
-      *end++= data_len;
+      if (mysql->server_capabilities & CLIENT_PLUGIN_AUTH_LENENC_CLIENT_DATA)
+      {
+        end= (char *)mysql_net_store_length((uchar *)end, data_len);
+      }
+      else {
+        /* Without CLIENT_PLUGIN_AUTH_LENENC_CLIENT_DATA capability password
+           length is limited up to 255 chars */
+        if (data_len > 0xFF)
+          goto error;
+        *end++= data_len;
+      }
       memcpy(end, data, data_len);
       end+= data_len;
     }
@@ -300,6 +392,16 @@ static int send_client_reply_packet(MCPVIO_EXT *mpvio,
     end= ma_strmake(end, mpvio->plugin->name, NAME_LEN) + 1;
 
   end= ma_send_connect_attr(mysql, (unsigned char *)end);
+
+  /* MySQL 8.0: 
+     If zstd compresson was specified, the server expects
+     1 byte for compression level
+  */
+  if (mysql->client_flag & CLIENT_ZSTD_COMPRESSION)
+  {
+    int4store(end, (unsigned int)3);
+    end+= 4;
+  }
 
   /* Write authentication package */
   if (ma_net_write(net, (unsigned char *)buff, (size_t) (end-buff)) || ma_net_flush(net))
@@ -353,7 +455,9 @@ static int client_mpvio_read_packet(struct st_plugin_vio *mpv, uchar **buf)
   }
 
   /* otherwise read the data */
-  pkt_len= ma_net_safe_read(mysql);
+  if ((pkt_len= ma_net_safe_read(mysql)) == packet_error)
+    return (int)packet_error;
+
   mpvio->last_read_packet_len= pkt_len;
   *buf= mysql->net.read_pos;
 
@@ -497,39 +601,38 @@ static void client_mpvio_info(MYSQL_PLUGIN_VIO *vio,
 int run_plugin_auth(MYSQL *mysql, char *data, uint data_len,
                     const char *data_plugin, const char *db)
 {
-  const char    *auth_plugin_name;
+  const char    *auth_plugin_name= NULL;
   auth_plugin_t *auth_plugin;
   MCPVIO_EXT    mpvio;
   ulong		pkt_length;
   int           res;
 
+
   /* determine the default/initial plugin to use */
-  if (mysql->options.extension && mysql->options.extension->default_auth &&
-      mysql->server_capabilities & CLIENT_PLUGIN_AUTH)
+  if (mysql->server_capabilities & CLIENT_PLUGIN_AUTH)
   {
-    auth_plugin_name= mysql->options.extension->default_auth;
-    if (!(auth_plugin= (auth_plugin_t*) mysql_client_find_plugin(mysql,
-                       auth_plugin_name, MYSQL_CLIENT_AUTHENTICATION_PLUGIN)))
-      return 1; /* oops, not found */
+    if (mysql->options.extension && mysql->options.extension->default_auth)
+      auth_plugin_name= mysql->options.extension->default_auth;
+    else if (data_plugin)
+      auth_plugin_name= data_plugin;
   }
-  else
+  if (!auth_plugin_name)
   {
     if (mysql->server_capabilities & CLIENT_PROTOCOL_41)
-      auth_plugin= &mysql_native_password_client_plugin;
+       auth_plugin_name= native_password_plugin_name;
     else
-    {
-      if (!(auth_plugin= (auth_plugin_t*)mysql_client_find_plugin(mysql,
-                         "mysql_old_password", MYSQL_CLIENT_AUTHENTICATION_PLUGIN)))
-        return 1; /* not found */
-    }
-    auth_plugin_name= auth_plugin->name;
+       auth_plugin_name= "mysql_old_password";
   }
+  if (!(auth_plugin= (auth_plugin_t*) mysql_client_find_plugin(mysql,
+                     auth_plugin_name, MYSQL_CLIENT_AUTHENTICATION_PLUGIN)))
+    auth_plugin= &dummy_fallback_client_plugin;
 
   mysql->net.last_errno= 0; /* just in case */
 
   if (data_plugin && strcmp(data_plugin, auth_plugin_name))
   {
-    /* data was prepared for a different plugin, don't show it to this one */
+    /* data was prepared for a different plugin, so we don't
+       send any data */
     data= 0;
     data_len= 0;
   }
@@ -543,11 +646,26 @@ int run_plugin_auth(MYSQL *mysql, char *data, uint data_len,
   mpvio.mysql= mysql;
   mpvio.packets_read= mpvio.packets_written= 0;
   mpvio.db= db;
+
+retry:
   mpvio.plugin= auth_plugin;
 
+  if (auth_plugin_name &&
+     mysql->options.extension &&
+     mysql->options.extension->restricted_auth)
+  {
+    if (!strstr(mysql->options.extension->restricted_auth, auth_plugin_name))
+    {
+      my_set_error(mysql, CR_PLUGIN_NOT_ALLOWED, SQLSTATE_UNKNOWN, 0, data_plugin);
+      return 1;
+    }
+  }
+
+  mysql->net.read_pos[0]= 0;
   res= auth_plugin->authenticate_user((struct st_plugin_vio *)&mpvio, mysql);
 
-  if (res > CR_OK && mysql->net.read_pos[0] != 254)
+  if ((res == CR_ERROR && !mysql->net.buff) ||
+      (res > CR_OK && mysql->net.read_pos[0] != 254))
   {
     /*
       the plugin returned an error. write it down in mysql,
@@ -566,7 +684,7 @@ int run_plugin_auth(MYSQL *mysql, char *data, uint data_len,
   /* read the OK packet (or use the cached value in mysql->net.read_pos */
   if (res == CR_OK)
     pkt_length= ma_net_safe_read(mysql);
-  else /* res == CR_OK_HANDSHAKE_COMPLETE */
+  else /* res == CR_OK_HANDSHAKE_COMPLETE or an error */
     pkt_length= mpvio.last_read_packet_len;
 
   if (pkt_length == packet_error)
@@ -599,34 +717,10 @@ int run_plugin_auth(MYSQL *mysql, char *data, uint data_len,
     }
     if (!(auth_plugin= (auth_plugin_t *) mysql_client_find_plugin(mysql,
                          auth_plugin_name, MYSQL_CLIENT_AUTHENTICATION_PLUGIN)))
-      return 1;
+      auth_plugin= &dummy_fallback_client_plugin;
 
-    mpvio.plugin= auth_plugin;
-    res= auth_plugin->authenticate_user((struct st_plugin_vio *)&mpvio, mysql);
+    goto retry;
 
-    if (res > CR_OK)
-    {
-      if (res > CR_ERROR)
-        my_set_error(mysql, res, SQLSTATE_UNKNOWN, 0);
-      else
-        if (!mysql->net.last_errno)
-          my_set_error(mysql, CR_UNKNOWN_ERROR, SQLSTATE_UNKNOWN, 0);
-      return 1;
-    }
-
-    if (res != CR_OK_HANDSHAKE_COMPLETE)
-    {
-      /* Read what server thinks about out new auth message report */
-      if (ma_net_safe_read(mysql) == packet_error)
-      {
-        if (mysql->net.last_errno == CR_SERVER_LOST)
-          my_set_error(mysql, CR_SERVER_LOST, SQLSTATE_UNKNOWN,
-                              ER(CR_SERVER_LOST_EXTENDED),
-                              "reading final connect information",
-                              errno);
-        return 1;
-      }
-    }
   }
   /*
     net->read_pos[0] should always be 0 here if the server implements

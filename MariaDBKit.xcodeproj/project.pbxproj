@@ -35,8 +35,6 @@
 		27B7B46921FFF9F500CE2354 /* ma_sha1.c in Sources */ = {isa = PBXBuildFile; fileRef = 27B7B43E21FFF9F500CE2354 /* ma_sha1.c */; };
 		27B7B46A21FFF9F500CE2354 /* ma_client_plugin.c.in in Resources */ = {isa = PBXBuildFile; fileRef = 27B7B43F21FFF9F500CE2354 /* ma_client_plugin.c.in */; };
 		27B7B46B21FFF9F500CE2354 /* ma_client_plugin.c.in in Resources */ = {isa = PBXBuildFile; fileRef = 27B7B43F21FFF9F500CE2354 /* ma_client_plugin.c.in */; };
-		27B7B46C21FFF9F500CE2354 /* ma_hash.c in Sources */ = {isa = PBXBuildFile; fileRef = 27B7B44021FFF9F500CE2354 /* ma_hash.c */; };
-		27B7B46D21FFF9F500CE2354 /* ma_hash.c in Sources */ = {isa = PBXBuildFile; fileRef = 27B7B44021FFF9F500CE2354 /* ma_hash.c */; };
 		27B7B46E21FFF9F500CE2354 /* ma_alloc.c in Sources */ = {isa = PBXBuildFile; fileRef = 27B7B44121FFF9F500CE2354 /* ma_alloc.c */; };
 		27B7B46F21FFF9F500CE2354 /* ma_alloc.c in Sources */ = {isa = PBXBuildFile; fileRef = 27B7B44121FFF9F500CE2354 /* ma_alloc.c */; };
 		27B7B47021FFF9F500CE2354 /* ma_io.c in Sources */ = {isa = PBXBuildFile; fileRef = 27B7B44221FFF9F500CE2354 /* ma_io.c */; };
@@ -65,8 +63,6 @@
 		27B7B48721FFF9F500CE2354 /* mariadb_stmt.c in Sources */ = {isa = PBXBuildFile; fileRef = 27B7B44D21FFF9F500CE2354 /* mariadb_stmt.c */; };
 		27B7B48821FFF9F500CE2354 /* mariadb_async.c in Sources */ = {isa = PBXBuildFile; fileRef = 27B7B44E21FFF9F500CE2354 /* mariadb_async.c */; };
 		27B7B48921FFF9F500CE2354 /* mariadb_async.c in Sources */ = {isa = PBXBuildFile; fileRef = 27B7B44E21FFF9F500CE2354 /* mariadb_async.c */; };
-		27B7B48A21FFF9F500CE2354 /* get_password.c in Sources */ = {isa = PBXBuildFile; fileRef = 27B7B44F21FFF9F500CE2354 /* get_password.c */; };
-		27B7B48B21FFF9F500CE2354 /* get_password.c in Sources */ = {isa = PBXBuildFile; fileRef = 27B7B44F21FFF9F500CE2354 /* get_password.c */; };
 		27B7B51021FFFAB900CE2354 /* libiconv.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = 27B7B50F21FFFAB900CE2354 /* libiconv.tbd */; };
 		27B7B51321FFFAE300CE2354 /* my_auth.c in Sources */ = {isa = PBXBuildFile; fileRef = 27B7B50121FFFA1C00CE2354 /* my_auth.c */; };
 		27B7B51421FFFAE700CE2354 /* old_password.c in Sources */ = {isa = PBXBuildFile; fileRef = 27B7B50721FFFA1C00CE2354 /* old_password.c */; };
@@ -168,6 +164,10 @@
 		726F8B8D240F215E00DEDCC2 /* mariadb_cleartext.c in Sources */ = {isa = PBXBuildFile; fileRef = 27B7B50321FFFA1C00CE2354 /* mariadb_cleartext.c */; };
 		727B45032289EC7B00CB3C60 /* openssl.c in Sources */ = {isa = PBXBuildFile; fileRef = 727B45022289EC7B00CB3C60 /* openssl.c */; };
 		727B45042289EC7B00CB3C60 /* openssl.c in Sources */ = {isa = PBXBuildFile; fileRef = 727B45022289EC7B00CB3C60 /* openssl.c */; };
+		728AEC1F280071550015C7F8 /* ma_hashtbl.c in Sources */ = {isa = PBXBuildFile; fileRef = 728AEC1E280071550015C7F8 /* ma_hashtbl.c */; };
+		728AEC20280071550015C7F8 /* ma_hashtbl.c in Sources */ = {isa = PBXBuildFile; fileRef = 728AEC1E280071550015C7F8 /* ma_hashtbl.c */; };
+		728AEC22280073250015C7F8 /* ma_config.h in Headers */ = {isa = PBXBuildFile; fileRef = 728AEC21280073250015C7F8 /* ma_config.h */; };
+		728AEC23280073250015C7F8 /* ma_config.h in Headers */ = {isa = PBXBuildFile; fileRef = 728AEC21280073250015C7F8 /* ma_config.h */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -195,7 +195,6 @@
 		27B7B43D21FFF9F500CE2354 /* ma_loaddata.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = ma_loaddata.c; sourceTree = "<group>"; };
 		27B7B43E21FFF9F500CE2354 /* ma_sha1.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = ma_sha1.c; sourceTree = "<group>"; };
 		27B7B43F21FFF9F500CE2354 /* ma_client_plugin.c.in */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = ma_client_plugin.c.in; sourceTree = "<group>"; };
-		27B7B44021FFF9F500CE2354 /* ma_hash.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = ma_hash.c; sourceTree = "<group>"; };
 		27B7B44121FFF9F500CE2354 /* ma_alloc.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = ma_alloc.c; sourceTree = "<group>"; };
 		27B7B44221FFF9F500CE2354 /* ma_io.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = ma_io.c; sourceTree = "<group>"; };
 		27B7B44321FFF9F500CE2354 /* ma_time.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = ma_time.c; sourceTree = "<group>"; };
@@ -210,7 +209,6 @@
 		27B7B44C21FFF9F500CE2354 /* ma_pvio.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = ma_pvio.c; sourceTree = "<group>"; };
 		27B7B44D21FFF9F500CE2354 /* mariadb_stmt.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = mariadb_stmt.c; sourceTree = "<group>"; };
 		27B7B44E21FFF9F500CE2354 /* mariadb_async.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = mariadb_async.c; sourceTree = "<group>"; };
-		27B7B44F21FFF9F500CE2354 /* get_password.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = get_password.c; sourceTree = "<group>"; };
 		27B7B48D21FFFA0C00CE2354 /* ma_global.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ma_global.h; sourceTree = "<group>"; };
 		27B7B48F21FFFA0C00CE2354 /* ma_io.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ma_io.h; sourceTree = "<group>"; };
 		27B7B49021FFFA0C00CE2354 /* ma_tls.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ma_tls.h; sourceTree = "<group>"; };
@@ -381,6 +379,8 @@
 		72584E9E222FFB0500E4B47C /* MariaDBClient.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MariaDBClient.h; sourceTree = "<group>"; };
 		72584E9F222FFB0500E4B47C /* MariaDBClient.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = MariaDBClient.m; sourceTree = "<group>"; };
 		727B45022289EC7B00CB3C60 /* openssl.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = openssl.c; sourceTree = "<group>"; };
+		728AEC1E280071550015C7F8 /* ma_hashtbl.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = ma_hashtbl.c; sourceTree = "<group>"; };
+		728AEC21280073250015C7F8 /* ma_config.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ma_config.h; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -433,7 +433,6 @@
 				27B7B43D21FFF9F500CE2354 /* ma_loaddata.c */,
 				27B7B43E21FFF9F500CE2354 /* ma_sha1.c */,
 				27B7B43F21FFF9F500CE2354 /* ma_client_plugin.c.in */,
-				27B7B44021FFF9F500CE2354 /* ma_hash.c */,
 				27B7B44121FFF9F500CE2354 /* ma_alloc.c */,
 				27B7B44221FFF9F500CE2354 /* ma_io.c */,
 				27B7B44321FFF9F500CE2354 /* ma_time.c */,
@@ -446,9 +445,9 @@
 				27B7B44A21FFF9F500CE2354 /* mariadb_dyncol.c */,
 				27B7B44B21FFF9F500CE2354 /* ma_client_plugin.c */,
 				27B7B44C21FFF9F500CE2354 /* ma_pvio.c */,
+				728AEC1E280071550015C7F8 /* ma_hashtbl.c */,
 				27B7B44D21FFF9F500CE2354 /* mariadb_stmt.c */,
 				27B7B44E21FFF9F500CE2354 /* mariadb_async.c */,
-				27B7B44F21FFF9F500CE2354 /* get_password.c */,
 			);
 			path = libmariadb;
 			sourceTree = "<group>";
@@ -456,6 +455,7 @@
 		27B7B48C21FFFA0C00CE2354 /* include */ = {
 			isa = PBXGroup;
 			children = (
+				728AEC21280073250015C7F8 /* ma_config.h */,
 				27B7B48D21FFFA0C00CE2354 /* ma_global.h */,
 				27B7B48E21FFFA0C00CE2354 /* mariadb */,
 				27B7B49021FFFA0C00CE2354 /* ma_tls.h */,
@@ -779,6 +779,7 @@
 				27B7B54921FFFD5300CE2354 /* inffast.h in Headers */,
 				27B7B55D21FFFD5300CE2354 /* inflate.h in Headers */,
 				27B7B53921FFFD5300CE2354 /* inftrees.h in Headers */,
+				728AEC22280073250015C7F8 /* ma_config.h in Headers */,
 				27B7B55721FFFD5300CE2354 /* zlib.h in Headers */,
 				27B7B54721FFFD5300CE2354 /* trees.h in Headers */,
 				27B7B56F21FFFD5300CE2354 /* zconf.h in Headers */,
@@ -806,6 +807,7 @@
 				27B7B54A21FFFD5300CE2354 /* inffast.h in Headers */,
 				27B7B55E21FFFD5300CE2354 /* inflate.h in Headers */,
 				27B7B53A21FFFD5300CE2354 /* inftrees.h in Headers */,
+				728AEC23280073250015C7F8 /* ma_config.h in Headers */,
 				27B7B55821FFFD5300CE2354 /* zlib.h in Headers */,
 				27B7B54821FFFD5300CE2354 /* trees.h in Headers */,
 				27B7B57021FFFD5300CE2354 /* zconf.h in Headers */,
@@ -954,6 +956,7 @@
 				27B7B48421FFF9F500CE2354 /* ma_pvio.c in Sources */,
 				27B7B45421FFF9F500CE2354 /* ma_charset.c in Sources */,
 				27B7B46621FFF9F500CE2354 /* ma_loaddata.c in Sources */,
+				728AEC1F280071550015C7F8 /* ma_hashtbl.c in Sources */,
 				27B7B45021FFF9F500CE2354 /* mariadb_charset.c in Sources */,
 				27B7B45221FFF9F500CE2354 /* ma_context.c in Sources */,
 				27B7B46421FFF9F500CE2354 /* ma_init.c in Sources */,
@@ -965,7 +968,6 @@
 				27B7B47821FFF9F500CE2354 /* ma_stmt_codec.c in Sources */,
 				27B7B45E21FFF9F500CE2354 /* ma_ll2str.c in Sources */,
 				27B7B46E21FFF9F500CE2354 /* ma_alloc.c in Sources */,
-				27B7B46C21FFF9F500CE2354 /* ma_hash.c in Sources */,
 				27B7B45821FFF9F500CE2354 /* ma_errmsg.c in Sources */,
 				27B7B46221FFF9F500CE2354 /* ma_password.c in Sources */,
 				27B7B55121FFFD5300CE2354 /* zutil.c in Sources */,
@@ -993,7 +995,6 @@
 				27B7B55B21FFFD5300CE2354 /* minigzip.c in Sources */,
 				27B7B45621FFF9F500CE2354 /* ma_list.c in Sources */,
 				27B7B45A21FFF9F500CE2354 /* ma_compress.c in Sources */,
-				27B7B48A21FFF9F500CE2354 /* get_password.c in Sources */,
 				27B7B56521FFFD5300CE2354 /* trees.c in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -1016,6 +1017,7 @@
 				27B7B48521FFF9F500CE2354 /* ma_pvio.c in Sources */,
 				27B7B45521FFF9F500CE2354 /* ma_charset.c in Sources */,
 				27B7B46721FFF9F500CE2354 /* ma_loaddata.c in Sources */,
+				728AEC20280071550015C7F8 /* ma_hashtbl.c in Sources */,
 				27B7B45121FFF9F500CE2354 /* mariadb_charset.c in Sources */,
 				27B7B45321FFF9F500CE2354 /* ma_context.c in Sources */,
 				27B7B46521FFF9F500CE2354 /* ma_init.c in Sources */,
@@ -1027,7 +1029,6 @@
 				27B7B47921FFF9F500CE2354 /* ma_stmt_codec.c in Sources */,
 				27B7B45F21FFF9F500CE2354 /* ma_ll2str.c in Sources */,
 				27B7B46F21FFF9F500CE2354 /* ma_alloc.c in Sources */,
-				27B7B46D21FFF9F500CE2354 /* ma_hash.c in Sources */,
 				27B7B45921FFF9F500CE2354 /* ma_errmsg.c in Sources */,
 				27B7B46321FFF9F500CE2354 /* ma_password.c in Sources */,
 				27B7B55221FFFD5300CE2354 /* zutil.c in Sources */,
@@ -1055,7 +1056,6 @@
 				27B7B55C21FFFD5300CE2354 /* minigzip.c in Sources */,
 				27B7B45721FFF9F500CE2354 /* ma_list.c in Sources */,
 				27B7B45B21FFF9F500CE2354 /* ma_compress.c in Sources */,
-				27B7B48B21FFF9F500CE2354 /* get_password.c in Sources */,
 				27B7B56621FFFD5300CE2354 /* trees.c in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -1218,6 +1218,7 @@
 					HAVE_OPENSSL,
 					"LIBMARIADB=1",
 					HAVE_TLS,
+					HAVE_OPENSSL_1_1_API,
 				);
 				HEADER_SEARCH_PATHS = "";
 				INFOPLIST_FILE = MariaDB/Info.plist;
@@ -1268,6 +1269,7 @@
 				GCC_PREPROCESSOR_DEFINITIONS = (
 					HAVE_OPENSSL,
 					HAVE_TLS,
+					HAVE_OPENSSL_1_1_API,
 				);
 				HEADER_SEARCH_PATHS = "";
 				INFOPLIST_FILE = MariaDB/Info.plist;
@@ -1320,6 +1322,7 @@
 					"DEBUG=1",
 					"HAVE_OPENSSL=1",
 					HAVE_TLS,
+					HAVE_OPENSSL_1_1_API,
 				);
 				HEADER_SEARCH_PATHS = "$(SOURCE_ROOT)/MariaDB/include_copied/";
 				INFOPLIST_FILE = MariaDB/Info.plist;
@@ -1375,6 +1378,7 @@
 				GCC_PREPROCESSOR_DEFINITIONS = (
 					"HAVE_OPENSSL=1",
 					HAVE_TLS,
+					HAVE_OPENSSL_1_1_API,
 				);
 				HEADER_SEARCH_PATHS = "$(SOURCE_ROOT)/MariaDB/include_copied/";
 				INFOPLIST_FILE = MariaDB/Info.plist;

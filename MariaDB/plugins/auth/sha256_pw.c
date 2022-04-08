@@ -1,5 +1,5 @@
 /************************************************************************************
-  Copyright (C) 2017 MariaDB Corporation AB
+  Copyright (C) 2017, 2021, MariaDB Corporation AB
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Library General Public
@@ -20,10 +20,9 @@
 #define _GNU_SOURCE 1
 #endif
 
-#ifdef _WIN32
-#if !defined(HAVE_OPENSSL)
-#define HAVE_WINCRYPT
-#endif
+#ifdef HAVE_WINCRYPT
+#undef HAVE_GNUTLS
+#undef HAVE_OPENSSL
 #endif
 
 #if defined(HAVE_OPENSSL) || defined(HAVE_WINCRYPT)
@@ -42,12 +41,12 @@
 #include <dlfcn.h>
 #endif
 
-#if defined(HAVE_OPENSSL)
+#if defined(HAVE_WINCRYPT)
+#include <wincrypt.h>
+#elif defined(HAVE_OPENSSL)
 #include <openssl/rsa.h>
 #include <openssl/pem.h>
 #include <openssl/err.h>
-#elif defined(HAVE_WINCRYPT)
-#include <wincrypt.h>
 #endif
 
 #define MAX_PW_LEN 1024
@@ -84,7 +83,7 @@ struct st_mysql_client_plugin_AUTHENTICATION _mysql_client_plugin_declaration_ =
 static LPBYTE ma_load_pem(const char *buffer, DWORD *buffer_len)
 {
   LPBYTE der_buffer= NULL;
-  DWORD der_buffer_length;
+  DWORD der_buffer_length= 0;
 
   if (buffer_len == NULL || *buffer_len == 0)
     return NULL;
@@ -112,7 +111,7 @@ end:
 }
 #endif
 
-char *sha256_load_pub_key_file(const char *filename, int *pub_key_size)
+static char *load_pub_key_file(const char *filename, int *pub_key_size)
 {
   FILE *fp= NULL;
   char *buffer= NULL;
@@ -164,21 +163,24 @@ static int auth_sha256_client(MYSQL_PLUGIN_VIO *vio, MYSQL *mysql)
   int packet_length;
   int rc= CR_ERROR;
   char passwd[MAX_PW_LEN];
-  unsigned char rsa_enc_pw[MAX_PW_LEN];
   unsigned int rsa_size;
   unsigned int pwlen, i;
 
 #if defined(HAVE_OPENSSL)
-  RSA *pubkey= NULL;
+  EVP_PKEY *pubkey= NULL;
+  EVP_PKEY_CTX *ctx= NULL;
+  size_t outlen= 0;
+  unsigned char *rsa_enc_pw= NULL;
   BIO *bio;
 #elif defined(HAVE_WINCRYPT)
+  unsigned char rsa_enc_pw[MAX_PW_LEN];
   HCRYPTKEY pubkey= 0;
   HCRYPTPROV hProv= 0;
   LPBYTE der_buffer= NULL;
   DWORD der_buffer_len= 0;
   CERT_PUBLIC_KEY_INFO *publicKeyInfo= NULL;
   DWORD ParamSize= sizeof(DWORD);
-  int publicKeyInfoLen;
+  int publicKeyInfoLen= 0;
 #endif
   char *filebuffer= NULL;
 
@@ -212,7 +214,7 @@ static int auth_sha256_client(MYSQL_PLUGIN_VIO *vio, MYSQL *mysql)
   if (mysql->options.extension &&
       mysql->options.extension->server_public_key)
   {
-    filebuffer= sha256_load_pub_key_file(mysql->options.extension->server_public_key,
+    filebuffer= load_pub_key_file(mysql->options.extension->server_public_key,
                              &packet_length);
   }
 
@@ -229,9 +231,17 @@ static int auth_sha256_client(MYSQL_PLUGIN_VIO *vio, MYSQL *mysql)
 #if defined(HAVE_OPENSSL)
   bio= BIO_new_mem_buf(filebuffer ? (unsigned char *)filebuffer : packet,
                        packet_length);
-  if ((pubkey= PEM_read_bio_RSA_PUBKEY(bio, NULL, NULL, NULL)))
-    rsa_size= RSA_size(pubkey);
+  if (!(pubkey= PEM_read_bio_PUBKEY(bio, NULL, NULL, NULL)))
+    goto error;
+  if (!(ctx= EVP_PKEY_CTX_new(pubkey, NULL)))
+    goto error;
+  if (EVP_PKEY_encrypt_init(ctx) <= 0)
+    goto error;
+  if (EVP_PKEY_CTX_set_rsa_padding(ctx, RSA_PKCS1_OAEP_PADDING) <= 0)
+    goto error;
+  rsa_size= EVP_PKEY_size(pubkey);
   BIO_free(bio);
+  bio= NULL;
   ERR_clear_error();
 #elif defined(HAVE_WINCRYPT)
   der_buffer_len= packet_length;
@@ -273,7 +283,11 @@ static int auth_sha256_client(MYSQL_PLUGIN_VIO *vio, MYSQL *mysql)
 
   /* encrypt scrambled password */
 #if defined(HAVE_OPENSSL)
-  if (RSA_public_encrypt(pwlen, (unsigned char *)passwd, rsa_enc_pw, pubkey, RSA_PKCS1_OAEP_PADDING) < 0)
+  if (EVP_PKEY_encrypt(ctx, NULL, &outlen, (unsigned char *)passwd, pwlen) <= 0)
+    goto error;
+  if (!(rsa_enc_pw= malloc(outlen)))
+    goto error;
+  if (EVP_PKEY_encrypt(ctx, rsa_enc_pw, &outlen, (unsigned char *)passwd, pwlen) <= 0)
     goto error;
 #elif defined(HAVE_WINCRYPT)
   if (!CryptEncrypt(pubkey, 0, TRUE, CRYPT_OAEP, (BYTE *)passwd, (DWORD *)&pwlen, MAX_PW_LEN))
@@ -293,7 +307,13 @@ static int auth_sha256_client(MYSQL_PLUGIN_VIO *vio, MYSQL *mysql)
 error:
 #if defined(HAVE_OPENSSL)
   if (pubkey)
-    RSA_free(pubkey);
+    EVP_PKEY_free(pubkey);
+  if (bio)
+    BIO_free(bio);
+  if (ctx)
+    EVP_PKEY_CTX_free(ctx);
+  if (rsa_enc_pw)
+    free(rsa_enc_pw);
 #elif defined(HAVE_WINCRYPT)
   CryptReleaseContext(hProv, 0);
   if (publicKeyInfo)
