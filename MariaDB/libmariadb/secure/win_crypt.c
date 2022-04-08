@@ -21,9 +21,8 @@
 #include <ma_crypt.h>
 #include <malloc.h>
 
-#pragma comment(lib, "bcrypt.lib")
-
 BCRYPT_ALG_HANDLE Sha256Prov= 0;
+BCRYPT_ALG_HANDLE Sha512Prov= 0;
 BCRYPT_ALG_HANDLE RsaProv= 0;
 
 static LPCWSTR ma_hash_get_algorithm(unsigned int alg, BCRYPT_ALG_HANDLE *algHdl)
@@ -33,6 +32,9 @@ static LPCWSTR ma_hash_get_algorithm(unsigned int alg, BCRYPT_ALG_HANDLE *algHdl
   case MA_HASH_SHA256:
     *algHdl= Sha256Prov;
     return BCRYPT_SHA256_ALGORITHM;
+  case MA_HASH_SHA512:
+    *algHdl= Sha512Prov;
+    return BCRYPT_SHA512_ALGORITHM;
   default:
     *algHdl= 0;
     return NULL;
@@ -99,4 +101,3 @@ void ma_hash_result(MA_HASH_CTX *ctx, unsigned char *digest)
 {
   BCryptFinishHash(ctx->hHash, digest, ctx->digest_len, 0);
 }
-

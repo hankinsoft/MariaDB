@@ -30,6 +30,10 @@
 #include <openssl/conf.h>
 #include <openssl/md4.h>
 
+#if defined(_WIN32) && !defined(_OPENSSL_Applink) && defined(HAVE_OPENSSL_APPLINK_C)
+#include <openssl/applink.c>
+#endif
+
 #if OPENSSL_VERSION_NUMBER >= 0x10002000L && !defined(LIBRESSL_VERSION_NUMBER)
 #include <openssl/x509v3.h>
 #define HAVE_OPENSSL_CHECK_HOST 1
@@ -46,9 +50,6 @@
 #define CRYPTO_THREADID_get_callback CRYPTO_get_id_callback
 #endif
 
-#ifdef HAVE_TLS_SESSION_CACHE
-#undef HAVE_TLS_SESSION_CACHE
-#endif
 #if defined(OPENSSL_USE_BIOMETHOD)
 #undef OPENSSL_USE_BIOMETHOD
 #endif
@@ -142,129 +143,6 @@ static void ma_tls_set_error(MYSQL *mysql)
 }
 
 #ifndef HAVE_OPENSSL_1_1_API
-/*
-   thread safe callbacks for OpenSSL
-   Crypto call back functions will be
-   set during ssl_initialization
- */
-#if OPENSSL_VERSION_NUMBER < 0x10000000L
-static unsigned long my_cb_threadid(void)
-{
-  /* cast pthread_t to unsigned long */
-  return (unsigned long) pthread_self();
-}
-#else
-static void my_cb_threadid(CRYPTO_THREADID *id)
-{
-  CRYPTO_THREADID_set_numeric(id, (unsigned long)pthread_self());
-}
-#endif
-#endif
-
-#ifdef HAVE_TLS_SESSION_CACHE
-typedef struct st_ma_tls_session {
-  char md4_hash[17];
-  SSL_SESSION *session;
-} MA_SSL_SESSION;
-
-MA_SSL_SESSION *ma_tls_sessions= NULL;
-int ma_tls_session_cache_size= 128;
-
-static char *ma_md4_hash(const char *host, const char *user, unsigned int port, char *md4)
-{
-  char buffer[195]; /* MAX_USERNAME_LEN + MAX_HOST_NAME_LEN + 2 + 5 */
-  snprintf(buffer, 194, "%s@%s:%d", user ? user : "", host, port);
-  buffer[194]= 0;
-  MD4((unsigned char *)buffer, strlen(buffer), (unsigned char *)md4);
-  return md4;
-}
-
-MA_SSL_SESSION *ma_tls_get_session(MYSQL *mysql)
-{
-  char md4[17];
-  int i;
-
-  if (!ma_tls_sessions)
-    return NULL;
-
-  memset(md4, 0, 16);
-  ma_md4_hash(mysql->host, mysql->user, mysql->port, md4);
-  for (i=0; i < ma_tls_session_cache_size; i++)
-  {
-    if (ma_tls_sessions[i].session &&
-        !strncmp(ma_tls_sessions[i].md4_hash, md4, 16))
-    {
-      return &ma_tls_sessions[i];
-    }
-  }
-  return NULL;
-}
-
-
-#if OPENSSL_USE_BIOMETHOD
-static int ma_bio_read(BIO *bio, char *buf, int size)
-{
-  MARIADB_PVIO *pvio= (MARIADB_PVIO *)bio->ptr;
-  size_t rc;
-
-  rc= pvio->methods->read(pvio, buf, (size_t)size);
-  BIO_clear_retry_flags(bio);
-  return (int)rc;
-}
-static int ma_bio_write(BIO *bio, const char *buf, int size)
-{
-  MARIADB_PVIO *pvio= (MARIADB_PVIO *)bio->ptr;
-  size_t rc;
-
-  rc= pvio->methods->write(pvio, buf, (size_t)size);
-  BIO_clear_retry_flags(bio);
-  return (int)rc;
-}
-#endif
-
-static int ma_tls_session_cb(SSL *ssl, SSL_SESSION *session)
-{
-  MYSQL *mysql;
-  MA_SSL_SESSION *stored_session;
-  int i;
-
-  mysql= (MYSQL *)SSL_get_app_data(ssl);
-
-  /* check if we already stored session key */
-  if ((stored_session= ma_tls_get_session(mysql)))
-  {
-    SSL_SESSION_free(stored_session->session);
-    stored_session->session= session;
-    return 1;
-  }
-
-  for (i=0; i < ma_tls_session_cache_size; i++)
-  {
-    if (!ma_tls_sessions[i].session)
-    {
-      ma_md4_hash(mysql->host, mysql->user, mysql->port, ma_tls_sessions[i].md4_hash);
-      ma_tls_sessions[i].session= session;
-    }
-    return 1;
-  }
-  return 0;
-}
-
-static void ma_tls_remove_session_cb(SSL_CTX* ctx __attribute__((unused)), 
-                                     SSL_SESSION* session)
-{
-  int i;
-  for (i=0; i < ma_tls_session_cache_size; i++)
-    if (session == ma_tls_sessions[i].session)
-    {
-      ma_tls_sessions[i].md4_hash[0]= 0;
-      SSL_SESSION_free(ma_tls_sessions[i].session);
-      ma_tls_sessions[i].session= NULL;
-    }
-}
-#endif
-
-#ifndef HAVE_OPENSSL_1_1_API
 static void my_cb_locking(int mode, int n,
                           const char *file __attribute__((unused)),
                           int line __attribute__((unused)))
@@ -277,25 +155,18 @@ static void my_cb_locking(int mode, int n,
 
 static int ssl_thread_init()
 {
-  if (!CRYPTO_THREADID_get_callback()
-#ifndef OPENSSL_NO_DEPRECATED
-      && !CRYPTO_get_id_callback()
-#endif
-      )
+  if (LOCK_crypto == NULL)
   {
     int i, max= CRYPTO_num_locks();
 
-    if (LOCK_crypto == NULL)
-    {
-      if (!(LOCK_crypto=
-            (pthread_mutex_t *)ma_malloc(sizeof(pthread_mutex_t) * max, MYF(0))))
-        return 1;
+    if (!(LOCK_crypto=
+           (pthread_mutex_t *)ma_malloc(sizeof(pthread_mutex_t) * max, MYF(0))))
+      return 1;
 
-      for (i=0; i < max; i++)
-        pthread_mutex_init(&LOCK_crypto[i], NULL);
-    }
+    for (i=0; i < max; i++)
+      pthread_mutex_init(&LOCK_crypto[i], NULL);
+
     CRYPTO_set_locking_callback(my_cb_locking);
-    CRYPTO_THREADID_set_callback(my_cb_threadid);
   }
   return 0;
 }
@@ -419,9 +290,7 @@ void ma_tls_end()
     if (mariadb_deinitialize_ssl)
     {
 #ifndef HAVE_OPENSSL_1_1_API
-#if OPENSSL_VERSION_NUMBER < 0x10100000L
-      ERR_remove_state(0);
-#endif
+      ERR_remove_thread_state(NULL);
       EVP_cleanup();
       CRYPTO_cleanup_all_ex_data();
       ERR_free_strings();
@@ -447,22 +316,24 @@ int ma_tls_get_password(char *buf, int size,
 }
 
 
-static int ma_tls_set_certs(MYSQL *mysql, SSL *ssl)
+static int ma_tls_set_certs(MYSQL *mysql, SSL_CTX *ctx)
 {
   char *certfile= mysql->options.ssl_cert,
        *keyfile= mysql->options.ssl_key;
   char *pw= (mysql->options.extension) ?
             mysql->options.extension->tls_pw : NULL;
-  SSL_CTX *ctx= SSL_get_SSL_CTX(ssl);
 
-  
   /* add cipher */
   if ((mysql->options.ssl_cipher &&
         mysql->options.ssl_cipher[0] != 0))
-   {
-     if(SSL_set_cipher_list(ssl, mysql->options.ssl_cipher) == 0)
-    goto error;
-   }
+  {
+    if(
+#ifdef TLS1_3_VERSION
+       SSL_CTX_set_ciphersuites(ctx, mysql->options.ssl_cipher) == 0 &&
+#endif
+       SSL_CTX_set_cipher_list(ctx, mysql->options.ssl_cipher) == 0)
+      goto error;
+  }
 
   /* ca_file and ca_path */
   if (!SSL_CTX_load_verify_locations(ctx,
@@ -475,6 +346,22 @@ static int ma_tls_set_certs(MYSQL *mysql, SSL *ssl)
       goto error;
   }
 
+  if (mysql->options.extension &&
+     (mysql->options.extension->ssl_crl || mysql->options.extension->ssl_crlpath))
+  {
+    X509_STORE *certstore;
+
+    if ((certstore= SSL_CTX_get_cert_store(ctx)))
+    {
+      if (X509_STORE_load_locations(certstore, mysql->options.extension->ssl_crl,
+                                               mysql->options.extension->ssl_crlpath) == 0)
+        goto error;
+
+      if (X509_STORE_set_flags(certstore, X509_V_FLAG_CRL_CHECK | X509_V_FLAG_CRL_CHECK_ALL) == 0)
+        goto error;
+    }
+  } 
+
   if (keyfile && !certfile)
     certfile= keyfile;
   if (certfile && !keyfile)
@@ -483,10 +370,12 @@ static int ma_tls_set_certs(MYSQL *mysql, SSL *ssl)
   /* set cert */
   if (certfile  && certfile[0] != 0)
   {
-    if (SSL_CTX_use_certificate_chain_file(ctx, certfile) != 1 ||
-        SSL_use_certificate_file(ssl, certfile, SSL_FILETYPE_PEM) != 1)
+    if (SSL_CTX_use_certificate_chain_file(ctx, certfile) != 1)
+    {
       goto error; 
+    }
   }
+
   if (keyfile && keyfile[0])
   {
     FILE *fp;
@@ -495,7 +384,7 @@ static int ma_tls_set_certs(MYSQL *mysql, SSL *ssl)
       EVP_PKEY *key= EVP_PKEY_new();
       PEM_read_PrivateKey(fp, &key, NULL, pw);
       fclose(fp);
-      if (SSL_use_PrivateKey(ssl, key) != 1)
+      if (SSL_CTX_use_PrivateKey(ctx, key) != 1)
       {
         unsigned long err= ERR_peek_error();
         EVP_PKEY_free(key);
@@ -511,24 +400,10 @@ static int ma_tls_set_certs(MYSQL *mysql, SSL *ssl)
     }
   }
   /* verify key */
-  if (certfile && !SSL_check_private_key(ssl))
+  if (certfile && SSL_CTX_check_private_key(ctx) != 1)
     goto error;
   
-  if (mysql->options.extension &&
-      (mysql->options.extension->ssl_crl || mysql->options.extension->ssl_crlpath))
-  {
-    X509_STORE *certstore;
-
-    if ((certstore= SSL_CTX_get_cert_store(ctx)))
-    {
-      if (X509_STORE_load_locations(certstore, mysql->options.extension->ssl_crl,
-                                               mysql->options.extension->ssl_crlpath) == 0)
-        goto error;
-
-      X509_STORE_set_flags(certstore, X509_V_FLAG_CRL_CHECK | X509_V_FLAG_CRL_CHECK_ALL);
-    }
-  }
-  SSL_CTX_set_verify(ctx, (mysql->options.ssl_ca || mysql->options.ssl_capath)?
+  SSL_CTX_set_verify(ctx, (mysql->options.ssl_ca || mysql->options.ssl_capath) ? 
                      SSL_VERIFY_PEER : SSL_VERIFY_NONE, NULL);
   return 0;
 
@@ -541,12 +416,10 @@ void *ma_tls_init(MYSQL *mysql)
 {
   SSL *ssl= NULL;
   SSL_CTX *ctx= NULL;
-  long options= SSL_OP_ALL |
-                SSL_OP_NO_SSLv2 |
-                SSL_OP_NO_SSLv3;
-#ifdef HAVE_TLS_SESSION_CACHE
-  MA_SSL_SESSION *session= ma_tls_get_session(mysql);
-#endif
+  long default_options= SSL_OP_ALL |
+                        SSL_OP_NO_SSLv2 |
+                        SSL_OP_NO_SSLv3;
+  long options= 0;
   pthread_mutex_lock(&LOCK_openssl_config);
 
   #if OPENSSL_VERSION_NUMBER >= 0x10100000L
@@ -555,31 +428,20 @@ void *ma_tls_init(MYSQL *mysql)
   if (!(ctx= SSL_CTX_new(SSLv23_client_method())))
 #endif
     goto error;
-  if (mysql->options.extension)
-    options|= ma_tls_version_options(mysql->options.extension->tls_version);
-  SSL_CTX_set_options(ctx, options);
-#ifdef HAVE_TLS_SESSION_CACHE
-  SSL_CTX_set_session_cache_mode(ctx, SSL_SESS_CACHE_CLIENT);
-  ma_tls_sessions= (MA_SSL_SESSION *)calloc(1, sizeof(struct st_ma_tls_session) * ma_tls_session_cache_size);
-  SSL_CTX_sess_set_new_cb(ctx, ma_tls_session_cb);
-  SSL_CTX_sess_set_remove_cb(ctx, ma_tls_remove_session_cb);
-#endif
+  if (mysql->options.extension) 
+    options= ma_tls_version_options(mysql->options.extension->tls_version);
+  SSL_CTX_set_options(ctx, options ? options : default_options);
 
-  if (!(ssl= SSL_new(ctx)))
-    goto error;
-
-  if (ma_tls_set_certs(mysql, ssl))
+  if (ma_tls_set_certs(mysql, ctx))
   {
     goto error;
   }
 
-  if (!SSL_set_app_data(ssl, mysql))
+  if (!(ssl= SSL_new(ctx)))
     goto error;
 
-#ifdef HAVE_TLS_SESSION_CACHE
-  if (session)
-    SSL_set_session(ssl, session->session);
-#endif
+  if (!SSL_set_app_data(ssl, mysql))
+    goto error;
 
   pthread_mutex_unlock(&LOCK_openssl_config);
   return (void *)ssl;
@@ -624,7 +486,7 @@ my_bool ma_tls_connect(MARIADB_TLS *ctls)
 
   while (try_connect && (rc= SSL_connect(ssl)) == -1)
   {
-    switch(SSL_get_error(ssl, rc)) {
+    switch((SSL_get_error(ssl, rc))) {
     case SSL_ERROR_WANT_READ:
       if (pvio->methods->wait_io_or_timeout(pvio, TRUE, mysql->options.connect_timeout) < 1)
         try_connect= 0;
@@ -637,25 +499,26 @@ my_bool ma_tls_connect(MARIADB_TLS *ctls)
       try_connect= 0;
     }
   }
-  if (rc != 1)
+
+  /* In case handshake failed or if a root certificate (ca) was specified,
+     we need to check the result code of X509 verification. A detailed check
+     of the peer certificate (hostname checking will follow later) */
+  if (rc != 1 ||
+      (mysql->client_flag & CLIENT_SSL_VERIFY_SERVER_CERT) ||
+      (mysql->options.ssl_ca || mysql->options.ssl_capath))
   {
-    ma_tls_set_error(mysql);
-    /* restore blocking mode */
-    if (!blocking)
-      pvio->methods->blocking(pvio, FALSE, 0);
-    return 1;
-  }
-  if ((mysql->client_flag & CLIENT_SSL_VERIFY_SERVER_CERT))
-  {
-    rc= SSL_get_verify_result(ssl);
-    if (rc != X509_V_OK)
+    long x509_err= SSL_get_verify_result(ssl);
+    if (x509_err != X509_V_OK)
     {
       my_set_error(mysql, CR_SSL_CONNECTION_ERROR, SQLSTATE_UNKNOWN, 
-                   ER(CR_SSL_CONNECTION_ERROR), X509_verify_cert_error_string(rc));
+                   ER(CR_SSL_CONNECTION_ERROR), X509_verify_cert_error_string(x509_err));
       /* restore blocking mode */
       if (!blocking)
         pvio->methods->blocking(pvio, FALSE, 0);
 
+      return 1;
+    } else if (rc != 1) {
+      ma_tls_set_error(mysql);
       return 1;
     }
   }
@@ -792,7 +655,6 @@ int ma_tls_verify_server_cert(MARIADB_TLS *ctls)
   ASN1_STRING *cn_asn1;
   const char *cn_str;
 #endif
-
   if (!ctls || !ctls->ssl)
     return 1;
   ssl= (SSL *)ctls->ssl;
@@ -814,7 +676,8 @@ int ma_tls_verify_server_cert(MARIADB_TLS *ctls)
     return 1;
   }
 #ifdef HAVE_OPENSSL_CHECK_HOST
-  if (X509_check_host(cert, mysql->host, 0, 0, 0) != 1)
+  if (X509_check_host(cert, mysql->host, 0, 0, 0) != 1
+     && X509_check_ip_asc(cert, mysql->host, 0) != 1)
     goto error;
 #else
   x509sn= X509_get_subject_name(cert);

@@ -1325,9 +1325,14 @@
 				INFOPLIST_FILE = MariaDB/Info.plist;
 				INSTALL_PATH = "";
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks @loader_path/Frameworks";
-				LIBRARY_SEARCH_PATHS = (
+				LIBRARY_SEARCH_PATHS = "$(inherited)";
+				"LIBRARY_SEARCH_PATHS[arch=*]" = (
 					"$(inherited)",
 					"$(PROJECT_DIR)/libs/iOS",
+				);
+				"LIBRARY_SEARCH_PATHS[sdk=iphonesimulator*]" = (
+					"$(inherited)",
+					"$(PROJECT_DIR)/libs/iOS-sim",
 				);
 				OTHER_CFLAGS = (
 					"-fPIC",
@@ -1375,9 +1380,14 @@
 				INFOPLIST_FILE = MariaDB/Info.plist;
 				INSTALL_PATH = "";
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks @loader_path/Frameworks";
-				LIBRARY_SEARCH_PATHS = (
+				LIBRARY_SEARCH_PATHS = "$(inherited)";
+				"LIBRARY_SEARCH_PATHS[arch=*]" = (
 					"$(inherited)",
 					"$(PROJECT_DIR)/libs/iOS",
+				);
+				"LIBRARY_SEARCH_PATHS[sdk=iphonesimulator*]" = (
+					"$(inherited)",
+					"$(PROJECT_DIR)/libs/iOS-sim",
 				);
 				OTHER_CFLAGS = (
 					"-fPIC",

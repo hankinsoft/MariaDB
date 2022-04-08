@@ -64,7 +64,7 @@
 #include <ma_global.h>
 #include <ma_sys.h>
 #include <ma_string.h>
-#include <ma_hash.h>
+//#include <ma_hashtbl.h>
 #include <mariadb_dyncol.h>
 #include <mysql.h>
 
@@ -3751,7 +3751,7 @@ mariadb_dyncol_check(DYNAMIC_COLUMN *str)
        i++, header.entry+= header.entry_size)
   {
     DYNAMIC_COLUMN_VALUE store;
-    // already checked by previouse pass
+    /* already checked by previous pass */
     (*fmt->type_and_offset_read)(&header.type, &header.offset,
                                  header.entry + fmt->fixed_hdr_entry,
                                  header.offset_size);

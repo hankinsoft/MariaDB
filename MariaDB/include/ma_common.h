@@ -21,7 +21,8 @@
 #define _ma_common_h
 
 #include <mysql.h>
-#include <ma_hash.h>
+#include <mysql/client_plugin.h>
+#include <ma_hashtbl.h>
 
 enum enum_multi_status {
   COM_MULTI_OFF= 0,
@@ -30,6 +31,13 @@ enum enum_multi_status {
   COM_MULTI_DISABLED,
   COM_MULTI_END
 };
+
+
+typedef enum {
+  ALWAYS_ACCEPT,       /* heuristics is disabled, use CLIENT_LOCAL_FILES */
+  WAIT_FOR_QUERY,      /* heuristics is enabled, not sending files */
+  ACCEPT_FILE_REQUEST  /* heuristics is enabled, ready to send a file */
+} auto_local_infile_state;
 
 typedef struct st_mariadb_db_driver
 {
@@ -47,7 +55,7 @@ struct st_mysql_options_extension {
   char *ssl_crlpath;
   char *server_public_key_path;
   struct mysql_async_context *async_context;
-  HASH connect_attrs;
+  MA_HASHTBL connect_attrs;
   size_t connect_attrs_len;
   void (*report_progress)(const MYSQL *mysql,
                           unsigned int stage,
@@ -67,10 +75,13 @@ struct st_mysql_options_extension {
   my_bool read_only;
   char *connection_handler;
   my_bool (*set_option)(MYSQL *mysql, const char *config_option, const char *config_value);
-  HASH userdata;
+  MA_HASHTBL userdata;
   char *server_public_key;
   char *proxy_header;
   size_t proxy_header_len;
+  int (*io_wait)(my_socket handle, my_bool is_read, int timeout);
+  my_bool skip_read_response;
+  char *restricted_auth;
 };
 
 typedef struct st_connection_handler
@@ -83,6 +94,9 @@ typedef struct st_connection_handler
 
 struct st_mariadb_net_extension {
   enum enum_multi_status multi_status;
+  int extended_errno;
+  ma_compress_ctx *compression_ctx;
+  MARIADB_COMPRESSION_PLUGIN *compression_plugin;
 };
 
 struct st_mariadb_session_state
@@ -96,10 +110,17 @@ struct st_mariadb_extension {
   struct st_mariadb_session_state session_state[SESSION_TRACK_TYPES];
   unsigned long mariadb_client_flag; /* MariaDB specific client flags */
   unsigned long mariadb_server_capabilities; /* MariaDB specific server capabilities */
+  my_bool auto_local_infile;
 };
 
 #define OPT_EXT_VAL(a,key) \
-  ((a)->options.extension && (a)->options.extension->key) ?\
-    (a)->options.extension->key : 0
+  (((a)->options.extension && (a)->options.extension->key) ?\
+    (a)->options.extension->key : 0)
 
 #endif
+
+
+typedef struct st_mariadb_field_extension
+{
+  MARIADB_CONST_STRING metadata[MARIADB_FIELD_ATTR_LAST+1]; /* 10.5 */
+} MA_FIELD_EXTENSION;

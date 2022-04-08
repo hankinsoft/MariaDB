@@ -46,15 +46,17 @@
 
 #include <ma_pthread.h>
 
+struct st_DER {
+  char* der_buffer;
+  DWORD der_length;
+};
+
 struct st_schannel {
-  HCERTSTORE cert_store;
-  const CERT_CONTEXT *client_cert_ctx;
   CredHandle CredHdl;
-  my_bool FreeCredHdl;
   PUCHAR IoBuffer;
   DWORD IoBufferSize;
   SecPkgContext_StreamSizes Sizes;
-  CtxtHandle ctxt;
+  CtxtHandle hCtxt;
 
   /* Cached data from the last read/decrypt call.*/
   SecBuffer extraBuf; /* encrypted data read from server. */
@@ -67,18 +69,16 @@ typedef struct st_schannel SC_CTX;
 extern HCERTSTORE ca_CertStore, crl_CertStore;
 extern my_bool ca_Check, crl_Check;
 
-CERT_CONTEXT *ma_schannel_create_cert_context(MARIADB_PVIO *pvio, const char *pem_file);
+;
 SECURITY_STATUS ma_schannel_client_handshake(MARIADB_TLS *ctls);
 SECURITY_STATUS ma_schannel_handshake_loop(MARIADB_PVIO *pvio, my_bool InitialRead, SecBuffer *pExtraData);
-my_bool ma_schannel_load_private_key(MARIADB_PVIO *pvio, const CERT_CONTEXT *ctx, char *key_file);
-PCCRL_CONTEXT ma_schannel_create_crl_context(MARIADB_PVIO *pvio, const char *pem_file);
-my_bool ma_schannel_verify_certs(MARIADB_TLS *ctls);
+
+my_bool ma_schannel_verify_certs(MARIADB_TLS *ctls, BOOL verify_server_name);
 ssize_t ma_schannel_write_encrypt(MARIADB_PVIO *pvio,
                                  uchar *WriteBuffer,
                                  size_t WriteBufferSize);
- SECURITY_STATUS ma_schannel_read_decrypt(MARIADB_PVIO *pvio,
-                                 PCredHandle phCreds,
-                                 CtxtHandle * phContext,
+SECURITY_STATUS ma_schannel_read_decrypt(MARIADB_PVIO *pvio,
+                                 CtxtHandle* phContext,
                                  DWORD *DecryptLength,
                                  uchar *ReadBuffer,
                                  DWORD ReadBufferSize);

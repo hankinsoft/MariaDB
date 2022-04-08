@@ -49,6 +49,7 @@
 #include <mariadb_ctype.h>
 #include "mysql.h"
 #include <math.h> /* ceil() */
+#include <limits.h>
 
 #ifdef WIN32
 #include <malloc.h>
@@ -71,6 +72,8 @@
 #define LONGLONG_MIN    ((long long) 0x8000000000000000LL)
 #define LONGLONG_MAX    ((long long) 0x7FFFFFFFFFFFFFFFLL)
 #endif
+
+#define MAX_DBL_STR (3 + DBL_MANT_DIG - DBL_MIN_EXP)
 
 #if defined(HAVE_LONG_LONG) && !defined(ULONGLONG_MAX)
 /* First check for ANSI C99 definition: */
@@ -171,6 +174,7 @@ static long long my_strtoll(const char *str, size_t len, const char **end, int *
 
   if (p == end_str)
   {
+    *end = p;
     *err = ERANGE;
     return 0;
   }
@@ -253,19 +257,25 @@ static unsigned long long my_atoull(const char *str, const char *end_str, int *e
 double my_atod(const char *number, const char *end, int *error)
 {
   double val= 0.0;
-  char buffer[255];
+  char buffer[MAX_DBL_STR + 1];
   int len= (int)(end - number);
 
-  if (len > 254) 
-    *error= 1;
+  *error= errno= 0;
 
-  len= MIN(len, 254);
-  memcpy(&buffer, number, len);
+  if (len > MAX_DBL_STR)
+  {
+    *error= 1;
+    len= MAX_DBL_STR;
+  }
+
+  memcpy(buffer, number, len);
   buffer[len]= '\0';
 
   val= strtod(buffer, NULL);
-/*  if (!*error)
-    *error= errno; */
+
+  if (errno)
+    *error= errno;
+
   return val;
 }
 
@@ -360,7 +370,7 @@ end:
 
   Year must be < 10000, month < 12, day < 32
 
-  Years with 2 digits, are coverted to values 1970-2069 according to 
+  Years with 2 digits, are converted to values 1970-2069 according to
   usual rules:
 
   00-69 is converted to 2000-2069.
@@ -569,21 +579,24 @@ static void convert_froma_string(MYSQL_BIND *r_param, char *buffer, size_t len)
     case MYSQL_TYPE_NEWDECIMAL:
     default:
     {
-      char *start= buffer + r_param->offset; /* stmt_fetch_column sets offset */
-      char *end= buffer + len;
-      size_t copylen= 0;
-
-      if (start < end)
+      if (len >= r_param->offset)
       {
-        copylen= end - start;
-        if (r_param->buffer_length)
-          memcpy(r_param->buffer, start, MIN(copylen, r_param->buffer_length));
-      }
-      if (copylen < r_param->buffer_length)
-        ((char *)r_param->buffer)[copylen]= 0;
-      *r_param->error= (copylen > r_param->buffer_length);
+        char *start= buffer + r_param->offset; /* stmt_fetch_column sets offset */
+        char *end= buffer + len;
+        size_t copylen= 0;
 
-      *r_param->length= (ulong)len; 
+        if (start < end)
+        {
+          copylen= end - start;
+          if (r_param->buffer_length)
+            memcpy(r_param->buffer, start, MIN(copylen, r_param->buffer_length));
+        }
+        if (copylen < r_param->buffer_length)
+          ((char *)r_param->buffer)[copylen]= 0;
+        *r_param->error= (copylen > r_param->buffer_length);
+
+      }
+      *r_param->length= (ulong)len;
     }
     break;
   }
@@ -629,7 +642,7 @@ static void convert_from_long(MYSQL_BIND *r_param, const MYSQL_FIELD *field, lon
     }
     case MYSQL_TYPE_FLOAT:
     {
-      float fval;
+      volatile float fval;
       fval= is_unsigned ? (float)(ulonglong)(val) : (float)val;
       floatstore((uchar *)r_param->buffer, fval);
       *r_param->error= (fval != ceilf(fval)) ||
@@ -643,21 +656,28 @@ static void convert_from_long(MYSQL_BIND *r_param, const MYSQL_FIELD *field, lon
       char *buffer;
       char *endptr;
       uint len;
+      my_bool zf_truncated= 0;
 
       buffer= alloca(MAX(field->length, 22));
       endptr= ma_ll2str(val, buffer, is_unsigned ? 10 : -10);
       len= (uint)(endptr - buffer);
 
       /* check if field flag is zerofill */
-      if (field->flags & ZEROFILL_FLAG &&
-          len < field->length && len < r_param->buffer_length)
+      if (field->flags & ZEROFILL_FLAG)
       {
-        ma_bmove_upp(buffer + field->length, buffer + len, len);
-        /* coverity [bad_memset] */
-        memset((void*) buffer, (int) '0', field->length - len);
-        len= field->length;
+        uint display_width= MAX(field->length, len);
+        if (display_width < r_param->buffer_length)
+        {
+          ma_bmove_upp(buffer + display_width, buffer + len, len);
+          /* coverity[bad_memset] */
+          memset((void*) buffer, (int) '0', display_width - len);
+          len= display_width;
+        }
+        else
+          zf_truncated= 1;
       }
       convert_froma_string(r_param, buffer, len);
+      *r_param->error+= zf_truncated;
     }
     break;
   }
@@ -872,7 +892,7 @@ static void convert_from_float(MYSQL_BIND *r_param, const MYSQL_FIELD *field, fl
         if (field->length < length || field->length > MAX_DOUBLE_STRING_REP_LENGTH - 1)
           break;
         ma_bmove_upp(buff + field->length, buff + length, length);
-        /* coverity [bad_memset] */
+        /* coverity[bad_memset] */
         memset((void*) buff, (int) '0', field->length - length);
         length= field->length;
       }
@@ -1095,74 +1115,68 @@ void ps_fetch_datetime(MYSQL_BIND *r_param, const MYSQL_FIELD * field,
   unsigned int len= net_field_length(row);
 
   switch (r_param->buffer_type) {
-  case MYSQL_TYPE_DATETIME:
-  case MYSQL_TYPE_TIMESTAMP:
-    convert_to_datetime(t, row, len, field->type);
-    break;
-  case MYSQL_TYPE_DATE:
-    convert_to_datetime(t, row, len, field->type);
-    break;
-  case MYSQL_TYPE_TIME:
-    convert_to_datetime(t, row, len, field->type);
-    t->year= t->day= t->month= 0;
-    break;
-  case MYSQL_TYPE_YEAR:
-  {
-    MYSQL_TIME tm;
-    convert_to_datetime(&tm, row, len, field->type);
-    shortstore(r_param->buffer, tm.year);
-    break;
-  }
-  default: 
-  {
-    char dtbuffer[60];
-    MYSQL_TIME tm;
-    size_t length;
-    convert_to_datetime(&tm, row, len, field->type);
- /*   
-    if (tm.time_type== MYSQL_TIMESTAMP_TIME && tm.day)
-    {
-      tm.hour+= tm.day * 24;
-      tm.day=0;
-    }
-*/
-    switch(field->type) {
-    case MYSQL_TYPE_DATE:
-      length= sprintf(dtbuffer, "%04u-%02u-%02u", tm.year, tm.month, tm.day);
-      break;
-    case MYSQL_TYPE_TIME:
-      length= sprintf(dtbuffer, "%s%02u:%02u:%02u", (tm.neg ? "-" : ""), tm.hour, tm.minute, tm.second);
-      if (field->decimals && field->decimals <= 6)
-      {
-        char ms[8];
-        sprintf(ms, ".%06lu", tm.second_part);
-        if (field->decimals < 6)
-          ms[field->decimals + 1]= 0;
-        length+= strlen(ms);
-        strcat(dtbuffer, ms);
-      }
-      break;
     case MYSQL_TYPE_DATETIME:
     case MYSQL_TYPE_TIMESTAMP:
-      length= sprintf(dtbuffer, "%04u-%02u-%02u %02u:%02u:%02u", tm.year, tm.month, tm.day, tm.hour, tm.minute, tm.second);
-      if (field->decimals && field->decimals <= 6)
-      {
-        char ms[8];
-        sprintf(ms, ".%06lu", tm.second_part);
-        if (field->decimals < 6)
-          ms[field->decimals + 1]= 0;
-        length+= strlen(ms);
-        strcat(dtbuffer, ms);
-      }
+      convert_to_datetime(t, row, len, field->type);
       break;
-    default:
-      dtbuffer[0]= 0;
-      length= 0;
-    break;
+    case MYSQL_TYPE_DATE:
+      convert_to_datetime(t, row, len, field->type);
+      break;
+    case MYSQL_TYPE_TIME:
+      convert_to_datetime(t, row, len, field->type);
+      t->year= t->day= t->month= 0;
+      break;
+    case MYSQL_TYPE_YEAR:
+    {
+      MYSQL_TIME tm;
+      convert_to_datetime(&tm, row, len, field->type);
+      shortstore(r_param->buffer, tm.year);
+      break;
     }
-    convert_froma_string(r_param, dtbuffer, length);
-    break;
-  }
+    default: 
+    {
+      char dtbuffer[60];
+      MYSQL_TIME tm;
+      size_t length;
+      convert_to_datetime(&tm, row, len, field->type);
+
+      switch(field->type) {
+      case MYSQL_TYPE_DATE:
+        length= sprintf(dtbuffer, "%04u-%02u-%02u", tm.year, tm.month, tm.day);
+        break;
+      case MYSQL_TYPE_TIME:
+        length= sprintf(dtbuffer, "%s%02u:%02u:%02u", (tm.neg ? "-" : ""), tm.hour, tm.minute, tm.second);
+        if (field->decimals && field->decimals <= 6)
+        {
+          char ms[8];
+          sprintf(ms, ".%06lu", tm.second_part);
+          if (field->decimals < 6)
+            ms[field->decimals + 1]= 0;
+          length+= strlen(ms);
+          strcat(dtbuffer, ms);
+        }
+        break;
+      case MYSQL_TYPE_DATETIME:
+      case MYSQL_TYPE_TIMESTAMP:
+        length= sprintf(dtbuffer, "%04u-%02u-%02u %02u:%02u:%02u", tm.year, tm.month, tm.day, tm.hour, tm.minute, tm.second);
+        if (field->decimals && field->decimals <= 6)
+        {
+          char ms[8];
+          sprintf(ms, ".%06lu", tm.second_part);
+          if (field->decimals < 6)
+            ms[field->decimals + 1]= 0;
+          length+= strlen(ms);
+          strcat(dtbuffer, ms);
+        }
+        break;
+      default:
+        dtbuffer[0]= 0;
+        length= 0;
+        break;
+      }
+      convert_froma_string(r_param, dtbuffer, length);
+      break;
+    }
   }
   (*row) += len;
 }
@@ -1234,11 +1248,11 @@ void mysql_init_ps_subsystem(void)
 
   mysql_ps_fetch_functions[MYSQL_TYPE_YEAR].func    = ps_fetch_int16;
   mysql_ps_fetch_functions[MYSQL_TYPE_YEAR].pack_len  = 2;
-  mysql_ps_fetch_functions[MYSQL_TYPE_YEAR].max_len  = 6;
+  mysql_ps_fetch_functions[MYSQL_TYPE_YEAR].max_len  = 4;
 
   mysql_ps_fetch_functions[MYSQL_TYPE_INT24].func    = ps_fetch_int32;
   mysql_ps_fetch_functions[MYSQL_TYPE_INT24].pack_len  = 4;
-  mysql_ps_fetch_functions[MYSQL_TYPE_INT24].max_len  = 9;
+  mysql_ps_fetch_functions[MYSQL_TYPE_INT24].max_len  = 8;
 
   mysql_ps_fetch_functions[MYSQL_TYPE_LONG].func    = ps_fetch_int32;
   mysql_ps_fetch_functions[MYSQL_TYPE_LONG].pack_len  = 4;
@@ -1246,7 +1260,7 @@ void mysql_init_ps_subsystem(void)
 
   mysql_ps_fetch_functions[MYSQL_TYPE_LONGLONG].func  = ps_fetch_int64;
   mysql_ps_fetch_functions[MYSQL_TYPE_LONGLONG].pack_len= 8;
-  mysql_ps_fetch_functions[MYSQL_TYPE_LONGLONG].max_len  = 21;
+  mysql_ps_fetch_functions[MYSQL_TYPE_LONGLONG].max_len  = 20;
 
   mysql_ps_fetch_functions[MYSQL_TYPE_FLOAT].func    = ps_fetch_float;
   mysql_ps_fetch_functions[MYSQL_TYPE_FLOAT].pack_len  = 4;
@@ -1345,3 +1359,4 @@ void mysql_init_ps_subsystem(void)
  * vim600: noet sw=4 ts=4 fdm=marker
  * vim<600: noet sw=4 ts=4
  */
+

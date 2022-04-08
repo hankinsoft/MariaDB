@@ -61,6 +61,14 @@ typedef int my_socket;
 #include "ma_list.h"
 #include "mariadb_ctype.h"
 
+
+typedef struct st_ma_const_string
+{
+  const char *str;
+  size_t length;
+} MARIADB_CONST_STRING;
+
+
 #ifndef ST_MA_USED_MEM_DEFINED
 #define ST_MA_USED_MEM_DEFINED
   typedef struct st_ma_used_mem {   /* struct for once_alloc */
@@ -122,11 +130,13 @@ extern unsigned int mariadb_deinitialize_ssl;
   typedef unsigned int MYSQL_FIELD_OFFSET; /* offset to current field */
 
 #define SET_CLIENT_ERROR(a, b, c, d) \
-  { \
+  do { \
     (a)->net.last_errno= (b);\
     strncpy((a)->net.sqlstate, (c), SQLSTATE_LENGTH);\
+    (a)->net.sqlstate[SQLSTATE_LENGTH]= 0;\
     strncpy((a)->net.last_error, (d) ? (d) : ER((b)), MYSQL_ERRMSG_SIZE - 1);\
-  }
+    (a)->net.last_error[MYSQL_ERRMSG_SIZE - 1]= 0;\
+  } while(0)
 
 /* For mysql_async.c */
 #define set_mariadb_error(A,B,C) SET_CLIENT_ERROR((A),(B),(C),0)
@@ -134,11 +144,13 @@ extern const char *SQLSTATE_UNKNOWN;
 #define unknown_sqlstate SQLSTATE_UNKNOWN
 
 #define CLEAR_CLIENT_ERROR(a) \
-  { \
+  do { \
     (a)->net.last_errno= 0;\
     strcpy((a)->net.sqlstate, "00000");\
     (a)->net.last_error[0]= '\0';\
-  }
+    if ((a)->net.extension)\
+      (a)->net.extension->extended_errno= 0;\
+  } while (0)
 
 #define MYSQL_COUNT_ERROR (~(unsigned long long) 0)
 
@@ -233,7 +245,10 @@ extern const char *SQLSTATE_UNKNOWN;
     MARIADB_OPT_MULTI_RESULTS,
     MARIADB_OPT_MULTI_STATEMENTS,
     MARIADB_OPT_INTERACTIVE,
-    MARIADB_OPT_PROXY_HEADER
+    MARIADB_OPT_PROXY_HEADER,
+    MARIADB_OPT_IO_WAIT,
+    MARIADB_OPT_SKIP_READ_RESPONSE,
+    MARIADB_OPT_RESTRICTED_AUTH
   };
 
   enum mariadb_value {
@@ -270,7 +285,9 @@ extern const char *SQLSTATE_UNKNOWN;
     MARIADB_CONNECTION_SERVER_STATUS,
     MARIADB_CONNECTION_SERVER_CAPABILITIES,
     MARIADB_CONNECTION_EXTENDED_SERVER_CAPABILITIES,
-    MARIADB_CONNECTION_CLIENT_CAPABILITIES
+    MARIADB_CONNECTION_CLIENT_CAPABILITIES,
+    MARIADB_CONNECTION_BYTES_READ,
+    MARIADB_CONNECTION_BYTES_SENT
   };
 
   enum mysql_status { MYSQL_STATUS_READY,
@@ -379,6 +396,20 @@ typedef struct
   void *extension;
 } MYSQL_PARAMETERS;
 
+
+enum mariadb_field_attr_t
+{
+  MARIADB_FIELD_ATTR_DATA_TYPE_NAME= 0,
+  MARIADB_FIELD_ATTR_FORMAT_NAME= 1
+};
+
+#define MARIADB_FIELD_ATTR_LAST MARIADB_FIELD_ATTR_FORMAT_NAME
+
+
+int STDCALL mariadb_field_attr(MARIADB_CONST_STRING *attr,
+                               const MYSQL_FIELD *field,
+                               enum mariadb_field_attr_t type);
+
 #ifndef _mysql_time_h_
 enum enum_mysql_timestamp_type
 {
@@ -399,7 +430,7 @@ typedef struct st_mysql_time
 #define SEC_PART_DIGITS 6
 #define MARIADB_INVALID_SOCKET -1
 
-/* Ansynchronous API constants */
+/* Asynchronous API constants */
 #define MYSQL_WAIT_READ      1
 #define MYSQL_WAIT_WRITE     2
 #define MYSQL_WAIT_EXCEPT    4
@@ -431,9 +462,9 @@ typedef struct character_set
   const char *desc;                                     \
   unsigned int version[3];                              \
   const char *license;                                  \
-  void *mariadb_api;                                    \
+  void *mysql_api;                                      \
   int (*init)(char *, size_t, int, va_list);            \
-  int (*deinit)();                                      \
+  int (*deinit)(void);                                  \
   int (*options)(const char *option, const void *);
 struct st_mysql_client_plugin
 {
@@ -702,7 +733,7 @@ int STDCALL mysql_stmt_send_long_data_cont(my_bool *ret, MYSQL_STMT *stmt,
                                            int status);
 int STDCALL mysql_reset_connection(MYSQL *mysql);
 
-/* API function calls (used by dynmic plugins) */
+/* API function calls (used by dynamic plugins) */
 struct st_mariadb_api {
   unsigned long long (STDCALL *mysql_num_rows)(MYSQL_RES *res);
   unsigned int (STDCALL *mysql_num_fields)(MYSQL_RES *res);
@@ -845,12 +876,15 @@ struct st_mariadb_methods {
   void (*set_error)(MYSQL *mysql, unsigned int error_nr, const char *sqlstate, const char *format, ...);
   void (*invalidate_stmts)(MYSQL *mysql, const char *function_name);
   struct st_mariadb_api *api;
+  int (*db_read_execute_response)(MYSQL_STMT *stmt);
+  unsigned char* (*db_execute_generate_request)(MYSQL_STMT *stmt, size_t *request_len, my_bool internal);
 };
 
 /* synonyms/aliases functions */
 #define mysql_reload(mysql) mysql_refresh((mysql),REFRESH_GRANT)
 #define mysql_library_init mysql_server_init
 #define mysql_library_end mysql_server_end
+#define mariadb_connect(hdl, conn_str) mysql_real_connect((hdl),(conn_str), NULL, NULL, NULL, 0, NULL, 0)
 
 /* new api functions */
 

@@ -52,12 +52,12 @@ ulong net_read_timeout=  NET_READ_TIMEOUT;
 ulong net_write_timeout= NET_WRITE_TIMEOUT;
 ulong net_buffer_length= 8192;	/* Default length. Enlarged if necessary */
 
-#if !defined(_WIN32) && !defined(MSDOS)
+#if !defined(_WIN32)
 #include <sys/socket.h>
 #else
 #undef MYSQL_SERVER			/* Win32 can't handle interrupts */
 #endif
-#if !defined(MSDOS) && !defined(_WIN32) && !defined(HAVE_BROKEN_NETINET_INCLUDES) && !defined(__BEOS__)
+#if !defined(_WIN32) && !defined(HAVE_BROKEN_NETINET_INCLUDES) && !defined(__BEOS__)
 #include <netinet/in_systm.h>
 #include <netinet/in.h>
 #include <netinet/ip.h>
@@ -87,7 +87,7 @@ int ma_net_init(NET *net, MARIADB_PVIO* pvio)
 
   memset(net->buff, 0, net_buffer_length);
 
-  max_allowed_packet= net->max_packet_size= MAX(net_buffer_length, max_allowed_packet);
+  net->max_packet_size= MAX(net_buffer_length, max_allowed_packet);
   net->buff_end=net->buff+(net->max_packet=net_buffer_length);
   net->pvio = pvio;
   net->error=0; net->return_status=0;
@@ -157,7 +157,7 @@ int ma_net_flush(NET *net)
 {
   int error=0;
 
-  /* don't flush if com_multi is in progress */
+  /* don't flush if pipelined query is in progress */
   if (net->extension->multi_status > COM_MULTI_OFF)
     return 0;
 
@@ -250,6 +250,9 @@ static int ma_net_write_buff(NET *net,const char *packet, size_t len)
 {
   size_t left_length;
 
+  if (!len)
+    return 0;
+
   if (net->max_packet > MAX_PACKET_LENGTH &&
       net->compress)
     left_length= (size_t)(MAX_PACKET_LENGTH - (net->write_pos - net->buff));
@@ -317,7 +320,7 @@ int ma_net_real_write(NET *net, const char *packet, size_t len)
     }
     memcpy(b+header_length,packet,len);
 
-    if (_mariadb_compress((unsigned char*) b+header_length,&len,&complen))
+    if (_mariadb_compress(net, (unsigned char*) b+header_length,&len,&complen))
     {
       complen=0;
     }
@@ -337,6 +340,10 @@ int ma_net_real_write(NET *net, const char *packet, size_t len)
       net->error=2;				/* Close socket */
       net->last_errno= ER_NET_ERROR_ON_WRITE;
       net->reading_or_writing=0;
+#ifdef HAVE_COMPRESS
+      if (net->compress)
+        free((char*) packet);
+#endif
       return(1);
     }
     pos+=length;
@@ -547,7 +554,7 @@ ulong ma_net_read(NET *net)
 
       if ((packet_length = ma_real_read(net,(size_t *)&complen)) == packet_error)
         return packet_error;
-      if (_mariadb_uncompress((unsigned char*) net->buff + net->where_b, &packet_length, &complen))
+      if (_mariadb_uncompress(net, (unsigned char*) net->buff + net->where_b, &packet_length, &complen))
       {
         net->error=2;			/* caller will close socket */
         net->last_errno=ER_NET_UNCOMPRESS_ERROR;

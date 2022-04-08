@@ -27,7 +27,7 @@
 
 #ifdef _WIN32
 #include <io.h>
-#include "Shlwapi.h"
+#include "shlwapi.h"
 
 static const char *ini_exts[]= {"ini", "cnf", 0};
 #define R_OK 4
@@ -49,7 +49,9 @@ static int add_cfg_dir(char **cfg_dirs, const char *directory)
 {
   int i;
 
-  for (i=0; i < MAX_CONFIG_DIRS && cfg_dirs[i]; i++);
+  for (i = 0; i < MAX_CONFIG_DIRS && cfg_dirs[i]; i++)
+    if (!strcmp(cfg_dirs[i], directory)) /* already present */
+      return 0;
 
   if (i < MAX_CONFIG_DIRS) {
     cfg_dirs[i]= strdup(directory);
@@ -82,11 +84,13 @@ char **get_default_configuration_dirs()
 
 #ifdef _WIN32
   /* On Windows operating systems configuration files are stored in
-     1. System directory
-     2. Windows directory
-     3. C:\
+     1. System Windows directory
+     2. System directory
+     3. Windows directory
+     4. C:\
   */
-  if (!GetSystemDirectory(dirname, FN_REFLEN) ||
+
+  if (!GetSystemWindowsDirectory(dirname, FN_REFLEN) ||
       add_cfg_dir(configuration_dirs, dirname))
     goto error;
 
@@ -120,9 +124,11 @@ char **get_default_configuration_dirs()
     goto error;
 #endif
 #endif
-/* This differs from https://mariadb.com/kb/en/mariadb/configuring-mariadb-with-mycnf/ where MYSQL_HOME is not specified for Windows */
-  if ((env= getenv("MYSQL_HOME")) &&
-      add_cfg_dir(configuration_dirs, env))
+  /* CONC-537: Read configuration files from MYSQL_HOME directory only if
+     MARIADB_HOME was not set */
+  if (!(env= getenv("MARIADB_HOME")))
+    env= getenv("MYSQL_HOME");
+  if (env && add_cfg_dir(configuration_dirs, env))
     goto error;
 end:
   return configuration_dirs;

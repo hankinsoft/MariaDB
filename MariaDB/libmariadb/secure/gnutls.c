@@ -19,10 +19,10 @@
  *************************************************************************************/
 #ifdef HAVE_GNUTLS
 
+#include <ma_global.h>
 #include <gnutls/gnutls.h>
 #include <gnutls/x509.h>
 #include <gnutls/abstract.h>
-#include <ma_global.h>
 #include <ma_sys.h>
 #include <ma_common.h>
 #include <ma_pvio.h>
@@ -965,7 +965,7 @@ int ma_tls_start(char *errmsg, size_t errmsg_len)
   if (ma_tls_initialized)
     return 0;
 
-  pthread_mutex_init(&LOCK_gnutls_config,MY_MUTEX_INIT_FAST);
+  pthread_mutex_init(&LOCK_gnutls_config,NULL);
   pthread_mutex_lock(&LOCK_gnutls_config);
 
   if ((rc= gnutls_global_init()) != GNUTLS_E_SUCCESS)
@@ -1025,11 +1025,15 @@ static size_t ma_gnutls_get_protocol_version(const char *tls_version_option,
     strcat(tls_versions, ":+VERS-TLS1.1");
   if (strstr(tls_version_option, "TLSv1.2"))
     strcat(tls_versions, ":+VERS-TLS1.2");
+#if GNUTLS_VERSION_NUMBER > 0x030605
+  if (strstr(tls_version_option, "TLSv1.3"))
+    strcat(tls_versions, ":+VERS-TLS1.3");
+#endif
 end:
   if (tls_versions[0])
-    snprintf(priority_string, prio_len - 1, "NORMAL:-VERS-TLS-ALL%s", tls_versions);
+    snprintf(priority_string, prio_len - 1, "-VERS-TLS-ALL%s:NORMAL", tls_versions);
   else
-    strncpy(priority_string, "NORMAL", prio_len - 1);
+    strncpy(priority_string, "NORMAL:+VERS-ALL", prio_len - 1);
   return strlen(priority_string);
 }
 
@@ -1049,75 +1053,23 @@ static int ma_gnutls_set_ciphers(gnutls_session_t ssl,
 
   token= strtok((char *)cipher_str, ":");
 
-  strcpy(prio, "NONE:+VERS-TLS-ALL:+SIGN-ALL:+COMP-NULL");
+  strcpy(prio, "NONE:+VERS-TLS-ALL:+SIGN-ALL:+COMP-NULL:+CURVE-ALL");
 
   while (token)
   {
     char priority[1024];
     char *p= get_priority(token, priority, 1024);
     if (p)
-      strncat(prio, p, PRIO_SIZE - strlen(prio) - 1);
+      strncat(prio, p, PRIO_SIZE - strlen(prio));
     token = strtok(NULL, ":");
   }
   return gnutls_priority_set_direct(ssl, prio , &err);
-}
-
-static int ma_tls_load_cert(const char *filename,
-                            enum ma_pem_type type,
-                            const char *password,
-                            void *ptr)
-{
-  gnutls_datum_t data;
-  int rc;
-
-  data.data= 0;
-
-  if ((rc= gnutls_load_file(filename, &data)) < 0)
-    goto error;
-
-  switch(type) {
-  case MA_TLS_PEM_CERT:
-  {
-    gnutls_x509_crt_t cert;
-    if ((rc= gnutls_x509_crt_init(&cert)) < 0)
-      goto error;
-    if ((rc= gnutls_x509_crt_import(cert, &data, GNUTLS_X509_FMT_PEM)))
-    {
-      gnutls_x509_crt_deinit(cert);
-      goto error;
-    }
-    *((gnutls_x509_crt_t *)ptr)= cert;
-    return 0;
-  }
-  case MA_TLS_PEM_KEY:
-  {
-    gnutls_x509_privkey_t key;
-    if ((rc= gnutls_x509_privkey_init(&key)) < 0)
-      goto error;
-    if ((rc= gnutls_x509_privkey_import2(key, &data, 
-                                         GNUTLS_X509_FMT_PEM,
-                                         password, 0)) < 0)
-    {
-      gnutls_x509_privkey_deinit(key);
-      goto error;
-    }
-    *((gnutls_x509_privkey_t *)ptr)= key;
-  }
-  default:
-    break;
-  }
-error:
-  if (data.data)
-    gnutls_free(data.data);
-  return rc;
 }
 
 static int ma_tls_set_certs(MYSQL *mysql,
                             gnutls_certificate_credentials_t ctx)
 {
   int  ssl_error= 0;
-  gnutls_x509_privkey_t key= 0;
-  gnutls_x509_crt_t cert= 0;
 
   if (mysql->options.ssl_ca)
   {
@@ -1128,6 +1080,31 @@ static int ma_tls_set_certs(MYSQL *mysql,
     if (ssl_error < 0)
       goto error;
   }
+
+  if (mysql->options.ssl_capath)
+  {
+    ssl_error=  gnutls_certificate_set_x509_trust_dir(ctx,
+                                                      mysql->options.ssl_capath,
+                                                      GNUTLS_X509_FMT_PEM);
+    if (ssl_error < 0)
+      goto error;
+  }
+
+  if (mysql->options.extension && mysql->options.extension->ssl_crl)
+  {
+    ssl_error= gnutls_certificate_set_x509_crl_file(ctx,
+                   mysql->options.extension->ssl_crl, GNUTLS_X509_FMT_PEM);
+    if (ssl_error < 0)
+      goto error;
+  }
+
+  if (!mysql->options.ssl_ca && !mysql->options.ssl_capath)
+  {
+    ssl_error= gnutls_certificate_set_x509_system_trust(ctx);
+    if (ssl_error < 0)
+      goto error;
+  }
+
   gnutls_certificate_set_verify_function(ctx,
                                          my_verify_callback);
 
@@ -1135,53 +1112,20 @@ static int ma_tls_set_certs(MYSQL *mysql,
   {
     char *keyfile= mysql->options.ssl_key;
     char *certfile= mysql->options.ssl_cert;
-    unsigned char key_id1[65], key_id2[65];
-    size_t key_id1_len, key_id2_len;
-
+    
     if (!certfile)
       certfile= keyfile;
     else if (!keyfile)
       keyfile= certfile;
 
-    if ((ssl_error= ma_tls_load_cert(keyfile, MA_TLS_PEM_KEY,
-                                     mysql->options.extension ?
-                                     mysql->options.extension->tls_pw : NULL,
-                                     &key)) < 0)
-      goto error;
-    if ((ssl_error= ma_tls_load_cert(certfile, MA_TLS_PEM_CERT,
-                                     NULL, &cert)) < 0)
-      goto error;
-
-    /* check if private key corresponds to certificate */
-    key_id1_len= key_id2_len= sizeof(key_id1);
-    if ((ssl_error= gnutls_x509_crt_get_key_id(cert, 0, 
-                                               key_id1, &key_id1_len)) < 0 ||
-        (ssl_error= gnutls_x509_privkey_get_key_id(key, 0, 
-                                                   key_id2, &key_id2_len)) < 0)
-      goto error;
-
-    if (key_id1_len != key_id2_len ||
-        memcmp(key_id1, key_id2, key_id1_len) != 0)
-    {
-      ssl_error= GNUTLS_E_CERTIFICATE_KEY_MISMATCH;
-      goto error;
-    }
-
     /* load cert/key into context */
-    if ((ssl_error= gnutls_certificate_set_x509_key(ctx,
-                                                    &cert,
-                                                    1,
-                                                    key)) < 0)
+    if ((ssl_error= gnutls_certificate_set_x509_key_file2(ctx,
+                                certfile, keyfile, GNUTLS_X509_FMT_PEM,
+                                 mysql->options.extension ? mysql->options.extension->tls_pw : NULL, 0)) < 0)
       goto error;
   }
 
-
-  return ssl_error;
 error:
-  if (key)
-    gnutls_x509_privkey_deinit(key);
-  if (cert)
-    gnutls_x509_crt_deinit(cert);
   return ssl_error;
 }
 
@@ -1208,9 +1152,7 @@ void *ma_tls_init(MYSQL *mysql)
 
   data->mysql= mysql;
   gnutls_session_set_ptr(ssl, (void *)data);
-  /*
-  gnutls_certificate_set_retrieve_function2(GNUTLS_xcred, client_cert_callback);
- */
+
   ssl_error= ma_gnutls_set_ciphers(ssl, mysql->options.ssl_cipher, mysql->options.extension ? mysql->options.extension->tls_version : NULL);
   if (ssl_error < 0)
     goto error;
@@ -1225,6 +1167,7 @@ void *ma_tls_init(MYSQL *mysql)
 error:
   free_gnutls_data(data);
   ma_tls_set_error(mysql, ssl, ssl_error);
+  gnutls_certificate_free_credentials(ctx);
   if (ssl)
     gnutls_deinit(ssl);
   pthread_mutex_unlock(&LOCK_gnutls_config);
@@ -1273,6 +1216,7 @@ my_bool ma_tls_connect(MARIADB_TLS *ctls)
   if (!(blocking= pvio->methods->is_blocking(pvio)))
     pvio->methods->blocking(pvio, TRUE, 0);
 
+
 #ifdef GNUTLS_EXTERNAL_TRANSPORT
   /* we don't use GnuTLS read/write functions */
   gnutls_transport_set_ptr(ssl, pvio);
@@ -1290,11 +1234,14 @@ my_bool ma_tls_connect(MARIADB_TLS *ctls)
 
   if (ret < 0)
   {
-    ma_tls_set_error(mysql, ssl, ret);
+    /* If error message was not set while calling certification callback function,
+       use default error message (which is not very descriptive */
+    if (!mysql_errno(mysql))
+      ma_tls_set_error(mysql, ssl, ret);
+
+    ma_tls_close(ctls);
+
     /* restore blocking mode */
-    gnutls_deinit((gnutls_session_t )ctls->ssl);
-    free_gnutls_data(data);
-    ctls->ssl= NULL;
     if (!blocking)
       pvio->methods->blocking(pvio, FALSE, 0);
     return 1;
@@ -1354,12 +1301,32 @@ ssize_t ma_tls_read_async(MARIADB_PVIO *pvio, const uchar *buffer, size_t length
 
 ssize_t ma_tls_read(MARIADB_TLS *ctls, const uchar* buffer, size_t length)
 {
-  return gnutls_record_recv((gnutls_session_t )ctls->ssl, (void *)buffer, length);
+  ssize_t rc;
+  MARIADB_PVIO *pvio= ctls->pvio;
+
+  while ((rc= gnutls_record_recv((gnutls_session_t)ctls->ssl, (void *)buffer, length)) <= 0)
+  {
+    if (rc != GNUTLS_E_AGAIN && rc != GNUTLS_E_INTERRUPTED)
+      return rc;
+    if (pvio->methods->wait_io_or_timeout(pvio, TRUE, pvio->mysql->options.read_timeout) < 1)
+      return rc;
+  }
+  return rc;
 }
 
 ssize_t ma_tls_write(MARIADB_TLS *ctls, const uchar* buffer, size_t length)
 { 
-  return gnutls_record_send((gnutls_session_t )ctls->ssl, (void *)buffer, length);
+  ssize_t rc;
+  MARIADB_PVIO *pvio= ctls->pvio;
+
+  while ((rc= gnutls_record_send((gnutls_session_t)ctls->ssl, (void *)buffer, length)) <= 0)
+  {
+    if (rc != GNUTLS_E_AGAIN && rc != GNUTLS_E_INTERRUPTED)
+      return rc;
+    if (pvio->methods->wait_io_or_timeout(pvio, TRUE, pvio->mysql->options.write_timeout) < 1)
+      return rc;
+  }
+  return rc;
 }
 
 my_bool ma_tls_close(MARIADB_TLS *ctls)
@@ -1389,7 +1356,7 @@ my_bool ma_tls_close(MARIADB_TLS *ctls)
 
 int ma_tls_verify_server_cert(MARIADB_TLS *ctls __attribute__((unused)))
 {
-  /* server verification is already handled before */
+  /* server verification is already handled before during handshake */
   return 0;
 }
 
@@ -1411,77 +1378,44 @@ const char *ma_tls_get_cipher(MARIADB_TLS *ctls)
 static int my_verify_callback(gnutls_session_t ssl)
 {
   unsigned int status= 0;
-  const gnutls_datum_t *cert_list;
-  unsigned int cert_list_size;
   struct st_gnutls_data *data= (struct st_gnutls_data *)gnutls_session_get_ptr(ssl);
   MYSQL *mysql;
-  MARIADB_PVIO *pvio;
-  
-  gnutls_x509_crt_t cert;
-  const char *hostname;
 
   mysql= data->mysql;
-  pvio= mysql->net.pvio;
-
-  /* read hostname */
-  hostname = mysql->host;
-
-  /* This verification function uses the trusted CAs in the credentials
-   * structure. So you must have installed one or more CA certificates.
-   */
-  if ((mysql->client_flag & CLIENT_SSL_VERIFY_SERVER_CERT)  &&
-        gnutls_certificate_verify_peers2 (ssl, &status) < 0)
-  {
-    pvio->set_error(mysql, CR_SSL_CONNECTION_ERROR, SQLSTATE_UNKNOWN, "CA verification failed");
-    return GNUTLS_E_CERTIFICATE_ERROR;
-  }
-
-  if (status & GNUTLS_CERT_INVALID)
-  {
-    char errbuf[100];
-    snprintf(errbuf, 99, "CA Verification failed (Status: %d)", status);
-    pvio->set_error(mysql, CR_SSL_CONNECTION_ERROR, SQLSTATE_UNKNOWN, errbuf);
-    return GNUTLS_E_CERTIFICATE_ERROR;
-  }
-  /* Up to here the process is the same for X.509 certificates and
-   * OpenPGP keys. From now on X.509 certificates are assumed. This can
-   * be easily extended to work with openpgp keys as well.
-   */
-  if (gnutls_certificate_type_get (ssl) != GNUTLS_CRT_X509)
-  {
-    pvio->set_error(mysql, CR_SSL_CONNECTION_ERROR, SQLSTATE_UNKNOWN, "Expected X509 certificate");
-    return GNUTLS_E_CERTIFICATE_ERROR;
-  }
-  if (gnutls_x509_crt_init (&cert) < 0)
-  {
-    pvio->set_error(mysql, CR_SSL_CONNECTION_ERROR, SQLSTATE_UNKNOWN, "Error during certificate initialization");
-    return GNUTLS_E_CERTIFICATE_ERROR;
-  }
-  cert_list = gnutls_certificate_get_peers (ssl, &cert_list_size);
-  if (cert_list == NULL)
-  {
-    gnutls_x509_crt_deinit (cert);
-    pvio->set_error(mysql, CR_SSL_CONNECTION_ERROR, SQLSTATE_UNKNOWN, "No certificate found");
-    return GNUTLS_E_CERTIFICATE_ERROR;
-  }
-  if (gnutls_x509_crt_import (cert, &cert_list[0], GNUTLS_X509_FMT_DER) < 0)
-  {
-    gnutls_x509_crt_deinit (cert);
-    pvio->set_error(mysql, CR_SSL_CONNECTION_ERROR, SQLSTATE_UNKNOWN, "Unknown SSL error");
-    return GNUTLS_E_CERTIFICATE_ERROR;
-  }
-
-  if ((mysql->client_flag & CLIENT_SSL_VERIFY_SERVER_CERT) &&
-      !gnutls_x509_crt_check_hostname (cert, hostname))
-  {
-    gnutls_x509_crt_deinit (cert);
-    pvio->set_error(mysql, CR_SSL_CONNECTION_ERROR, SQLSTATE_UNKNOWN, "Hostname in certificate doesn't match");
-    return GNUTLS_E_CERTIFICATE_ERROR;
-  }
-  gnutls_x509_crt_deinit (cert);
-  /* notify gnutls to continue handshake normally */
 
   CLEAR_CLIENT_ERROR(mysql);
+
+  if ((mysql->client_flag & CLIENT_SSL_VERIFY_SERVER_CERT))
+  {
+    const char *hostname= mysql->host;
+
+    if (gnutls_certificate_verify_peers3 (ssl, hostname, &status) < 0)
+      return GNUTLS_E_CERTIFICATE_ERROR;
+  } else {
+    if (gnutls_certificate_verify_peers2 (ssl, &status) < 0)
+      return GNUTLS_E_CERTIFICATE_ERROR;
+  }
+  if (status & GNUTLS_CERT_INVALID)
+  {
+    gnutls_datum_t out;
+    int type;
+    /* accept self signed certificates if we don't have to verify server cert */
+    if (!(mysql->client_flag & CLIENT_SSL_VERIFY_SERVER_CERT) &&
+        (status & GNUTLS_CERT_SIGNER_NOT_FOUND))
+      return 0;
+
+    /* gnutls default error message "certificate validation failed" isn't very
+       descriptive, so we provide more information about the error here */
+    type= gnutls_certificate_type_get(ssl);
+    gnutls_certificate_verification_status_print(status, type, &out, 0);
+    my_set_error(mysql, CR_SSL_CONNECTION_ERROR, SQLSTATE_UNKNOWN,
+                 ER(CR_SSL_CONNECTION_ERROR), out.data);
+    gnutls_free(out.data);
+    
+    return GNUTLS_E_CERTIFICATE_ERROR;
+  }
+  
+
   return 0;
 }
 

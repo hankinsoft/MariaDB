@@ -35,9 +35,21 @@ typedef struct my_aio_result {
 
 #include <stdarg.h>  
 
-#define MYSYS_PROGRAM_USES_CURSES()  { ma_error_handler_hook = ma_message_curses;	mysys_uses_curses=1; }
-#define MYSYS_PROGRAM_DONT_USE_CURSES()  { ma_error_handler_hook = ma_message_no_curses; mysys_uses_curses=0;}
-#define MY_INIT(name);		{ ma_progname= name; ma_init(); }
+#define MYSYS_PROGRAM_USES_CURSES() \
+do {\
+  ma_error_handler_hook = ma_message_curses;\
+  mysys_uses_curses=1;\
+} while(0)
+#define MYSYS_PROGRAM_DONT_USE_CURSES() \
+do {\
+  ma_error_handler_hook = ma_message_no_curses; \
+  mysys_uses_curses=0; \
+} while(0)
+#define MY_INIT(name) \
+do {\
+  ma_progname= name;\
+  ma_init();\
+} while(0)
 
 #define MAXMAPS		(4)	/* Number of error message maps */
 #define ERRMOD		(1000)	/* Max number of errors in a map */
@@ -100,7 +112,7 @@ typedef struct my_aio_result {
 	/* Some constants */
 #define MY_WAIT_FOR_USER_TO_FIX_PANIC	60	/* in seconds */
 #define MY_WAIT_GIVE_USER_A_MESSAGE	10	/* Every 10 times of prev */
-#define MIN_COMPRESS_LENGTH		50	/* Don't compress small bl. */
+#define MIN_COMPRESS_LENGTH		150	/* Don't compress small bl. */
 #define KEYCACHE_BLOCK_SIZE		1024
 
 	/* root_alloc flags */
@@ -133,22 +145,6 @@ typedef struct my_aio_result {
 #define my_alloca(SZ) ma_malloc(SZ,MYF(0))
 #define my_afree(PTR) ma_free(PTR)
 #endif /* HAVE_ALLOCA */
-
-#ifdef MSDOS
-#ifdef __ZTC__
-void * __CDECL halloc(long count,size_t length);
-void   __CDECL hfree(void *ptr);
-#endif
-#if defined(USE_HALLOC)
-#if defined(_VCM_) || defined(M_IC80386)
-#undef USE_HALLOC
-#endif
-#endif
-#ifdef USE_HALLOC
-#define malloc(a) halloc((long) (a),1)
-#define free(a) hfree(a)
-#endif
-#endif /* MSDOS */
 
 #ifndef errno
 #ifdef HAVE_ERRNO_AS_DEFINE
@@ -247,19 +243,6 @@ typedef struct st_record_cache	/* Used when caching records */
   enum cache_type type;
 } RECORD_CACHE;
 
-/*
-enum file_type { UNOPEN = 0, FILE_BY_OPEN, FILE_BY_CREATE,
-		   STREAM_BY_FOPEN, STREAM_BY_FDOPEN, FILE_BY_MKSTEMP };
-
-extern struct ma_file_info
-{
-  my_string		name;
-  enum file_type	type;
-#if defined(THREAD) && !defined(HAVE_PREAD)  
-  pthread_mutex_t	mutex;
-#endif
-} ma_file_info[MY_NFILE];
-*/
 
 typedef struct st_dynamic_array {
   char *buffer;
@@ -298,15 +281,15 @@ typedef int (*qsort2_cmp)(const void *, const void *, const void *);
 	/* defines for mf_iocache */
 
 	/* Test if buffer is inited */
-#define my_b_clear(info) (info)->buffer=0
-#define my_b_inited(info) (info)->buffer
+#define my_b_clear(info) do{(info)->buffer= 0;} while (0)
+#define my_b_inited(info) ((info)->buffer)
 #define my_b_EOF INT_MIN
 
 #define my_b_read(info,Buffer,Count) \
   ((info)->rc_pos + (Count) <= (info)->rc_end ?\
-   (memcpy(Buffer,(info)->rc_pos,(size_t) (Count)), \
+   (memcpy((Buffer),(info)->rc_pos,(size_t) (Count)), \
     ((info)->rc_pos+=(Count)),0) :\
-   (*(info)->read_function)((info),Buffer,Count))
+   (*(info)->read_function)((info),(Buffer),(Count)))
 
 #define my_b_get(info) \
   ((info)->rc_pos != (info)->rc_end ?\
@@ -315,18 +298,18 @@ typedef int (*qsort2_cmp)(const void *, const void *, const void *);
 
 #define my_b_write(info,Buffer,Count) \
   ((info)->rc_pos + (Count) <= (info)->rc_end ?\
-   (memcpy((info)->rc_pos,Buffer,(size_t) (Count)), \
+   (memcpy((info)->rc_pos,(Buffer),(size_t) (Count)), \
     ((info)->rc_pos+=(Count)),0) :\
-   _my_b_write(info,Buffer,Count))
+   _my_b_write((info),(Buffer),(Count)))
 
 	/* my_b_write_byte doesn't have any err-check */
 #define my_b_write_byte(info,chr) \
   (((info)->rc_pos < (info)->rc_end) ?\
    ((*(info)->rc_pos++)=(chr)) :\
-   (_my_b_write(info,0,0) , ((*(info)->rc_pos++)=(chr))))
+   (_my_b_write((info),0,0) , ((*(info)->rc_pos++)=(chr))))
 
 #define my_b_fill_cache(info) \
-  (((info)->rc_end=(info)->rc_pos),(*(info)->read_function)(info,0,0))
+  (((info)->rc_end=(info)->rc_pos),(*(info)->read_function)((info),0,0))
 
 #define my_b_tell(info) ((info)->pos_in_file + \
 			 ((info)->rc_pos - (info)->rc_request_pos))
@@ -414,7 +397,7 @@ extern void casedn_str(my_string str);
 extern void case_sort(my_string str,uint length);
 extern uint ma_dirname_part(my_string to,const char *name);
 extern uint ma_dirname_length(const char *name);
-#define base_name(A) (A+dirname_length(A))
+#define base_name(A) ((A)+dirname_length(A))
 extern int test_if_hard_path(const char *dir_name);
 extern char *ma_convert_dirname(my_string name);
 extern void to_unix_path(my_string name);
@@ -536,13 +519,6 @@ void set_all_changeable_vars(CHANGEABLE_VAR *vars);
 my_bool set_changeable_var(my_string str,CHANGEABLE_VAR *vars);
 my_bool set_changeable_varval(const char *var, ulong val,
 			      CHANGEABLE_VAR *vars);
-#ifdef HAVE_MLOCK
-extern unsigned char *ma_malloc_lock(size_t length,myf flags);
-extern void ma_free_lock(unsigned char *ptr,myf flags);
-#else
-#define ma_malloc_lock(A,B) ma_malloc((A),(B))
-#define ma_free_lock(A,B) ma_free((A),(B))
-#endif
 #define ma_alloc_root_inited(A) ((A)->min_malloc != 0)
 void ma_init_alloc_root(MA_MEM_ROOT *mem_root, size_t block_size, size_t pre_alloc_size);
 void *ma_alloc_root(MA_MEM_ROOT *mem_root, size_t Size);
@@ -551,9 +527,6 @@ char *ma_strdup_root(MA_MEM_ROOT *root,const char *str);
 char *ma_memdup_root(MA_MEM_ROOT *root,const char *str, size_t len);
 void ma_free_defaults(char **argv);
 void ma_print_defaults(const char *conf_file, const char **groups);
-my_bool _mariadb_compress(unsigned char *, size_t *, size_t *);
-my_bool _mariadb_uncompress(unsigned char *, size_t *, size_t *);
-unsigned char *_mariadb_compress_alloc(const unsigned char *packet, size_t *len, size_t *complen);
 ulong checksum(const unsigned char *mem, uint count);
 
 #if defined(_MSC_VER) && !defined(_WIN32)

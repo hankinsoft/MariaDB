@@ -44,14 +44,7 @@
 #define MA_MAX_HASH_SIZE 64
 /** \typedef MRL hash context */
 
-#if defined(HAVE_OPENSSL)
-typedef void MA_HASH_CTX;
-#elif defined(HAVE_GNUTLS)
-typedef struct {
-  void *ctx;
-  const struct nettle_hash *hash;
-} MA_HASH_CTX;
-#elif defined(HAVE_SCHANNEL)
+#if defined(HAVE_WINCRYPT)
 #include <windows.h>
 #include <bcrypt.h>
 typedef struct {
@@ -60,6 +53,14 @@ typedef struct {
   BCRYPT_HASH_HANDLE hHash;
   PBYTE hashObject;
   DWORD digest_len;
+} MA_HASH_CTX;
+#elif defined(HAVE_OPENSSL)
+#include <openssl/evp.h>
+typedef EVP_MD_CTX MA_HASH_CTX;
+#elif defined(HAVE_GNUTLS)
+typedef struct {
+  void *ctx;
+  const struct nettle_hash *hash;
 } MA_HASH_CTX;
 #endif
 
@@ -113,7 +114,7 @@ void ma_hash_result(MA_HASH_CTX *ctx, unsigned char *digest);
 
   @param[in] hash algorithm
 
-  @retuns digest size or 0 on error
+  @returns digest size or 0 on error
 */
 static inline size_t ma_hash_digest_size(unsigned int hash_alg)
 {
@@ -153,7 +154,7 @@ static inline void ma_hash(unsigned int algorithm,
                            unsigned char *digest)
 {
   MA_HASH_CTX *ctx= NULL;
-#ifdef HAVE_SCHANNEL
+#ifdef HAVE_WINCRYPT
   MA_HASH_CTX dctx;
   ctx= &dctx;
 #endif
