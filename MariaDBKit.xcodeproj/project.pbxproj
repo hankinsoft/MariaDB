@@ -166,6 +166,8 @@
 		728AEC20280071550015C7F8 /* ma_hashtbl.c in Sources */ = {isa = PBXBuildFile; fileRef = 728AEC1E280071550015C7F8 /* ma_hashtbl.c */; };
 		728AEC22280073250015C7F8 /* ma_config.h in Headers */ = {isa = PBXBuildFile; fileRef = 728AEC21280073250015C7F8 /* ma_config.h */; };
 		728AEC23280073250015C7F8 /* ma_config.h in Headers */ = {isa = PBXBuildFile; fileRef = 728AEC21280073250015C7F8 /* ma_config.h */; };
+		728AEC38280093C50015C7F8 /* c_zlib.c in Sources */ = {isa = PBXBuildFile; fileRef = 728AEC35280093C50015C7F8 /* c_zlib.c */; };
+		728AEC39280093C50015C7F8 /* c_zlib.c in Sources */ = {isa = PBXBuildFile; fileRef = 728AEC35280093C50015C7F8 /* c_zlib.c */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -308,6 +310,7 @@
 		727B45022289EC7B00CB3C60 /* openssl.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = openssl.c; sourceTree = "<group>"; };
 		728AEC1E280071550015C7F8 /* ma_hashtbl.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = ma_hashtbl.c; sourceTree = "<group>"; };
 		728AEC21280073250015C7F8 /* ma_config.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ma_config.h; sourceTree = "<group>"; };
+		728AEC35280093C50015C7F8 /* c_zlib.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = c_zlib.c; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -440,6 +443,7 @@
 		27B7B4F321FFFA1C00CE2354 /* plugins */ = {
 			isa = PBXGroup;
 			children = (
+				728AEC34280093C50015C7F8 /* compress */,
 				27B7B4F421FFFA1C00CE2354 /* pvio */,
 				27B7B4F821FFFA1C00CE2354 /* trace */,
 				27B7B4FA21FFFA1C00CE2354 /* connection */,
@@ -609,6 +613,14 @@
 				7249730E1F3E2A240026F0FA /* Info.plist */,
 			);
 			path = "MariaDBKitTests-ios";
+			sourceTree = "<group>";
+		};
+		728AEC34280093C50015C7F8 /* compress */ = {
+			isa = PBXGroup;
+			children = (
+				728AEC35280093C50015C7F8 /* c_zlib.c */,
+			);
+			path = compress;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -810,6 +822,7 @@
 				27B7B48421FFF9F500CE2354 /* ma_pvio.c in Sources */,
 				27B7B45421FFF9F500CE2354 /* ma_charset.c in Sources */,
 				27B7B46621FFF9F500CE2354 /* ma_loaddata.c in Sources */,
+				728AEC38280093C50015C7F8 /* c_zlib.c in Sources */,
 				728AEC1F280071550015C7F8 /* ma_hashtbl.c in Sources */,
 				27B7B45021FFF9F500CE2354 /* mariadb_charset.c in Sources */,
 				27B7B45221FFF9F500CE2354 /* ma_context.c in Sources */,
@@ -871,6 +884,7 @@
 				27B7B48521FFF9F500CE2354 /* ma_pvio.c in Sources */,
 				27B7B45521FFF9F500CE2354 /* ma_charset.c in Sources */,
 				27B7B46721FFF9F500CE2354 /* ma_loaddata.c in Sources */,
+				728AEC39280093C50015C7F8 /* c_zlib.c in Sources */,
 				728AEC20280071550015C7F8 /* ma_hashtbl.c in Sources */,
 				27B7B45121FFF9F500CE2354 /* mariadb_charset.c in Sources */,
 				27B7B45321FFF9F500CE2354 /* ma_context.c in Sources */,
