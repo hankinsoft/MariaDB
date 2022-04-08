@@ -136,8 +136,6 @@
 		27B7B5AB220003B100CE2354 /* mariadb_com.h in Headers */ = {isa = PBXBuildFile; fileRef = 27B7B4A521FFFA0C00CE2354 /* mariadb_com.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		27B7B5AC220003B900CE2354 /* mariadb_version.h in Headers */ = {isa = PBXBuildFile; fileRef = 27B7B4F121FFFA0C00CE2354 /* mariadb_version.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		27B7B5AD220003C900CE2354 /* ma_list.h in Headers */ = {isa = PBXBuildFile; fileRef = 27B7B49C21FFFA0C00CE2354 /* ma_list.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		27F0376421F9F6C20039DFA6 /* libssl.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 27F0376221F9F6C20039DFA6 /* libssl.a */; };
-		27F0376521F9F6C20039DFA6 /* libcrypto.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 27F0376321F9F6C20039DFA6 /* libcrypto.a */; };
 		720B049C2201D96A0051FC88 /* caching_sha2_pw.c in Sources */ = {isa = PBXBuildFile; fileRef = 27B7B50021FFFA1C00CE2354 /* caching_sha2_pw.c */; };
 		720B049D2201D96E0051FC88 /* caching_sha2_pw.c in Sources */ = {isa = PBXBuildFile; fileRef = 27B7B50021FFFA1C00CE2354 /* caching_sha2_pw.c */; };
 		720B04A82201DC3E0051FC88 /* openssl_crypt.c in Sources */ = {isa = PBXBuildFile; fileRef = 720B04A02201DC3E0051FC88 /* openssl_crypt.c */; };
@@ -399,8 +397,6 @@
 			buildActionMask = 2147483647;
 			files = (
 				722BB2C525A88AAE00016267 /* libiconv.tbd in Frameworks */,
-				27F0376421F9F6C20039DFA6 /* libssl.a in Frameworks */,
-				27F0376521F9F6C20039DFA6 /* libcrypto.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1329,13 +1325,9 @@
 				INSTALL_PATH = "";
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks @loader_path/Frameworks";
 				LIBRARY_SEARCH_PATHS = "$(inherited)";
-				"LIBRARY_SEARCH_PATHS[arch=*]" = (
-					"$(inherited)",
-					"$(PROJECT_DIR)/libs/iOS",
-				);
 				"LIBRARY_SEARCH_PATHS[sdk=iphonesimulator*]" = (
 					"$(inherited)",
-					"$(PROJECT_DIR)/libs/iOS-sim",
+					"$(SOURCE_ROOT)/libs/",
 				);
 				OTHER_CFLAGS = (
 					"-fPIC",
@@ -1349,6 +1341,15 @@
 					THREAD,
 					"-D",
 					DBUG_OFF,
+				);
+				OTHER_LDFLAGS = "$(SRCROOT)/libs/iOS-sim/libssl.a";
+				"OTHER_LDFLAGS[sdk=iphoneos*]" = (
+					"$(SRCROOT)/libs/iOS/libssl.a",
+					"$(SRCROOT)/libs/iOS/libcrypto.a",
+				);
+				"OTHER_LDFLAGS[sdk=iphonesimulator*]" = (
+					"$(SRCROOT)/libs/iOS-sim/libssl.a",
+					"$(SRCROOT)/libs/iOS-sim/libcrypto.a",
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = com.hankinsoft.sqlpro.MariaDB;
 				PRODUCT_NAME = MariaDBKit;
@@ -1385,13 +1386,9 @@
 				INSTALL_PATH = "";
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks @loader_path/Frameworks";
 				LIBRARY_SEARCH_PATHS = "$(inherited)";
-				"LIBRARY_SEARCH_PATHS[arch=*]" = (
-					"$(inherited)",
-					"$(PROJECT_DIR)/libs/iOS",
-				);
 				"LIBRARY_SEARCH_PATHS[sdk=iphonesimulator*]" = (
 					"$(inherited)",
-					"$(PROJECT_DIR)/libs/iOS-sim",
+					"$(SOURCE_ROOT)/libs",
 				);
 				OTHER_CFLAGS = (
 					"-fPIC",
@@ -1406,6 +1403,12 @@
 					"-D",
 					DBUG_OFF,
 				);
+				OTHER_LDFLAGS = "$(SRCROOT)/libs/iOS-sim/libssl.a";
+				"OTHER_LDFLAGS[sdk=iphoneos*]" = (
+					"$(SRCROOT)/libs/iOS/libssl.a",
+					"$(SRCROOT)/libs/iOS/libcrypto.a",
+				);
+				"OTHER_LDFLAGS[sdk=iphonesimulator*]" = "$(SRCROOT)/libs/iOS-sim/libssl.a";
 				PRODUCT_BUNDLE_IDENTIFIER = com.hankinsoft.sqlpro.MariaDB;
 				PRODUCT_NAME = MariaDBKit;
 				SDKROOT = iphoneos;
