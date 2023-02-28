@@ -248,7 +248,9 @@ extern const char *SQLSTATE_UNKNOWN;
     MARIADB_OPT_PROXY_HEADER,
     MARIADB_OPT_IO_WAIT,
     MARIADB_OPT_SKIP_READ_RESPONSE,
-    MARIADB_OPT_RESTRICTED_AUTH
+    MARIADB_OPT_RESTRICTED_AUTH,
+    MARIADB_OPT_RPL_REGISTER_REPLICA,
+    MARIADB_OPT_STATUS_CALLBACK
   };
 
   enum mariadb_value {
@@ -858,7 +860,7 @@ struct st_mariadb_methods {
 					   const char *db, unsigned int port, const char *unix_socket, unsigned long clientflag);
   void (*db_close)(MYSQL *mysql);
   int (*db_command)(MYSQL *mysql,enum enum_server_command command, const char *arg,
-                    size_t length, my_bool skipp_check, void *opt_arg);
+                    size_t length, my_bool skip_check, void *opt_arg);
   void (*db_skip_result)(MYSQL *mysql);
   int (*db_read_query_result)(MYSQL *mysql);
   MYSQL_DATA *(*db_read_rows)(MYSQL *mysql,MYSQL_FIELD *fields, unsigned int field_count);

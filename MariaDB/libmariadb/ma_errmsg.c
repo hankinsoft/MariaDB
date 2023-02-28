@@ -53,7 +53,7 @@ const char *client_errors[]=
 /* 2023 */  "",
 /* 2024 */  "",
 /* 2025 */  "",
-/* 2026 */  "SSL connection error: %-.100s",
+/* 2026 */  "TLS/SSL error: %-.100s",
 /* 2027 */  "Received malformed packet",
 /* 2028 */  "",
 /* 2029 */  "",
@@ -85,10 +85,10 @@ const char *client_errors[]=
 /* 2055 */  "Lost connection to server at '%s', system error: %d",
 /* 2056 */  "Server closed statement due to a prior %s function call",
 /* 2057 */  "The number of parameters in bound buffers differs from number of columns in resultset",
-/* 2059 */  "Can't connect twice. Already connected",
-/* 2058 */  "Plugin %s could not be loaded: %s",
-/* 2059 */  "An attribute with same name already exists",
-/* 2060 */  "Plugin doesn't support this function",
+/* 2058 */  "Can't connect twice. Already connected",
+/* 2059 */  "Plugin %s could not be loaded: %s",
+/* 2060 */  "An attribute with same name already exists",
+/* 2061 */  "Plugin doesn't support this function",
             ""
 };
 
@@ -107,6 +107,10 @@ const char *mariadb_client_errors[] =
   /* 5010 */ "Authentication plugin '%s' couldn't be found in restricted_auth plugin list.",
   /* 5011 */ "Parse error in connection string (offset %d)",
   /* 5012 */ "Error while loading plugin '%s'",
+  /* 5013 */ "Read error: %s (%d)",
+  /* 5014 */ "Write error: %s (%d)",
+  /* 5015 */ "Error while uncompressing packet",
+  /* 5016 */ "Error while retrieving parameter from callback function",
   ""
 };
 

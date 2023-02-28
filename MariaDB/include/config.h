@@ -89,6 +89,11 @@
 # define HAVE_UINT 1
 #endif
 
+/* #undef SIZEOF_USHORT */
+#if defined(SIZEOF_USHORT)
+# define HAVE_USHORT 1
+#endif
+
 /* #undef SIZEOF_ULONG */
 #if defined(SIZEOF_ULONG)
 # define HAVE_ULONG 1

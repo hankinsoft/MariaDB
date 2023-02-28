@@ -140,7 +140,7 @@ struct st_ma_pvio_methods pvio_socket_methods= {
 #ifndef PLUGIN_DYNAMIC
 MARIADB_PVIO_PLUGIN pvio_socket_client_plugin=
 #else
-MARIADB_PVIO_PLUGIN _mysql_client_plugin_declaration_
+MARIADB_PVIO_PLUGIN _mysql_client_plugin_declaration_=
 #endif
 {
   MARIADB_CLIENT_PVIO_PLUGIN,
@@ -627,6 +627,10 @@ static int pvio_socket_internal_connect(MARIADB_PVIO *pvio,
   int rc= 0;
   struct st_pvio_socket *csock= NULL;
   int timeout;
+#ifndef _WIN32
+  unsigned int wait_conn= 1;
+  time_t start_t= time(NULL);
+#endif
 
   if (!pvio || !pvio->data)
     return 1;
@@ -639,7 +643,20 @@ static int pvio_socket_internal_connect(MARIADB_PVIO *pvio,
 
 #ifndef _WIN32
   do {
+    int save_errno;
     rc= connect(csock->socket, (struct sockaddr*) name, (int)namelen);
+
+    if (time(NULL) - start_t > (time_t)timeout/1000)
+      break;
+
+    /* CONC-612: Since usleep may fail and will set errno (On MacOSX usleep
+      always sets errno=ETIMEDOUT), we need to save and restore errno */
+    save_errno= errno;
+    usleep(wait_conn);
+    errno= save_errno;
+
+    wait_conn= wait_conn >= 1000000 ? 1000000 : wait_conn * 2;
+
   } while (rc == -1 && (errno == EINTR || errno == EAGAIN));
   /* in case a timeout values was set we need to check error values
      EINPROGRESS */
@@ -733,6 +750,16 @@ int pvio_socket_fast_send(MARIADB_PVIO *pvio)
 }
 
 static int
+pvio_socket_connect_async(MARIADB_PVIO *pvio,
+                          const struct sockaddr *name, uint namelen)
+{
+  MYSQL *mysql= pvio->mysql;
+  mysql->options.extension->async_context->pvio= pvio;
+  pvio_socket_blocking(pvio, 0, 0);
+  return my_connect_async(pvio, name, namelen, pvio->timeout[PVIO_CONNECT_TIMEOUT]);
+}
+
+static int
 pvio_socket_connect_sync_or_async(MARIADB_PVIO *pvio,
                           const struct sockaddr *name, uint namelen)
 {
@@ -742,9 +769,7 @@ pvio_socket_connect_sync_or_async(MARIADB_PVIO *pvio,
   {
     /* even if we are not connected yet, application needs to check socket
      * via mysql_get_socket api call, so we need to assign pvio */
-    mysql->options.extension->async_context->pvio= pvio;
-    pvio_socket_blocking(pvio, 0, 0);
-    return my_connect_async(pvio, name, namelen, pvio->timeout[PVIO_CONNECT_TIMEOUT]);
+    return pvio_socket_connect_async(pvio, name, namelen);
   }
 
   return pvio_socket_internal_connect(pvio, name, namelen);
@@ -916,7 +941,18 @@ my_bool pvio_socket_connect(MARIADB_PVIO *pvio, MA_PVIO_CINFO *cinfo)
         }
       }
 
-      rc= pvio_socket_connect_sync_or_async(pvio, save_res->ai_addr, (uint)save_res->ai_addrlen);
+      if (mysql->options.extension && mysql->options.extension->async_context &&
+          mysql->options.extension->async_context->active)
+      {
+        mysql->options.extension->async_context->pending_gai_res = res;
+        rc= pvio_socket_connect_async(pvio, save_res->ai_addr, (uint)save_res->ai_addrlen);
+        mysql->options.extension->async_context->pending_gai_res = NULL;
+      }
+      else
+      {
+        rc= pvio_socket_connect_sync_or_async(pvio, save_res->ai_addr, (uint)save_res->ai_addrlen);
+      }
+
       if (!rc)
       {
         MYSQL *mysql= pvio->mysql;
@@ -1126,3 +1162,4 @@ int pvio_socket_shutdown(MARIADB_PVIO *pvio)
   }
   return -1;
 }
+

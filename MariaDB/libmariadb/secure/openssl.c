@@ -125,20 +125,22 @@ static void ma_tls_set_error(MYSQL *mysql)
   char  ssl_error[MAX_SSL_ERR_LEN];
   const char *ssl_error_reason;
   MARIADB_PVIO *pvio= mysql->net.pvio;
+  int save_errno= errno;
 
-  if (!ssl_errno)
-  {
-    pvio->set_error(mysql, CR_SSL_CONNECTION_ERROR, SQLSTATE_UNKNOWN, "Unknown SSL error");
-    return;
-  }
-  if ((ssl_error_reason= ERR_reason_error_string(ssl_errno)))
+  if (ssl_errno && (ssl_error_reason= ERR_reason_error_string(ssl_errno)))
   {
     pvio->set_error(mysql, CR_SSL_CONNECTION_ERROR, SQLSTATE_UNKNOWN, 
                    0, ssl_error_reason);
     return;
+  } else if (!save_errno) {
+    pvio->set_error(mysql, CR_SERVER_LOST, SQLSTATE_UNKNOWN,
+                    ER(CR_SERVER_LOST));
+    return;
   }
-  snprintf(ssl_error, MAX_SSL_ERR_LEN, "SSL errno=%lu", ssl_errno);
-  pvio->set_error(mysql, CR_SSL_CONNECTION_ERROR, SQLSTATE_UNKNOWN, 0, ssl_error);
+
+  strerror_r(save_errno, ssl_error, MAX_SSL_ERR_LEN);
+  pvio->set_error(mysql, CR_SSL_CONNECTION_ERROR, SQLSTATE_UNKNOWN, "TLS/SSL error: %s (%d)",
+                  ssl_error, save_errno);
   return;
 }
 
@@ -587,13 +589,18 @@ ssize_t ma_tls_read(MARIADB_TLS *ctls, const uchar* buffer, size_t length)
   int rc;
   MARIADB_PVIO *pvio= ctls->pvio;
 
-  while ((rc= SSL_read((SSL *)ctls->ssl, (void *)buffer, (int)length)) < 0)
+  while ((rc= SSL_read((SSL *)ctls->ssl, (void *)buffer, (int)length)) <= 0)
   {
     int error= SSL_get_error((SSL *)ctls->ssl, rc);
     if (error != SSL_ERROR_WANT_READ)
-      return rc;
+      break;
     if (pvio->methods->wait_io_or_timeout(pvio, TRUE, pvio->mysql->options.read_timeout) < 1)
-      return rc;
+      break;
+  }
+  if (rc <= 0)
+  {
+    MYSQL *mysql= SSL_get_app_data(ctls->ssl);
+    ma_tls_set_error(mysql);
   }
   return rc;
 }
@@ -607,9 +614,14 @@ ssize_t ma_tls_write(MARIADB_TLS *ctls, const uchar* buffer, size_t length)
   {
     int error= SSL_get_error((SSL *)ctls->ssl, rc);
     if (error != SSL_ERROR_WANT_WRITE)
-      return rc;
+      break;
     if (pvio->methods->wait_io_or_timeout(pvio, TRUE, pvio->mysql->options.write_timeout) < 1)
-      return rc;
+      break;
+  }
+  if (rc <= 0)
+  {
+    MYSQL *mysql= SSL_get_app_data(ctls->ssl);
+    ma_tls_set_error(mysql);
   }
   return rc;
 }
@@ -676,7 +688,7 @@ int ma_tls_verify_server_cert(MARIADB_TLS *ctls)
     return 1;
   }
 #ifdef HAVE_OPENSSL_CHECK_HOST
-  if (X509_check_host(cert, mysql->host, 0, 0, 0) != 1
+  if (X509_check_host(cert, mysql->host, strlen(mysql->host), 0, 0) != 1
      && X509_check_ip_asc(cert, mysql->host, 0) != 1)
     goto error;
 #else
@@ -766,5 +778,10 @@ int ma_tls_get_protocol_version(MARIADB_TLS *ctls)
     return -1;
 
   return SSL_version(ctls->ssl) & 0xFF;
+}
+
+void ma_tls_set_connection(MYSQL *mysql)
+{
+  (void)SSL_set_app_data(mysql->net.pvio->ctls->ssl, mysql);
 }
 

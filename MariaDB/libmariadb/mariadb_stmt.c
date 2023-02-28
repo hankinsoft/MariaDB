@@ -1,5 +1,6 @@
 /****************************************************************************
   Copyright (C) 2012 Monty Program AB
+                2013, 2022 MariaDB Corporation AB
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Library General Public
@@ -90,18 +91,35 @@ void stmt_set_error(MYSQL_STMT *stmt,
                   ...)
 {
   va_list ap;
-  const char *error= NULL;
 
-  if (error_nr >= CR_MIN_ERROR && error_nr <= CR_MYSQL_LAST_ERROR)
-    error= ER(error_nr);
-  else if (error_nr >= CER_MIN_ERROR && error_nr <= CR_MARIADB_LAST_ERROR)
-    error= CER(error_nr);
+  const char *errmsg;
 
   stmt->last_errno= error_nr;
   ma_strmake(stmt->sqlstate, sqlstate, SQLSTATE_LENGTH);
+
+  if (!format)
+  {
+    if (IS_MYSQL_ERROR(error_nr) || IS_MARIADB_ERROR(error_nr))
+      errmsg= ER(error_nr);
+    else {
+      snprintf(stmt->last_error, MYSQL_ERRMSG_SIZE - 1,
+               ER_UNKNOWN_ERROR_CODE, error_nr);
+      return;
+    }
+  }
+
+  /* Fix for CONC-627: If this is a server error message, we don't
+     need to substitute and possible variadic arguments will be
+     ignored */
+  if (!IS_MYSQL_ERROR(error_nr) && !IS_MARIADB_ERROR(error_nr))
+  {
+    strncpy(stmt->last_error, format, MYSQL_ERRMSG_SIZE - 1);
+    return;
+  }
+
   va_start(ap, format);
-  vsnprintf(stmt->last_error, MYSQL_ERRMSG_SIZE,
-            format ? format : error ? error : "", ap);
+  vsnprintf(stmt->last_error, MYSQL_ERRMSG_SIZE - 1,
+            format ? format : errmsg, ap);
   va_end(ap);
   return;
 }
@@ -285,12 +303,14 @@ int mthd_stmt_read_all_rows(MYSQL_STMT *stmt)
       result->rows++;
     } else  /* end of stream */
     {
+      unsigned int last_status= stmt->mysql->server_status;
       *pprevious= 0;
       /* sace status info */
       p++;
       stmt->upsert_status.warning_count= stmt->mysql->warning_count= uint2korr(p);
       p+=2;
       stmt->upsert_status.server_status= stmt->mysql->server_status= uint2korr(p);
+      ma_status_callback(stmt->mysql, last_status);
       stmt->result_cursor= result->data;
       return(0);
     }
@@ -354,13 +374,16 @@ void mthd_stmt_flush_unbuffered(MYSQL_STMT *stmt)
                     stmt->state < MYSQL_STMT_FETCH_DONE;
   while ((packet_len = ma_net_safe_read(stmt->mysql)) != packet_error)
   {
+    unsigned int last_status= stmt->mysql->server_status;
     uchar *pos= stmt->mysql->net.read_pos;
+
     if (!in_resultset && *pos == 0) /* OK */
     {
       pos++;
       net_field_length(&pos);
       net_field_length(&pos);
       stmt->mysql->server_status= uint2korr(pos);
+      ma_status_callback(stmt->mysql, last_status);
       goto end;
     }
     if (packet_len < 8 && *pos == 254) /* EOF */
@@ -368,6 +391,7 @@ void mthd_stmt_flush_unbuffered(MYSQL_STMT *stmt)
       if (mariadb_connection(stmt->mysql))
       {
         stmt->mysql->server_status= uint2korr(pos + 3);
+        ma_status_callback(stmt->mysql, last_status);
         if (in_resultset)
           goto end;
         in_resultset= 1;
@@ -577,7 +601,7 @@ int store_param(MYSQL_STMT *stmt, int column, unsigned char **p, unsigned long r
        1          1       negative
        2-5        4       day
        6          1       hour
-       7          1       ninute
+       7          1       minute
        8          1       second;
        9-13       4       second_part
        */
@@ -711,6 +735,7 @@ unsigned char* ma_stmt_execute_generate_simple_request(MYSQL_STMT *stmt, size_t 
   size_t length= 1024;
   size_t free_bytes= 0;
   size_t null_byte_offset= 0;
+  uchar *tmp_start;
   uint i;
 
   uchar *start= NULL, *p;
@@ -739,8 +764,9 @@ unsigned char* ma_stmt_execute_generate_simple_request(MYSQL_STMT *stmt, size_t 
     {
       size_t offset= p - start;
       length+= offset + null_count + 20;
-      if (!(start= (uchar *)realloc(start, length)))
+      if (!(tmp_start= (uchar *)realloc(start, length)))
         goto mem_error;
+      start= tmp_start;
       p= start + offset;
     }
 
@@ -762,8 +788,9 @@ unsigned char* ma_stmt_execute_generate_simple_request(MYSQL_STMT *stmt, size_t 
       {
         size_t offset= p - start;
         length= offset + stmt->param_count * 2 + 20;
-        if (!(start= (uchar *)realloc(start, length)))
+        if (!(tmp_start= (uchar *)realloc(start, length)))
           goto mem_error;
+        start= tmp_start;
         p= start + offset;
       }
       for (i = 0; i < stmt->param_count; i++)
@@ -832,8 +859,9 @@ unsigned char* ma_stmt_execute_generate_simple_request(MYSQL_STMT *stmt, size_t 
       {
         size_t offset= p - start;
         length= MAX(2 * length, offset + size + 20);
-        if (!(start= (uchar *)realloc(start, length)))
+        if (!(tmp_start= (uchar *)realloc(start, length)))
           goto mem_error;
+        start= tmp_start;
         p= start + offset;
       }
       if (((stmt->params[i].is_null && *stmt->params[i].is_null) ||
@@ -906,6 +934,7 @@ unsigned char* ma_stmt_execute_generate_bulk_request(MYSQL_STMT *stmt, size_t *r
   size_t length= 1024;
   size_t free_bytes= 0;
   ushort flags= 0;
+  uchar *tmp_start;
   uint i, j;
 
   uchar *start= NULL, *p;
@@ -926,7 +955,10 @@ unsigned char* ma_stmt_execute_generate_bulk_request(MYSQL_STMT *stmt, size_t *r
 
   /* preallocate length bytes */
   if (!(start= p= (uchar *)malloc(length)))
-    goto mem_error;
+  {
+    SET_CLIENT_STMT_ERROR(stmt, CR_OUT_OF_MEMORY, SQLSTATE_UNKNOWN, 0);
+    goto error;
+  }
 
   int4store(p, stmt->stmt_id);
   p += STMT_ID_LENGTH;
@@ -938,7 +970,7 @@ unsigned char* ma_stmt_execute_generate_bulk_request(MYSQL_STMT *stmt, size_t *r
   p+=2;
 
   /* When using mariadb_stmt_execute_direct stmt->paran_count is
-     not knowm, so we need to assign prebind_params, which was previously
+     not known, so we need to assign prebind_params, which was previously
      set by mysql_stmt_attr_set
   */
   if (!stmt->param_count && stmt->prebind_params)
@@ -957,8 +989,12 @@ unsigned char* ma_stmt_execute_generate_bulk_request(MYSQL_STMT *stmt, size_t *r
       {
         size_t offset= p - start;
         length= offset + stmt->param_count * 2 + 20;
-        if (!(start= (uchar *)realloc(start, length)))
-          goto mem_error;
+        if (!(tmp_start= (uchar *)realloc(start, length)))
+        {
+          SET_CLIENT_STMT_ERROR(stmt, CR_OUT_OF_MEMORY, SQLSTATE_UNKNOWN, 0);
+          goto error;
+        }
+        start= tmp_start;
         p= start + offset;
       }
       for (i = 0; i < stmt->param_count; i++)
@@ -976,7 +1012,13 @@ unsigned char* ma_stmt_execute_generate_bulk_request(MYSQL_STMT *stmt, size_t *r
       /* If callback for parameters was specified, we need to
          update bind information for new row */
       if (stmt->param_callback)
-        stmt->param_callback(stmt->user_data, stmt->params, j);
+      {
+        if (stmt->param_callback(stmt->user_data, stmt->params, j))
+        {
+          SET_CLIENT_STMT_ERROR(stmt, CR_ERR_STMT_PARAM_CALLBACK, SQLSTATE_UNKNOWN, 0);
+          goto error;
+        }
+      }
 
       if (mysql_stmt_skip_paramset(stmt, j))
         continue;
@@ -1043,8 +1085,12 @@ unsigned char* ma_stmt_execute_generate_bulk_request(MYSQL_STMT *stmt, size_t *r
         {
           size_t offset= p - start;
           length= MAX(2 * length, offset + size + 20);
-          if (!(start= (uchar *)realloc(start, length)))
-            goto mem_error;
+          if (!(tmp_start= (uchar *)realloc(start, length)))
+          {
+            SET_CLIENT_STMT_ERROR(stmt, CR_OUT_OF_MEMORY, SQLSTATE_UNKNOWN, 0);
+            goto error;
+          }
+          start= tmp_start;
           p= start + offset;
         }
 
@@ -1060,8 +1106,7 @@ unsigned char* ma_stmt_execute_generate_bulk_request(MYSQL_STMT *stmt, size_t *r
   stmt->send_types_to_server= 0;
   *request_len = (size_t)(p - start);
   return start;
-mem_error:
-  SET_CLIENT_STMT_ERROR(stmt, CR_OUT_OF_MEMORY, SQLSTATE_UNKNOWN, 0);
+error:
   free(start);
   *request_len= 0;
   return NULL;
@@ -1766,7 +1811,8 @@ int STDCALL mysql_stmt_prepare(MYSQL_STMT *stmt, const char *query, unsigned lon
     goto fail;
 
   if (!is_multi && mysql->net.extension->multi_status == COM_MULTI_ENABLED)
-    ma_multi_command(mysql, COM_MULTI_END);
+    if (ma_multi_command(mysql, COM_MULTI_END))
+      goto fail;
   
   if (mysql->net.extension->multi_status > COM_MULTI_OFF ||
       mysql->options.extension->skip_read_response)
@@ -1900,6 +1946,7 @@ int mthd_stmt_read_execute_response(MYSQL_STMT *stmt)
 {
   MYSQL *mysql= stmt->mysql;
   int ret;
+  unsigned int last_status= mysql->server_status;
 
   if (!mysql)
     return(1);
@@ -1954,6 +2001,7 @@ int mthd_stmt_read_execute_response(MYSQL_STMT *stmt)
   }
   stmt->upsert_status.last_insert_id= mysql->insert_id;
   stmt->upsert_status.server_status= mysql->server_status;
+  ma_status_callback(stmt->mysql, last_status);
   stmt->upsert_status.warning_count= mysql->warning_count;
 
   CLEAR_CLIENT_ERROR(mysql);
@@ -2231,6 +2279,7 @@ static my_bool mysql_stmt_internal_reset(MYSQL_STMT *stmt, my_bool is_close)
   MYSQL *mysql= stmt->mysql;
   my_bool ret= 1;
   unsigned int flags= MADB_RESET_LONGDATA | MADB_RESET_BUFFER | MADB_RESET_ERROR;
+  unsigned int last_status;
 
   if (!mysql)
   {
@@ -2239,6 +2288,8 @@ static my_bool mysql_stmt_internal_reset(MYSQL_STMT *stmt, my_bool is_close)
     SET_CLIENT_STMT_ERROR(stmt, CR_SERVER_LOST, SQLSTATE_UNKNOWN, 0);
     return(1);
   }
+
+  last_status= mysql->server_status;
 
   if (stmt->state >= MYSQL_STMT_USER_FETCHING &&
       stmt->fetch_row_func == stmt_unbuffered_fetch)
@@ -2275,6 +2326,7 @@ static my_bool mysql_stmt_internal_reset(MYSQL_STMT *stmt, my_bool is_close)
   stmt->upsert_status.affected_rows= mysql->affected_rows;
   stmt->upsert_status.last_insert_id= mysql->insert_id;
   stmt->upsert_status.server_status= mysql->server_status;
+  ma_status_callback(stmt->mysql, last_status);
   stmt->upsert_status.warning_count= mysql->warning_count;
   mysql->status= MYSQL_STATUS_READY;
 
@@ -2288,7 +2340,7 @@ MYSQL_RES * STDCALL mysql_stmt_result_metadata(MYSQL_STMT *stmt)
   if (!stmt->field_count)
     return(NULL);
 
-  /* aloocate result set structutr and copy stmt information */
+  /* allocate result set structure and copy stmt information */
   if (!(res= (MYSQL_RES *)calloc(1, sizeof(MYSQL_RES))))
   {
     SET_CLIENT_STMT_ERROR(stmt, CR_OUT_OF_MEMORY, SQLSTATE_UNKNOWN, 0);
@@ -2442,9 +2494,11 @@ int STDCALL mysql_stmt_next_result(MYSQL_STMT *stmt)
     rc= madb_alloc_stmt_fields(stmt);
   else
   {
+    unsigned int last_status= stmt->mysql->server_status;
     stmt->upsert_status.affected_rows= stmt->mysql->affected_rows;
     stmt->upsert_status.last_insert_id= stmt->mysql->insert_id;
     stmt->upsert_status.server_status= stmt->mysql->server_status;
+    ma_status_callback(stmt->mysql, last_status);
     stmt->upsert_status.warning_count= stmt->mysql->warning_count;
   }
 
