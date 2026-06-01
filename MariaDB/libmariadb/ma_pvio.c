@@ -522,6 +522,7 @@ my_bool ma_pvio_has_data(MARIADB_PVIO *pvio, ssize_t *data_len)
 /* }}} */
 
 #ifdef HAVE_TLS
+
 /* {{{ my_bool ma_pvio_start_ssl */
 my_bool ma_pvio_start_ssl(MARIADB_PVIO *pvio)
 {
@@ -538,26 +539,6 @@ my_bool ma_pvio_start_ssl(MARIADB_PVIO *pvio)
     pvio->ctls= NULL;
     return 1;
   }
-
-  /* default behaviour:
-     1. peer certificate verification
-     2. verify CN (requires option ssl_verify_check)
-     3. verrify finger print
-  */
-  if ((pvio->mysql->client_flag & CLIENT_SSL_VERIFY_SERVER_CERT) &&
-         ma_pvio_tls_verify_server_cert(pvio->ctls))
-    return 1;
-
-  if (pvio->mysql->options.extension &&
-      ((pvio->mysql->options.extension->tls_fp && pvio->mysql->options.extension->tls_fp[0]) ||
-      (pvio->mysql->options.extension->tls_fp_list && pvio->mysql->options.extension->tls_fp_list[0])))
-  {
-    if (ma_pvio_tls_check_fp(pvio->ctls, 
-          pvio->mysql->options.extension->tls_fp,
-          pvio->mysql->options.extension->tls_fp_list))
-      return 1;
-  }
-
   return 0;
 }
 /* }}} */
@@ -576,6 +557,8 @@ int ma_pvio_register_callback(my_bool register_callback,
   if (register_callback)
   {
     list= (LIST *)malloc(sizeof(LIST));
+    if (!list)
+      return 1;
 
     list->data= (void *)callback_function;
     pvio_callback= list_add(pvio_callback, list);

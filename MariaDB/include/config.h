@@ -3,6 +3,7 @@
  * Include file constants (processed in LibmysqlIncludeFiles.txt 1
  */
 /* #undef HAVE_OPENSSL_APPLINK_C */
+#define HAVE_evp_pkey 1
 #define HAVE_ALLOCA_H 1
 /* #undef HAVE_BIGENDIAN */
 #define HAVE_SETLOCALE 1
@@ -28,7 +29,7 @@
 #define HAVE_SYS_UN_H 1
 #define HAVE_UNISTD_H 1
 #define HAVE_UCONTEXT_H 1
-#define HAVE_OPENSSL_1_1_API 1
+/* #undef HAVE_BOOST_CONTEXT_H */
 
 /*
  * function definitions - processed in LibmysqlFunctions.txt 
@@ -149,3 +150,4 @@
 
 #define MARIADB_DEFAULT_CHARSET "utf8mb4"
 
+#define DEFAULT_SSL_VERIFY_SERVER_CERT 1

@@ -32,14 +32,13 @@
 #undef _WIN32_WINNT
 #define _WIN32_WINNT 0x0601
 #endif
-
 #include "schannel_certs.h"
+#include "ma_schannel.h"
 #include <malloc.h>
 #include <stdio.h>
 #include <string.h>
-#include <winsock2.h>
-#include <ws2tcpip.h>
 #include <winhttp.h>
+#include <limits.h>
 #include <assert.h>
 #include "win32_errmsg.h"
 
@@ -235,7 +234,10 @@ static SECURITY_STATUS add_certs_to_store(
 
   file_buffer = pem_file_to_string(file, errmsg, errmsg_len);
   if (!file_buffer)
+  {
+    status = ERROR_FILE_NOT_FOUND;
     goto cleanup;
+  }
 
   for (cur = file_buffer; ; cur = end)
   {
@@ -486,7 +488,7 @@ static SECURITY_STATUS VerifyServerCertificate(
   PCCERT_CONTEXT  pServerCert,
   HCERTSTORE      hStore,
   LPWSTR          pwszServerName,
-  DWORD           dwRevocationCheckFlags,
+  DWORD           dwCertChainFlags,
   DWORD           dwVerifyFlags,
   LPSTR           errmsg,
   size_t          errmsg_len)
@@ -532,7 +534,7 @@ static SECURITY_STATUS VerifyServerCertificate(
     NULL,
     pServerCert->hCertStore,
     &ChainPara,
-    dwRevocationCheckFlags,
+    dwCertChainFlags,
     NULL,
     &pChainContext))
   {
@@ -550,6 +552,7 @@ static SECURITY_STATUS VerifyServerCertificate(
   memset(&PolicyPara, 0, sizeof(PolicyPara));
   PolicyPara.cbSize = sizeof(PolicyPara);
   PolicyPara.pvExtraPolicyPara = &polExtra;
+  PolicyPara.dwFlags= CERT_CHAIN_POLICY_IGNORE_ALL_REV_UNKNOWN_FLAGS;
 
   memset(&PolicyStatus, 0, sizeof(PolicyStatus));
   PolicyStatus.cbSize = sizeof(PolicyStatus);
@@ -596,18 +599,20 @@ Verify server certificate against a wincrypt store
 SECURITY_STATUS schannel_verify_server_certificate(
   const CERT_CONTEXT* cert,
   HCERTSTORE store,
-  BOOL check_revocation,
-  const char* server_name,
-  BOOL check_server_name,
+  const char *server_name,
+  unsigned int verify_flags,
   char* errmsg,
   size_t errmsg_len)
 {
   SECURITY_STATUS status = SEC_E_OK;
   wchar_t* wserver_name = NULL;
   DWORD dwVerifyFlags;
-  DWORD dwRevocationFlags;
+  DWORD dwCertChainFlags;
 
-  if (check_server_name)
+  if (!verify_flags)
+    return status;
+
+  if (verify_flags & MARIADB_TLS_VERIFY_HOST)
   {
     int cchServerName = (int)strlen(server_name) + 1;
     wserver_name = (wchar_t*)LocalAlloc(0,sizeof(wchar_t) * cchServerName);
@@ -622,31 +627,83 @@ SECURITY_STATUS schannel_verify_server_certificate(
   }
 
   dwVerifyFlags = 0;
-  dwRevocationFlags = 0;
-  if (check_revocation)
-    dwRevocationFlags |= CERT_CHAIN_REVOCATION_CHECK_CHAIN_EXCLUDE_ROOT | CERT_CHAIN_REVOCATION_CHECK_CACHE_ONLY;
-  if (!check_server_name)
+  dwCertChainFlags = CERT_CHAIN_CACHE_ONLY_URL_RETRIEVAL|CERT_CHAIN_CACHE_END_CERT;
+  if (verify_flags & MARIADB_TLS_VERIFY_REVOKED)
+    dwCertChainFlags |= CERT_CHAIN_REVOCATION_CHECK_END_CERT|CERT_CHAIN_REVOCATION_CHECK_CACHE_ONLY;
+  if (!(verify_flags & MARIADB_TLS_VERIFY_HOST))
     dwVerifyFlags |= SECURITY_FLAG_IGNORE_CERT_CN_INVALID;
+  if (!(verify_flags & MARIADB_TLS_VERIFY_PERIOD))
+    dwVerifyFlags |= SECURITY_FLAG_IGNORE_CERT_DATE_INVALID;
+  if (!(verify_flags & MARIADB_TLS_VERIFY_TRUST))
+    dwVerifyFlags |= SECURITY_FLAG_IGNORE_UNKNOWN_CA;
 
   status = VerifyServerCertificate(cert, store, wserver_name ? wserver_name : L"SERVER_NAME",
-    dwRevocationFlags, dwVerifyFlags, errmsg, errmsg_len);
+    dwCertChainFlags, dwVerifyFlags, errmsg, errmsg_len);
 
 cleanup:
   LocalFree(wserver_name);
   return status;
 }
 
+/*
+  Generate a random key container name.
+  Used to store private key in Windows key store.
+*/
+#define KEY_CONTAINER_NAME_PREFIX L"MariaDB-Connector-C-"
+static void generate_key_container_name(wchar_t* key_container_name, size_t key_container_name_len)
+{
+   LARGE_INTEGER now;
+   QueryPerformanceCounter(&now);
+   swprintf_s(key_container_name, key_container_name_len,
+              L"MariaDB-Connector-C-%u-%u-%lld",GetCurrentProcessId(),GetCurrentThreadId(),now.QuadPart);
+}
+
+/**
+  Execute CryptAcquireContext().
+  The preference order is persistent user key container with unique name,
+  with fallback machine key container with uniquename.
+
+  @param cert_handle - structure to store provider handle, key handle, and
+  certificate
+  @return TRUE on success, FALSE on failure.
+
+  @note If the function returns TRUE, the key_container_name and flags fields
+  of cert_handle are set.
+*/
+static BOOL crypt_acquire_context(client_cert_handle *cert_handle)
+{
+  DWORD all_flags[]= {CRYPT_NEWKEYSET, CRYPT_NEWKEYSET | CRYPT_MACHINE_KEYSET};
+  size_t i;
+  generate_key_container_name(cert_handle->key_container_name,
+      sizeof(cert_handle->key_container_name) / sizeof(wchar_t));
+  for (i= 0; i < ARRAYSIZE(all_flags); i++)
+  {
+    DWORD fl= all_flags[i];
+    if (CryptAcquireContextW(&cert_handle->prov, cert_handle->key_container_name,
+                             MS_ENHANCED_PROV_W, PROV_RSA_FULL, fl))
+    {
+      cert_handle->flags= fl;
+      return TRUE;
+    }
+    if (GetLastError() != ERROR_ACCESS_DENIED)
+      break;
+    cert_handle->prov= 0;
+  }
+  cert_handle->key_container_name[0]= 0;
+  cert_handle->flags= 0;
+  return FALSE;
+}
+
 
 /* Attach private key (in PEM format) to client certificate */
-static SECURITY_STATUS load_private_key(CERT_CONTEXT* cert, char* private_key_str, size_t len, char* errmsg, size_t errmsg_len)
+static SECURITY_STATUS load_private_key(client_cert_handle *cert_handle, char *private_key_str,
+                                        size_t len, char *errmsg,
+                                        size_t errmsg_len)
 {
   DWORD derlen = (DWORD)len;
   BYTE* derbuf = NULL;
   DWORD keyblob_len = 0;
   BYTE* keyblob = NULL;
-  HCRYPTPROV hProv = 0;
-  HCRYPTKEY hKey = 0;
-  CERT_KEY_CONTEXT cert_key_context = { 0 };
   PCRYPT_PRIVATE_KEY_INFO  pki = NULL;
   DWORD pki_len = 0;
   SECURITY_STATUS status = SEC_E_OK;
@@ -696,23 +753,28 @@ static SECURITY_STATUS load_private_key(CERT_CONTEXT* cert, char* private_key_st
     FAIL("Failed to parse private key");
   }
 
-  if (!CryptAcquireContext(&hProv, NULL, MS_ENHANCED_PROV, PROV_RSA_FULL, CRYPT_VERIFYCONTEXT))
+  if (!crypt_acquire_context(cert_handle))
   {
     FAIL("CryptAcquireContext failed");
   }
 
-  if (!CryptImportKey(hProv, keyblob, keyblob_len, 0, 0, (HCRYPTKEY*)&hKey))
+  if (!CryptImportKey(cert_handle->prov, keyblob, keyblob_len, 0, 0,
+                      &cert_handle->key))
   {
     FAIL("CryptImportKey failed");
   }
-  cert_key_context.hCryptProv = hProv;
-  cert_key_context.dwKeySpec = AT_KEYEXCHANGE;
-  cert_key_context.cbSize = sizeof(cert_key_context);
+  cert_handle->flags &= ~CRYPT_NEWKEYSET;
 
-  /* assign private key to certificate context */
-  if (!CertSetCertificateContextProperty(cert, CERT_KEY_CONTEXT_PROP_ID,
-                                         CERT_STORE_NO_CRYPT_RELEASE_FLAG,
-                                         &cert_key_context))
+  // Link the private key to the certificate
+  CRYPT_KEY_PROV_INFO keyProvInfo= {0};
+  keyProvInfo.pwszContainerName= cert_handle->key_container_name;
+  keyProvInfo.pwszProvName= NULL;
+  keyProvInfo.dwProvType= PROV_RSA_FULL;
+  keyProvInfo.dwFlags= cert_handle->flags;
+  keyProvInfo.cProvParam= 0;
+  keyProvInfo.rgProvParam= NULL;
+  keyProvInfo.dwKeySpec= AT_KEYEXCHANGE;
+  if (!CertSetCertificateContextProperty(cert_handle->cert, CERT_KEY_PROV_INFO_PROP_ID, 0, &keyProvInfo))
   {
     FAIL("CertSetCertificateContextProperty failed");
   }
@@ -721,13 +783,6 @@ cleanup:
   LocalFree(derbuf);
   LocalFree(keyblob);
   LocalFree(pki);
-  if (hKey)
-    CryptDestroyKey(hKey);
-  if (status)
-  {
-    if (hProv)
-      CryptReleaseContext(hProv, 0);
-  }
   return status;
 }
 
@@ -735,13 +790,13 @@ cleanup:
  Given PEM strings for certificate and private key,
  create a client certificate*
 */
-static CERT_CONTEXT* create_client_certificate_mem(
+static SECURITY_STATUS create_client_certificate_mem(
   char* cert_file_content,
   char* key_file_content,
+  client_cert_handle* cert_handle,
   char* errmsg,
   size_t errmsg_len)
 {
-  CERT_CONTEXT* ctx = NULL;
   char* begin;
   char* end;
   CERT_BLOB cert_blob;
@@ -764,7 +819,7 @@ static CERT_CONTEXT* create_client_certificate_mem(
     CERT_QUERY_OBJECT_BLOB, &cert_blob,
     CERT_QUERY_CONTENT_FLAG_CERT,
     CERT_QUERY_FORMAT_FLAG_ALL, 0, NULL, &actual_content_type,
-    NULL, NULL, NULL, (const void**)&ctx))
+    NULL, NULL, NULL, (const void**)&cert_handle->cert))
   {
     FAIL("Can't parse client certficate");
   }
@@ -777,7 +832,7 @@ static CERT_CONTEXT* create_client_certificate_mem(
     if (begin && end)
     {
       /* Assign key to certificate.*/
-      status = load_private_key(ctx, begin, (end - begin), errmsg, errmsg_len);
+      status = load_private_key(cert_handle, begin, (end - begin), errmsg, errmsg_len);
       goto cleanup;
     }
   }
@@ -789,21 +844,20 @@ static CERT_CONTEXT* create_client_certificate_mem(
   }
 
 cleanup:
-  if (status && ctx)
-  {
-    CertFreeCertificateContext(ctx);
-    ctx = NULL;
-  }
-  return ctx;
+  return status;
 }
 
 
 /* Given cert and key, as PEM file names, create a client certificate */
-CERT_CONTEXT* schannel_create_cert_context(char* cert_file, char* key_file, char* errmsg, size_t errmsg_len)
+SECURITY_STATUS schannel_create_cert_context(char* cert_file, char* key_file,
+    client_cert_handle *cert_handle,
+    char* errmsg, size_t errmsg_len)
 {
-  CERT_CONTEXT* ctx = NULL;
   char* key_file_content = NULL;
   char* cert_file_content = NULL;
+  SECURITY_STATUS status= SEC_E_INTERNAL_ERROR;
+
+  memset(cert_handle, 0, sizeof(client_cert_handle));
 
   cert_file_content = pem_file_to_string(cert_file, errmsg, errmsg_len);
 
@@ -821,34 +875,46 @@ CERT_CONTEXT* schannel_create_cert_context(char* cert_file, char* key_file, char
       goto cleanup;
   }
 
-  ctx = create_client_certificate_mem(cert_file_content, key_file_content, errmsg, errmsg_len);
+  status = create_client_certificate_mem(cert_file_content, key_file_content, cert_handle, errmsg, errmsg_len);
 
 cleanup:
   LocalFree(cert_file_content);
   if (cert_file != key_file)
     LocalFree(key_file_content);
-
-  return ctx;
+  if (status)
+    schannel_free_cert_context(cert_handle);
+  return status;
 }
 
 /*
   Free certificate, and all resources, created by schannel_create_cert_context()
 */
-void schannel_free_cert_context(const CERT_CONTEXT* cert)
+void schannel_free_cert_context(client_cert_handle* cert_handle)
 {
-  /* release provider handle which was acquires in load_private_key() */
-  CERT_KEY_CONTEXT cert_key_context = { 0 };
-  cert_key_context.cbSize = sizeof(cert_key_context);
-  DWORD cbData = sizeof(CERT_KEY_CONTEXT);
-  HCRYPTPROV hProv = 0;
-
-  if (CertGetCertificateContextProperty(cert, CERT_KEY_CONTEXT_PROP_ID, &cert_key_context, &cbData))
+  if (cert_handle->key)
   {
-    hProv = cert_key_context.hCryptProv;
+    CryptDestroyKey(cert_handle->key);
+    cert_handle->key = 0;
   }
-  CertFreeCertificateContext(cert);
-  if (hProv)
+  if (cert_handle->prov)
   {
-    CryptReleaseContext(cert_key_context.hCryptProv, 0);
+    CryptReleaseContext(cert_handle->prov, 0);
+    cert_handle->prov = 0;
   }
+  if (cert_handle->cert)
+  {
+    CertFreeCertificateContext(cert_handle->cert);
+    cert_handle->cert = 0;
+  }
+  if (cert_handle->key_container_name[0])
+  {
+    if (!CryptAcquireContextW(&cert_handle->prov, cert_handle->key_container_name,
+                              MS_ENHANCED_PROV_W, PROV_RSA_FULL,
+                              CRYPT_DELETEKEYSET|cert_handle->flags))
+    {
+      assert(GetLastError() == NTE_BAD_KEYSET);
+    }
+    cert_handle->key_container_name[0] = 0;
+  }
+  cert_handle->flags= 0;
 }

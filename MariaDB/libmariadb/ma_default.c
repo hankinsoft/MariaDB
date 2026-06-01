@@ -29,6 +29,8 @@
 #include <io.h>
 #include "shlwapi.h"
 
+#define access _access
+
 static const char *ini_exts[]= {"ini", "cnf", 0};
 #define R_OK 4
 #else
@@ -133,6 +135,7 @@ char **get_default_configuration_dirs()
 end:
   return configuration_dirs;
 error:
+  release_configuration_dirs();
   return NULL;
 }
 

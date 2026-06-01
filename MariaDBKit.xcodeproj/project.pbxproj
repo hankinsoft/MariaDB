@@ -31,8 +31,6 @@
 		27B7B46521FFF9F500CE2354 /* ma_init.c in Sources */ = {isa = PBXBuildFile; fileRef = 27B7B43C21FFF9F500CE2354 /* ma_init.c */; };
 		27B7B46621FFF9F500CE2354 /* ma_loaddata.c in Sources */ = {isa = PBXBuildFile; fileRef = 27B7B43D21FFF9F500CE2354 /* ma_loaddata.c */; };
 		27B7B46721FFF9F500CE2354 /* ma_loaddata.c in Sources */ = {isa = PBXBuildFile; fileRef = 27B7B43D21FFF9F500CE2354 /* ma_loaddata.c */; };
-		27B7B46821FFF9F500CE2354 /* ma_sha1.c in Sources */ = {isa = PBXBuildFile; fileRef = 27B7B43E21FFF9F500CE2354 /* ma_sha1.c */; };
-		27B7B46921FFF9F500CE2354 /* ma_sha1.c in Sources */ = {isa = PBXBuildFile; fileRef = 27B7B43E21FFF9F500CE2354 /* ma_sha1.c */; };
 		27B7B46A21FFF9F500CE2354 /* ma_client_plugin.c.in in Resources */ = {isa = PBXBuildFile; fileRef = 27B7B43F21FFF9F500CE2354 /* ma_client_plugin.c.in */; };
 		27B7B46B21FFF9F500CE2354 /* ma_client_plugin.c.in in Resources */ = {isa = PBXBuildFile; fileRef = 27B7B43F21FFF9F500CE2354 /* ma_client_plugin.c.in */; };
 		27B7B46E21FFF9F500CE2354 /* ma_alloc.c in Sources */ = {isa = PBXBuildFile; fileRef = 27B7B44121FFF9F500CE2354 /* ma_alloc.c */; };
@@ -100,8 +98,6 @@
 		27B7B55821FFFD5300CE2354 /* zlib.h in Headers */ = {isa = PBXBuildFile; fileRef = 27B7B52A21FFFD5200CE2354 /* zlib.h */; };
 		27B7B55921FFFD5300CE2354 /* gzlib.c in Sources */ = {isa = PBXBuildFile; fileRef = 27B7B52B21FFFD5200CE2354 /* gzlib.c */; };
 		27B7B55A21FFFD5300CE2354 /* gzlib.c in Sources */ = {isa = PBXBuildFile; fileRef = 27B7B52B21FFFD5200CE2354 /* gzlib.c */; };
-		27B7B55B21FFFD5300CE2354 /* minigzip.c in Sources */ = {isa = PBXBuildFile; fileRef = 27B7B52C21FFFD5200CE2354 /* minigzip.c */; };
-		27B7B55C21FFFD5300CE2354 /* minigzip.c in Sources */ = {isa = PBXBuildFile; fileRef = 27B7B52C21FFFD5200CE2354 /* minigzip.c */; };
 		27B7B55D21FFFD5300CE2354 /* inflate.h in Headers */ = {isa = PBXBuildFile; fileRef = 27B7B52D21FFFD5200CE2354 /* inflate.h */; };
 		27B7B55E21FFFD5300CE2354 /* inflate.h in Headers */ = {isa = PBXBuildFile; fileRef = 27B7B52D21FFFD5200CE2354 /* inflate.h */; };
 		27B7B55F21FFFD5300CE2354 /* inftrees.c in Sources */ = {isa = PBXBuildFile; fileRef = 27B7B52E21FFFD5200CE2354 /* inftrees.c */; };
@@ -168,6 +164,16 @@
 		728AEC23280073250015C7F8 /* ma_config.h in Headers */ = {isa = PBXBuildFile; fileRef = 728AEC21280073250015C7F8 /* ma_config.h */; };
 		728AEC38280093C50015C7F8 /* c_zlib.c in Sources */ = {isa = PBXBuildFile; fileRef = 728AEC35280093C50015C7F8 /* c_zlib.c */; };
 		728AEC39280093C50015C7F8 /* c_zlib.c in Sources */ = {isa = PBXBuildFile; fileRef = 728AEC35280093C50015C7F8 /* c_zlib.c */; };
+		1331C8010000000000000001 /* get_password.c in Sources */ = {isa = PBXBuildFile; fileRef = 1331C8010000000000000000 /* get_password.c */; };
+		1331C8010000000000000002 /* get_password.c in Sources */ = {isa = PBXBuildFile; fileRef = 1331C8010000000000000000 /* get_password.c */; };
+		1331C8020000000000000001 /* ma_decimal.c in Sources */ = {isa = PBXBuildFile; fileRef = 1331C8020000000000000000 /* ma_decimal.c */; };
+		1331C8020000000000000002 /* ma_decimal.c in Sources */ = {isa = PBXBuildFile; fileRef = 1331C8020000000000000000 /* ma_decimal.c */; };
+		1331C8040000000000000001 /* parsec.c in Sources */ = {isa = PBXBuildFile; fileRef = 1331C8040000000000000000 /* parsec.c */; };
+		1331C8040000000000000002 /* parsec.c in Sources */ = {isa = PBXBuildFile; fileRef = 1331C8040000000000000000 /* parsec.c */; };
+		1331C8060000000000000001 /* adler32_simd.c in Sources */ = {isa = PBXBuildFile; fileRef = 1331C8060000000000000000 /* adler32_simd.c */; };
+		1331C8060000000000000002 /* adler32_simd.c in Sources */ = {isa = PBXBuildFile; fileRef = 1331C8060000000000000000 /* adler32_simd.c */; };
+		1331C8080000000000000001 /* crc32_simd.c in Sources */ = {isa = PBXBuildFile; fileRef = 1331C8080000000000000000 /* crc32_simd.c */; };
+		1331C8080000000000000002 /* crc32_simd.c in Sources */ = {isa = PBXBuildFile; fileRef = 1331C8080000000000000000 /* crc32_simd.c */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -193,7 +199,6 @@
 		27B7B43B21FFF9F500CE2354 /* ma_password.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = ma_password.c; sourceTree = "<group>"; };
 		27B7B43C21FFF9F500CE2354 /* ma_init.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = ma_init.c; sourceTree = "<group>"; };
 		27B7B43D21FFF9F500CE2354 /* ma_loaddata.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = ma_loaddata.c; sourceTree = "<group>"; };
-		27B7B43E21FFF9F500CE2354 /* ma_sha1.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = ma_sha1.c; sourceTree = "<group>"; };
 		27B7B43F21FFF9F500CE2354 /* ma_client_plugin.c.in */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = ma_client_plugin.c.in; sourceTree = "<group>"; };
 		27B7B44121FFF9F500CE2354 /* ma_alloc.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = ma_alloc.c; sourceTree = "<group>"; };
 		27B7B44221FFF9F500CE2354 /* ma_io.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = ma_io.c; sourceTree = "<group>"; };
@@ -225,12 +230,10 @@
 		27B7B49B21FFFA0C00CE2354 /* ma_context.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ma_context.h; sourceTree = "<group>"; };
 		27B7B49C21FFFA0C00CE2354 /* ma_list.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ma_list.h; sourceTree = "<group>"; };
 		27B7B49D21FFFA0C00CE2354 /* ma_sys.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ma_sys.h; sourceTree = "<group>"; };
-		27B7B49F21FFFA0C00CE2354 /* plugin_auth_common.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = plugin_auth_common.h; sourceTree = "<group>"; };
 		27B7B4A021FFFA0C00CE2354 /* plugin_auth.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = plugin_auth.h; sourceTree = "<group>"; };
 		27B7B4A121FFFA0C00CE2354 /* client_plugin.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = client_plugin.h; sourceTree = "<group>"; };
 		27B7B4A221FFFA0C00CE2354 /* ma_string.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ma_string.h; sourceTree = "<group>"; };
 		27B7B4A321FFFA0C00CE2354 /* mysql.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = mysql.h; sourceTree = "<group>"; };
-		27B7B4A421FFFA0C00CE2354 /* ma_sha1.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ma_sha1.h; sourceTree = "<group>"; };
 		27B7B4A521FFFA0C00CE2354 /* mariadb_com.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = mariadb_com.h; sourceTree = "<group>"; };
 		27B7B4A621FFFA0C00CE2354 /* mysqld_error.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = mysqld_error.h; sourceTree = "<group>"; };
 		27B7B4A721FFFA0C00CE2354 /* ma_common.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ma_common.h; sourceTree = "<group>"; };
@@ -242,7 +245,6 @@
 		27B7B4F721FFFA1C00CE2354 /* pvio_shmem.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = pvio_shmem.c; sourceTree = "<group>"; };
 		27B7B4F921FFFA1C00CE2354 /* trace_example.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = trace_example.c; sourceTree = "<group>"; };
 		27B7B4FB21FFFA1C00CE2354 /* replication.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = replication.c; sourceTree = "<group>"; };
-		27B7B4FC21FFFA1C00CE2354 /* aurora.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = aurora.c; sourceTree = "<group>"; };
 		27B7B4FE21FFFA1C00CE2354 /* gssapi_client.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = gssapi_client.c; sourceTree = "<group>"; };
 		27B7B4FF21FFFA1C00CE2354 /* auth_gssapi_client.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = auth_gssapi_client.c; sourceTree = "<group>"; };
 		27B7B50021FFFA1C00CE2354 /* caching_sha2_pw.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = caching_sha2_pw.c; sourceTree = "<group>"; };
@@ -276,7 +278,6 @@
 		27B7B52921FFFD5200CE2354 /* gzguts.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = gzguts.h; sourceTree = "<group>"; };
 		27B7B52A21FFFD5200CE2354 /* zlib.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = zlib.h; sourceTree = "<group>"; };
 		27B7B52B21FFFD5200CE2354 /* gzlib.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = gzlib.c; sourceTree = "<group>"; };
-		27B7B52C21FFFD5200CE2354 /* minigzip.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = minigzip.c; sourceTree = "<group>"; };
 		27B7B52D21FFFD5200CE2354 /* inflate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = inflate.h; sourceTree = "<group>"; };
 		27B7B52E21FFFD5200CE2354 /* inftrees.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = inftrees.c; sourceTree = "<group>"; };
 		27B7B52F21FFFD5200CE2354 /* uncompr.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = uncompr.c; sourceTree = "<group>"; };
@@ -311,6 +312,15 @@
 		728AEC1E280071550015C7F8 /* ma_hashtbl.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = ma_hashtbl.c; sourceTree = "<group>"; };
 		728AEC21280073250015C7F8 /* ma_config.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ma_config.h; sourceTree = "<group>"; };
 		728AEC35280093C50015C7F8 /* c_zlib.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = c_zlib.c; sourceTree = "<group>"; };
+		1331C8010000000000000000 /* get_password.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = get_password.c; sourceTree = "<group>"; };
+		1331C8020000000000000000 /* ma_decimal.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = ma_decimal.c; sourceTree = "<group>"; };
+		1331C8030000000000000000 /* ma_decimal.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ma_decimal.h; sourceTree = "<group>"; };
+		1331C8040000000000000000 /* parsec.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = parsec.c; sourceTree = "<group>"; };
+		1331C8050000000000000000 /* ed25519_common.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ed25519_common.h; sourceTree = "<group>"; };
+		1331C8060000000000000000 /* adler32_simd.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = adler32_simd.c; sourceTree = "<group>"; };
+		1331C8070000000000000000 /* adler32_simd.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = adler32_simd.h; sourceTree = "<group>"; };
+		1331C8080000000000000000 /* crc32_simd.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = crc32_simd.c; sourceTree = "<group>"; };
+		1331C8090000000000000000 /* crc32_simd.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = crc32_simd.h; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -359,7 +369,6 @@
 				27B7B43B21FFF9F500CE2354 /* ma_password.c */,
 				27B7B43C21FFF9F500CE2354 /* ma_init.c */,
 				27B7B43D21FFF9F500CE2354 /* ma_loaddata.c */,
-				27B7B43E21FFF9F500CE2354 /* ma_sha1.c */,
 				27B7B43F21FFF9F500CE2354 /* ma_client_plugin.c.in */,
 				27B7B44121FFF9F500CE2354 /* ma_alloc.c */,
 				27B7B44221FFF9F500CE2354 /* ma_io.c */,
@@ -376,6 +385,8 @@
 				728AEC1E280071550015C7F8 /* ma_hashtbl.c */,
 				27B7B44D21FFF9F500CE2354 /* mariadb_stmt.c */,
 				27B7B44E21FFF9F500CE2354 /* mariadb_async.c */,
+				1331C8010000000000000000 /* get_password.c */,
+				1331C8020000000000000000 /* ma_decimal.c */,
 			);
 			path = libmariadb;
 			sourceTree = "<group>";
@@ -403,7 +414,6 @@
 				27B7B49E21FFFA0C00CE2354 /* mysql */,
 				27B7B4A221FFFA0C00CE2354 /* ma_string.h */,
 				27B7B4A321FFFA0C00CE2354 /* mysql.h */,
-				27B7B4A421FFFA0C00CE2354 /* ma_sha1.h */,
 				27B7B4A521FFFA0C00CE2354 /* mariadb_com.h */,
 				27B7B4A621FFFA0C00CE2354 /* mysqld_error.h */,
 				27B7B4A721FFFA0C00CE2354 /* ma_common.h */,
@@ -411,6 +421,7 @@
 				27B7B4F021FFFA0C00CE2354 /* ma_hash.h */,
 				27B7B4F121FFFA0C00CE2354 /* mariadb_version.h */,
 				27B7B4F221FFFA0C00CE2354 /* errmsg.h */,
+				1331C8030000000000000000 /* ma_decimal.h */,
 			);
 			path = include;
 			sourceTree = "<group>";
@@ -426,7 +437,6 @@
 		27B7B49E21FFFA0C00CE2354 /* mysql */ = {
 			isa = PBXGroup;
 			children = (
-				27B7B49F21FFFA0C00CE2354 /* plugin_auth_common.h */,
 				27B7B4A021FFFA0C00CE2354 /* plugin_auth.h */,
 				27B7B4A121FFFA0C00CE2354 /* client_plugin.h */,
 			);
@@ -475,7 +485,6 @@
 			isa = PBXGroup;
 			children = (
 				27B7B4FB21FFFA1C00CE2354 /* replication.c */,
-				27B7B4FC21FFFA1C00CE2354 /* aurora.c */,
 			);
 			path = connection;
 			sourceTree = "<group>";
@@ -498,6 +507,8 @@
 				27B7B50A21FFFA1C00CE2354 /* dialog.c */,
 				27B7B50B21FFFA1C00CE2354 /* gssapi_errmsg.c */,
 				27B7B50C21FFFA1C00CE2354 /* sha256_pw.c */,
+				1331C8040000000000000000 /* parsec.c */,
+				1331C8050000000000000000 /* ed25519_common.h */,
 			);
 			path = auth;
 			sourceTree = "<group>";
@@ -529,7 +540,6 @@
 				27B7B52921FFFD5200CE2354 /* gzguts.h */,
 				27B7B52A21FFFD5200CE2354 /* zlib.h */,
 				27B7B52B21FFFD5200CE2354 /* gzlib.c */,
-				27B7B52C21FFFD5200CE2354 /* minigzip.c */,
 				27B7B52D21FFFD5200CE2354 /* inflate.h */,
 				27B7B52E21FFFD5200CE2354 /* inftrees.c */,
 				27B7B52F21FFFD5200CE2354 /* uncompr.c */,
@@ -540,6 +550,10 @@
 				27B7B53421FFFD5200CE2354 /* inffast.c */,
 				27B7B53521FFFD5200CE2354 /* adler32.c */,
 				27B7B53621FFFD5200CE2354 /* zconf.h */,
+				1331C8060000000000000000 /* adler32_simd.c */,
+				1331C8070000000000000000 /* adler32_simd.h */,
+				1331C8080000000000000000 /* crc32_simd.c */,
+				1331C8090000000000000000 /* crc32_simd.h */,
 			);
 			path = zlib;
 			sourceTree = "<group>";
@@ -848,7 +862,6 @@
 				27B7B55921FFFD5300CE2354 /* gzlib.c in Sources */,
 				27B7B46021FFF9F500CE2354 /* ma_string.c in Sources */,
 				27B7B48821FFF9F500CE2354 /* mariadb_async.c in Sources */,
-				27B7B46821FFF9F500CE2354 /* ma_sha1.c in Sources */,
 				27B7B47221FFF9F500CE2354 /* ma_time.c in Sources */,
 				27B7B48621FFF9F500CE2354 /* mariadb_stmt.c in Sources */,
 				27B7B54D21FFFD5300CE2354 /* infback.c in Sources */,
@@ -859,10 +872,14 @@
 				27B7B56321FFFD5300CE2354 /* gzwrite.c in Sources */,
 				72584EA2222FFB0500E4B47C /* MariaDBClient.m in Sources */,
 				27B7B47021FFF9F500CE2354 /* ma_io.c in Sources */,
-				27B7B55B21FFFD5300CE2354 /* minigzip.c in Sources */,
 				27B7B45621FFF9F500CE2354 /* ma_list.c in Sources */,
 				27B7B45A21FFF9F500CE2354 /* ma_compress.c in Sources */,
 				27B7B56521FFFD5300CE2354 /* trees.c in Sources */,
+				1331C8010000000000000001 /* get_password.c in Sources */,
+				1331C8020000000000000001 /* ma_decimal.c in Sources */,
+				1331C8040000000000000001 /* parsec.c in Sources */,
+				1331C8060000000000000001 /* adler32_simd.c in Sources */,
+				1331C8080000000000000001 /* crc32_simd.c in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -910,7 +927,6 @@
 				27B7B55A21FFFD5300CE2354 /* gzlib.c in Sources */,
 				27B7B46121FFF9F500CE2354 /* ma_string.c in Sources */,
 				27B7B48921FFF9F500CE2354 /* mariadb_async.c in Sources */,
-				27B7B46921FFF9F500CE2354 /* ma_sha1.c in Sources */,
 				27B7B47321FFF9F500CE2354 /* ma_time.c in Sources */,
 				27B7B48721FFF9F500CE2354 /* mariadb_stmt.c in Sources */,
 				27B7B54E21FFFD5300CE2354 /* infback.c in Sources */,
@@ -921,10 +937,14 @@
 				27B7B56421FFFD5300CE2354 /* gzwrite.c in Sources */,
 				72584EA3222FFB0500E4B47C /* MariaDBClient.m in Sources */,
 				27B7B47121FFF9F500CE2354 /* ma_io.c in Sources */,
-				27B7B55C21FFFD5300CE2354 /* minigzip.c in Sources */,
 				27B7B45721FFF9F500CE2354 /* ma_list.c in Sources */,
 				27B7B45B21FFF9F500CE2354 /* ma_compress.c in Sources */,
 				27B7B56621FFFD5300CE2354 /* trees.c in Sources */,
+				1331C8010000000000000002 /* get_password.c in Sources */,
+				1331C8020000000000000002 /* ma_decimal.c in Sources */,
+				1331C8040000000000000002 /* parsec.c in Sources */,
+				1331C8060000000000000002 /* adler32_simd.c in Sources */,
+				1331C8080000000000000002 /* crc32_simd.c in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -933,6 +953,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				7249730D1F3E2A240026F0FA /* MariaDBKitTests_ios.m in Sources */,
+
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -997,7 +1018,7 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 10.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
 				MACOSX_DEPLOYMENT_TARGET = 10.13;
 				MTL_ENABLE_DEBUG_INFO = YES;
 				ONLY_ACTIVE_ARCH = YES;
@@ -1053,7 +1074,7 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 10.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
 				MACOSX_DEPLOYMENT_TARGET = 10.13;
 				MTL_ENABLE_DEBUG_INFO = NO;
 				SDKROOT = macosx;
@@ -1096,6 +1117,7 @@
 					"$(inherited)",
 					"$(PROJECT_DIR)/openssl/macOS/lib",
 				);
+				MACOSX_DEPLOYMENT_TARGET = 10.13;
 				OTHER_CFLAGS = (
 					"-fPIC",
 					"-D",
@@ -1147,6 +1169,7 @@
 					"$(inherited)",
 					"$(PROJECT_DIR)/openssl/macOS/lib",
 				);
+				MACOSX_DEPLOYMENT_TARGET = 10.13;
 				OTHER_CFLAGS = (
 					"-fPIC",
 					"-D",
@@ -1308,7 +1331,7 @@
 				GCC_C_LANGUAGE_STANDARD = gnu99;
 				HEADER_SEARCH_PATHS = "";
 				INFOPLIST_FILE = "MariaDBKitTests-ios/Info.plist";
-				IPHONEOS_DEPLOYMENT_TARGET = 10.3;
+				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = "com.hankinsoft.sqlpro.MariaDBKitTests-ios";
 				PRODUCT_NAME = "$(TARGET_NAME)";
@@ -1325,7 +1348,7 @@
 				GCC_C_LANGUAGE_STANDARD = gnu99;
 				HEADER_SEARCH_PATHS = "";
 				INFOPLIST_FILE = "MariaDBKitTests-ios/Info.plist";
-				IPHONEOS_DEPLOYMENT_TARGET = 10.3;
+				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = "com.hankinsoft.sqlpro.MariaDBKitTests-ios";
 				PRODUCT_NAME = "$(TARGET_NAME)";
