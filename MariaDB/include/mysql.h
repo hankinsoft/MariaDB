@@ -57,10 +57,20 @@ typedef int my_socket;
 #endif
 #endif
 #endif
+/* Framework-style includes so the installed MariaDBKit headers pass clang's
+   quoted-include-in-framework-header check; the quoted fallback keeps plain
+   C builds of the connector working. */
+#if defined(__has_include) && __has_include(<MariaDBKit/mariadb_com.h>)
+#include <MariaDBKit/mariadb_com.h>
+#include <MariaDBKit/mariadb_version.h>
+#include <MariaDBKit/ma_list.h>
+#include <MariaDBKit/mariadb_ctype.h>
+#else
 #include "mariadb_com.h"
 #include "mariadb_version.h"
 #include "ma_list.h"
 #include "mariadb_ctype.h"
+#endif
 
 
 typedef struct st_ma_const_string
@@ -476,7 +486,11 @@ typedef struct character_set
 /* Local infile support functions */
 #define LOCAL_INFILE_ERROR_LEN 512
 
+#if defined(__has_include) && __has_include(<MariaDBKit/mariadb_stmt.h>)
+#include <MariaDBKit/mariadb_stmt.h>
+#else
 #include "mariadb_stmt.h"
+#endif
 
 #ifndef MYSQL_CLIENT_PLUGIN_HEADER
 #define MYSQL_CLIENT_PLUGIN_HEADER                      \

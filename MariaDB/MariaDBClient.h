@@ -7,7 +7,7 @@
 //
 
 #import <Foundation/Foundation.h>
-#import "MariaDBResultSet.h"
+#import <MariaDBKit/MariaDBResultSet.h>
 
 #define kMariaDBKitDomain      @"MariaDBKit"
 
